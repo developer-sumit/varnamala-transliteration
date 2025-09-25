@@ -1,6 +1,8 @@
 package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
+import com.sumit.varnamala.data.Screen
+import com.sumit.varnamala.ui.components.ResultCard
 import com.sumit.varnamala.ui.components.CameraPermissionHandler
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCRCameraPreview
@@ -22,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.sumit.varnamala.ui.components.ResultCard
-import com.sumit.varnamala.ui.components.Topbar
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun CameraScreen(navController: NavController) {
@@ -37,18 +39,126 @@ fun CameraScreen(navController: NavController) {
     var lastUpdateTime by remember { mutableLongStateOf(0L) }
     var preferredLanguage by remember { mutableStateOf<String?>(null) }
     var manualLanguageRequired by remember { mutableStateOf(false) }
+    var detectionIntervalMs by remember { mutableLongStateOf(1000L) }
+    var readingMsPerWord by remember { mutableIntStateOf(300) }
+    var maxExtraDelayMs by remember { mutableIntStateOf(5000) }
+    var showSettingsDialog by remember { mutableStateOf(false) }
+
+    if (showSettingsDialog) {
+        AlertDialog(
+            onDismissRequest = { showSettingsDialog = false },
+            title = { Text("Scanner Settings") },
+            text = {
+                Column(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Detection interval controls
+                    Text("Detection Interval", fontWeight = FontWeight.Medium)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("${detectionIntervalMs}ms", fontSize = 14.sp)
+                        Row {
+                            OutlinedIconButton(
+                                onClick = {
+                                    detectionIntervalMs = max(250L, detectionIntervalMs - 250L)
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("-")
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            OutlinedIconButton(
+                                onClick = {
+                                    detectionIntervalMs = min(5000L, detectionIntervalMs + 250L)
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("+")
+                            }
+                        }
+                    }
+                    Slider(
+                        value = detectionIntervalMs.toFloat(),
+                        onValueChange = { detectionIntervalMs = it.toLong() },
+                        valueRange = 250f..5000f,
+                        steps = 18,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    HorizontalDivider()
+
+                    // Reading speed controls
+                    Text("Reading Time per Word", fontWeight = FontWeight.Medium)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("${readingMsPerWord}ms", fontSize = 14.sp)
+                        Row {
+                            OutlinedIconButton(
+                                onClick = { readingMsPerWord = max(100, readingMsPerWord - 50) },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("-")
+                            }
+                            Spacer(Modifier.width(8.dp))
+                            OutlinedIconButton(
+                                onClick = { readingMsPerWord = min(1000, readingMsPerWord + 50) },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("+")
+                            }
+                        }
+                    }
+                    Slider(
+                        value = readingMsPerWord.toFloat(),
+                        onValueChange = { readingMsPerWord = it.toInt() },
+                        valueRange = 100f..1000f,
+                        steps = 18,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showSettingsDialog = false }) {
+                    Text(stringResource(R.string.done))
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        Topbar()
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Settings button
+            GlassButton(
+                icon = painterResource(R.drawable.ic_settings_outline),
+                size = 44.dp,
+                onClick = { showSettingsDialog = true }
+            )
+        }
 
         CameraPermissionHandler(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1f)
+                .background(MaterialTheme.colorScheme.surface),
             onGranted = {
                 Box(
                     modifier = Modifier.weight(1f),
@@ -59,6 +169,10 @@ fun CameraScreen(navController: NavController) {
                         isDetectionRunning = detectionRunning,
                         flashEnabled = flashEnabled,
                         preferredLanguage = preferredLanguage,
+                        detectionIntervalMs = detectionIntervalMs,
+                        readingMsPerWord = readingMsPerWord,
+                        maxExtraDelayMs = maxExtraDelayMs,
+                        skipFrames = 5,
                         onOCRResult = { result ->
                             lastOCRResult = result
                             errorMessage = null
@@ -166,10 +280,8 @@ fun CameraScreen(navController: NavController) {
                     onClick = {
                         detectionRunning = !detectionRunning
                         if (!detectionRunning) {
-                            lastOCRResult = null
                             errorMessage = null
                             detectionCount = 0
-                            lastUpdateTime = 0L
                         } else {
                             detectionCount = 0
                             lastUpdateTime = System.currentTimeMillis()
@@ -177,11 +289,10 @@ fun CameraScreen(navController: NavController) {
                     }
                 )
 
-                // Flash toggle
+                // Gallery button
                 GlassButton(
-                    icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
-                        R.drawable.ic_flash_off_outline
-                    ), onClick = { flashEnabled = !flashEnabled }
+                    icon = painterResource(R.drawable.ic_image_outline),
+                    onClick = { navController.navigate(Screen.Gallery.route) }
                 )
             }
         }

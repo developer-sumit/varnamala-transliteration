@@ -4,10 +4,23 @@
     <string name="stop">STOP</string>
     <string name="start">START</string>
 
+    <string name="dark_mode">Dark Mode</string>
+    <string name="language">Language</string>
+    <string name="terms_of_service">Terms of Service</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
     <string name="grant_permission">Grant Permission</string>
     <string name="open_settings">Open Settings</string>
     <string name="camera_permission_required">Camera Permission Required</string>
-    <string name="camera_permission_description">We need access to your camera to detect hands in real-time.</string>
+    <string name="camera_permission_description">We need access to your camera to detect text in real-time.</string>
     <string name="camera_permission_denied_description">Camera permission has been permanently denied.</string>
     <string name="camera_permission_allow_hint">Please enable it in settings to continue.</string>
+    <string name="media_permission_required">Media Permission Required</string>
+    <string name="media_permission_description">We need access to your images to display them in the gallery.</string>
+    <string name="media_permission_denied_description">Media permission has been permanently denied.</string>
+    <string name="media_permission_allow_hint">Enable the permission in system settings to continue.</string>
+
+    <string name="clear_cache">Clear Cache</string>
+    <string name="gallery">Gallery</string>
+    <string name="done">Done</string>
 </resources>

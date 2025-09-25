@@ -1,8 +1,9 @@
 package com.sumit.varnamala.ui.components
 
+import com.sumit.varnamala.data.ocr.OCRResult
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,15 +20,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sumit.varnamala.R
-import com.sumit.varnamala.data.ocr.OCRResult
+
 
 @Composable
 fun ResultCard(result: OCRResult?, modifier: Modifier = Modifier) {
+
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
@@ -70,28 +70,15 @@ fun ResultCard(result: OCRResult?, modifier: Modifier = Modifier) {
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .padding(16.dp),
-        ) {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Text(
-                    text = result?.text?.takeIf { it.isNotEmpty() }
-                        ?: "No detection yet",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = if (!result?.text.isNullOrEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
-                        alpha = 0.6f
-                    ),
-                    lineHeight = 22.sp,
-                )
-            }
-            GlassButton(
-                icon = painterResource(R.drawable.ic_volume_outline),
-                modifier = Modifier.align(Alignment.BottomEnd),
-                onClick = {},
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Text(
+                text = result?.text?.takeIf { it.isNotEmpty() }
+                    ?: "No detection yet",
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (!result?.text.isNullOrEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.6f
+                ),
+                lineHeight = 22.sp,
             )
         }
 

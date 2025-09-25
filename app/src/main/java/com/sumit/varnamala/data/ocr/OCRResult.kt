@@ -9,7 +9,10 @@ data class OCRResult(
     val confidence: Float,
     val language: String?,
     val boundingBoxes: List<TextBlock> = emptyList(),
-    val processingTimeMs: Long = 0L
+    val processingTimeMs: Long = 0L,
+    val imageWidth: Int = 0,
+    val imageHeight: Int = 0,
+    val imageRotation: Int = 0
 )
 
 @Immutable

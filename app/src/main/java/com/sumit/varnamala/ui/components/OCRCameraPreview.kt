@@ -1,8 +1,14 @@
 package com.sumit.varnamala.ui.components
 
+import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.data.ocr.TextBlock
+import com.sumit.varnamala.data.ocr.TextElement
+import com.sumit.varnamala.data.ocr.TextLine
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
+import android.util.Log
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -20,12 +26,10 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.sumit.varnamala.data.ocr.OCRResult
-import com.sumit.varnamala.data.ocr.TextBlock
-import com.sumit.varnamala.data.ocr.TextElement
-import com.sumit.varnamala.data.ocr.TextLine
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.min
 
 @Composable
 fun OCRCameraPreview(
@@ -33,6 +37,13 @@ fun OCRCameraPreview(
     isDetectionRunning: Boolean = false,
     flashEnabled: Boolean = false,
     preferredLanguage: String? = null,
+    // time-based sampling (milliseconds)
+    detectionIntervalMs: Long = 1000L,
+    // reading time estimate per word (ms)
+    readingMsPerWord: Int = 300,
+    // maximum extra delay (ms) based on reading estimate
+    maxExtraDelayMs: Int = 5000,
+    skipFrames: Int = 5,
     onOCRResult: (OCRResult) -> Unit = {},
     onManualLanguageRequired: () -> Unit = {},
     onError: (String) -> Unit = {}
@@ -47,15 +58,12 @@ fun OCRCameraPreview(
     var imageAnalyzer: ImageAnalysis? by remember { mutableStateOf(null) }
     var previewView: PreviewView? by remember { mutableStateOf(null) }
 
-    val latinRecognizer = remember {
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    }
-    val devanagariRecognizer = remember {
-        TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build())
-    }
+    val latinRecognizer =
+        remember { TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS) }
+    val devanagariRecognizer =
+        remember { TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build()) }
 
-    var frameSkipCounter by remember { mutableIntStateOf(0) }
-    val skipFrames = 5
+    var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
 
     Box(modifier = modifier) {
         AndroidView(
@@ -64,9 +72,7 @@ fun OCRCameraPreview(
                 PreviewView(ctx).apply {
                     scaleType = PreviewView.ScaleType.FILL_CENTER
                     implementationMode = PreviewView.ImplementationMode.PERFORMANCE
-                }.also {
-                    previewView = it
-                }
+                }.also { previewView = it }
             },
             update = { currentPreviewView ->
                 if (cameraProvider == null) {
@@ -87,6 +93,11 @@ fun OCRCameraPreview(
 
         LaunchedEffect(isDetectionRunning) {
             cameraProvider?.let { provider ->
+                val wrappedOnOCR: (OCRResult) -> Unit = { result ->
+                    lastOCRResult = result
+                    onOCRResult(result)
+                }
+
                 updateAnalysisUseCase(
                     cameraProvider = provider,
                     lifecycleOwner = lifecycleOwner,
@@ -96,27 +107,31 @@ fun OCRCameraPreview(
                     skipFrames = skipFrames,
                     latinRecognizer = latinRecognizer,
                     devanagariRecognizer = devanagariRecognizer,
-                    onOCRResult = onOCRResult,
-                    onError = onError,
+                    timeBasedIntervalMs = detectionIntervalMs,
+                    readingMsPerWord = readingMsPerWord,
+                    maxExtraDelayMs = maxExtraDelayMs,
+                    suppressDuplicateDurationMs = 2000L,
                     preferredLanguage = preferredLanguage,
+                    onOCRResult = wrappedOnOCR,
                     onManualLanguageRequired = onManualLanguageRequired,
-                    onFrameSkip = { frameSkipCounter = it },
-                    onAnalyzerReady = { analyzer -> imageAnalyzer = analyzer }
+                    onError = onError,
+                    onAnalyzerReady = { analyzer -> imageAnalyzer = analyzer },
+                    onCameraReady = { cam ->
+                        camera = cam
+                        try {
+                            if (flashEnabled) cam.cameraControl.enableTorch(true)
+                        } catch (_: Throwable) {
+                        }
+                    }
                 )
             }
         }
 
         LaunchedEffect(flashEnabled, camera) {
             camera?.let { cam ->
-                if (cam.cameraInfo.hasFlashUnit()) {
-                    cam.cameraControl.enableTorch(flashEnabled)
-                }
-            }
-        }
-
-        LaunchedEffect(isDetectionRunning) {
-            if (!isDetectionRunning) {
-                camera?.cameraControl?.enableTorch(false)
+                if (cam.cameraInfo.hasFlashUnit()) cam.cameraControl.enableTorch(
+                    flashEnabled
+                )
             }
         }
     }
@@ -143,26 +158,14 @@ private fun setupCameraOnce(
     cameraProviderFuture.addListener({
         try {
             val cameraProvider = cameraProviderFuture.get()
-
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(previewView.surfaceProvider)
-                }
-
+            val preview = Preview.Builder().build()
+                .also { it.setSurfaceProvider(previewView.surfaceProvider) }
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
             cameraProvider.unbindAll()
-
-            val camera = cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                preview
-            )
-
+            val camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview)
             onCameraProviderReady(cameraProvider, camera, preview)
-
         } catch (exc: Exception) {
+            Log.e("OCRCameraPreview", "Camera setup failed", exc)
             onError("Camera initialization failed: ${exc.message}")
         }
     }, ContextCompat.getMainExecutor(context))
@@ -178,12 +181,16 @@ private fun updateAnalysisUseCase(
     skipFrames: Int,
     latinRecognizer: TextRecognizer,
     devanagariRecognizer: TextRecognizer,
-    onOCRResult: (OCRResult) -> Unit,
-    onError: (String) -> Unit,
+    timeBasedIntervalMs: Long,
+    readingMsPerWord: Int,
+    maxExtraDelayMs: Int,
     preferredLanguage: String?,
+    onOCRResult: (OCRResult) -> Unit,
     onManualLanguageRequired: () -> Unit,
-    onFrameSkip: (Int) -> Unit,
-    onAnalyzerReady: (ImageAnalysis?) -> Unit
+    onError: (String) -> Unit,
+    onAnalyzerReady: (ImageAnalysis?) -> Unit,
+    onCameraReady: (Camera) -> Unit,
+    suppressDuplicateDurationMs: Long = 2000L
 ) {
     try {
         val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
@@ -193,14 +200,41 @@ private fun updateAnalysisUseCase(
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also { analysis ->
-                    val analyzerCounter = java.util.concurrent.atomic.AtomicInteger(0)
+                    val analyzerCounter = AtomicInteger(0)
+
+                    var lastAllowedRun = 0L
+                    var lastSentText = ""
+                    var lastSentTime = 0L
+
                     analysis.setAnalyzer(cameraExecutor) { imageProxy ->
                         try {
                             val current = analyzerCounter.incrementAndGet() % (skipFrames + 1)
-                            onFrameSkip(current)
                             if (current != 0) {
-                                imageProxy.close()
-                                return@setAnalyzer
+                                imageProxy.close(); return@setAnalyzer
+                            }
+
+                            val now = System.currentTimeMillis()
+                            if (now < lastAllowedRun) {
+                                imageProxy.close(); return@setAnalyzer
+                            }
+
+                            val sendWrapper: (OCRResult) -> Unit = { result ->
+                                val ts = System.currentTimeMillis()
+                                val text = result.text
+                                val words =
+                                    if (text.isBlank()) 0 else text.trim().split(Regex("\\s+")).size
+                                val extraDelay =
+                                    min(maxExtraDelayMs.toLong(), words.toLong() * readingMsPerWord)
+                                // schedule next allowed run after base interval + reading extra
+                                lastAllowedRun = ts + timeBasedIntervalMs + extraDelay
+
+                                if (text.isNotEmpty() && text == lastSentText && ts - lastSentTime < suppressDuplicateDurationMs) {
+                                    // suppressed duplicate
+                                } else {
+                                    lastSentText = text
+                                    lastSentTime = ts
+                                    onOCRResult(result)
+                                }
                             }
 
                             processImageProxy(
@@ -208,10 +242,11 @@ private fun updateAnalysisUseCase(
                                 latinRecognizer = latinRecognizer,
                                 devanagariRecognizer = devanagariRecognizer,
                                 preferredLanguage = preferredLanguage,
-                                onOCRResult = onOCRResult,
+                                onOCRResult = sendWrapper,
                                 onManualLanguageRequired = onManualLanguageRequired,
                                 onError = onError
                             )
+                            return@setAnalyzer
                         } catch (t: Throwable) {
                             try {
                                 imageProxy.close()
@@ -222,7 +257,7 @@ private fun updateAnalysisUseCase(
                 }
 
             cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
+            val cam = cameraProvider.bindToLifecycle(
                 lifecycleOwner,
                 cameraSelector,
                 preview!!,
@@ -230,21 +265,17 @@ private fun updateAnalysisUseCase(
             )
 
             onAnalyzerReady(imageAnalyzer)
+            onCameraReady(cam)
         } else {
             cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner,
-                cameraSelector,
-                preview!!
-            )
-
+            cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview!!)
             onAnalyzerReady(null)
         }
     } catch (exc: Exception) {
+        Log.e("OCRCameraPreview", "Analysis update failed", exc)
         onError("Camera analysis update failed: ${exc.message}")
     }
 }
-
 
 @SuppressLint("UnsafeOptInUsageError")
 private fun processImageProxy(
@@ -258,16 +289,12 @@ private fun processImageProxy(
 ) {
     try {
         val startTime = System.currentTimeMillis()
-
         val mediaImage = imageProxy.image
         if (mediaImage == null) {
-            imageProxy.close()
-            return
+            imageProxy.close(); return
         }
-
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
-        // Processing order: preferredLanguage -> devanagari -> latin
         fun handleNoText() {
             onManualLanguageRequired()
             val emptyResult = OCRResult(
@@ -275,7 +302,10 @@ private fun processImageProxy(
                 confidence = 0f,
                 language = "Unknown",
                 boundingBoxes = emptyList(),
-                processingTimeMs = System.currentTimeMillis() - startTime
+                processingTimeMs = System.currentTimeMillis() - startTime,
+                imageWidth = image.width,
+                imageHeight = image.height,
+                imageRotation = imageProxy.imageInfo.rotationDegrees
             )
             onOCRResult(emptyResult)
             imageProxy.close()
@@ -285,20 +315,19 @@ private fun processImageProxy(
             latinRecognizer.process(image)
                 .addOnSuccessListener { latinResult ->
                     val finalProcessingTime = System.currentTimeMillis() - startTime
-                    if (latinResult.text.isNotEmpty()) {
-                        val ocrResult =
-                            convertToOCRResult(latinResult, "English", finalProcessingTime)
-                        onOCRResult(ocrResult)
-                    } else {
-                        handleNoText()
-                    }
+                    if (latinResult.text.isNotEmpty()) onOCRResult(
+                        convertToOCRResult(
+                            latinResult,
+                            "English",
+                            finalProcessingTime,
+                            image.width,
+                            image.height,
+                            imageProxy.imageInfo.rotationDegrees
+                        )
+                    ) else handleNoText()
                 }
-                .addOnFailureListener { exception ->
-                    handleNoText()
-                }
-                .addOnCompleteListener {
-                    imageProxy.close()
-                }
+                .addOnFailureListener { _ -> handleNoText() }
+                .addOnCompleteListener { imageProxy.close() }
         }
 
         val tryDevanagari: () -> Unit = {
@@ -306,37 +335,28 @@ private fun processImageProxy(
                 .addOnSuccessListener { devanagariResult ->
                     val processingTime = System.currentTimeMillis() - startTime
                     if (devanagariResult.text.isNotEmpty()) {
-                        val ocrResult =
-                            convertToOCRResult(devanagariResult, "Devanagari", processingTime)
-                        onOCRResult(ocrResult)
-                        imageProxy.close()
-                    } else {
-                        tryLatin()
-                    }
+                        onOCRResult(
+                            convertToOCRResult(
+                                devanagariResult,
+                                "Devanagari",
+                                processingTime,
+                                image.width,
+                                image.height,
+                                imageProxy.imageInfo.rotationDegrees
+                            )
+                        ); imageProxy.close()
+                    } else tryLatin()
                 }
-                .addOnFailureListener { exception ->
-                    tryLatin()
-                }
+                .addOnFailureListener { _ -> tryLatin() }
         }
 
         when (preferredLanguage?.lowercase()) {
-            null -> {
-                // Default order: devanagari then latin
-                tryDevanagari()
-            }
-
-            "english", "en", "latin" -> {
-                tryLatin()
-            }
-
-            "devanagari", "hi", "hindi" -> {
-                tryDevanagari()
-            }
-
-            else -> {
-                tryDevanagari()
-            }
+            null -> tryDevanagari()
+            "english", "en", "latin" -> tryLatin()
+            "devanagari", "hi", "hindi" -> tryDevanagari()
+            else -> tryDevanagari()
         }
+
     } catch (exc: Exception) {
         onError("Image processing failed: ${exc.message}")
         try {
@@ -349,7 +369,10 @@ private fun processImageProxy(
 private fun convertToOCRResult(
     mlkitResult: Text,
     language: String,
-    processingTime: Long
+    processingTime: Long,
+    imageWidth: Int = 0,
+    imageHeight: Int = 0,
+    imageRotation: Int = 0
 ): OCRResult {
     val textBlocks = mlkitResult.textBlocks.map { block ->
         TextBlock(
@@ -379,6 +402,9 @@ private fun convertToOCRResult(
             .maxOfOrNull { it.confidence } ?: 0f,
         language = language,
         boundingBoxes = textBlocks,
-        processingTimeMs = processingTime
+        processingTimeMs = processingTime,
+        imageWidth = imageWidth,
+        imageHeight = imageHeight,
+        imageRotation = imageRotation
     )
 }
