@@ -1,5 +1,6 @@
 package com.sumit.varnamala.ui.screens
 
+import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.MediaPermissionHandler
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.sumit.varnamala.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.launch
@@ -88,6 +88,8 @@ fun GalleryScreen(navController: NavController) {
                     }
                     resolver.query(collection, projection, args, null)
                 } else {
+                    // For older versions, don't use LIMIT in the query string as it's not supported
+                    // Instead, we'll limit the results after fetching
                     resolver.query(
                         collection,
                         projection,

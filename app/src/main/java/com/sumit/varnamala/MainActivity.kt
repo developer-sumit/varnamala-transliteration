@@ -5,6 +5,9 @@ import com.sumit.varnamala.ui.screens.CameraScreen
 import com.sumit.varnamala.ui.screens.GalleryScreen
 import com.sumit.varnamala.ui.screens.ImageDetailScreen
 import com.sumit.varnamala.ui.screens.SettingsScreen
+import com.sumit.varnamala.ui.screens.LanguageScreen
+import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
+import com.sumit.varnamala.data.preferences.AppLanguageRepository
 import com.sumit.varnamala.ui.theme.VarnamalaTheme
 
 import android.app.Activity
@@ -18,8 +21,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import java.util.Locale
+import android.content.res.Configuration
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -35,19 +44,47 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
-            val window = (context as Activity).window
+            val activity = context as Activity
             val navController = rememberNavController()
 
-            // Hide System Top and Bottom Navigation Bars
+            val themeSettingsRepository = remember {
+                ThemeSettingsRepository(context)
+            }
+            val languageRepository = remember {
+                AppLanguageRepository(context)
+            }
+
+            // Update locale when language changes
+            val currentLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
+            LaunchedEffect(currentLanguage) {
+                // Apply locale change immediately
+                val locale = Locale(currentLanguage)
+                Locale.setDefault(locale)
+                val config = Configuration(resources.configuration)
+                config.setLocale(locale)
+
+                // Update resources configuration
+                resources.updateConfiguration(config, resources.displayMetrics)
+
+                // Also update the application context configuration
+                applicationContext.resources.updateConfiguration(
+                    config,
+                    applicationContext.resources.displayMetrics
+                )
+            }
+
+            val isDarkTheme by themeSettingsRepository.isDarkTheme.collectAsState(initial = true)
+
             SideEffect {
-                WindowCompat.setDecorFitsSystemWindows(window, false)
-                val controller = WindowInsetsControllerCompat(window, window.decorView)
-                controller.hide(WindowInsetsCompat.Type.systemBars())
-                controller.systemBarsBehavior =
+                WindowCompat.setDecorFitsSystemWindows(activity.window, false)
+                val windowInsetsController =
+                    WindowInsetsControllerCompat(activity.window, activity.window.decorView)
+                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+                windowInsetsController.systemBarsBehavior =
                     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
 
-            VarnamalaTheme {
+            VarnamalaTheme(darkTheme = isDarkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavHost(
                         navController = navController,
@@ -55,74 +92,97 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(
-                            route = Screen.Home.route,
+                            Screen.Home.route,
                             enterTransition = {
                                 slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                                     animationSpec = tween(300)
                                 )
                             },
                             exitTransition = {
                                 slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                                     animationSpec = tween(300)
                                 )
                             }
                         ) {
-                            CameraScreen(navController = navController)
+                            CameraScreen(navController)
                         }
                         composable(
-                            route = Screen.Gallery.route,
+                            Screen.Gallery.route,
                             enterTransition = {
                                 slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                                     animationSpec = tween(300)
                                 )
                             },
                             exitTransition = {
                                 slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                                     animationSpec = tween(300)
                                 )
                             }
                         ) {
-                            GalleryScreen(navController = navController)
+                            GalleryScreen(navController)
                         }
                         composable(
-                            route = Screen.Settings.route,
+                            Screen.Settings.route,
                             enterTransition = {
                                 slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                                     animationSpec = tween(300)
                                 )
                             },
                             exitTransition = {
                                 slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                                     animationSpec = tween(300)
                                 )
                             }
                         ) {
-                            SettingsScreen(navController = navController, isDarkTheme = true)
+                            SettingsScreen(
+                                navController = navController,
+                                themeRepository = themeSettingsRepository
+                            )
+                        }
+                        composable(
+                            Screen.Language.route,
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }
+                        ) {
+                            LanguageScreen(navController)
                         }
                         composable(
                             route = Screen.ImageDetail.route,
                             arguments = listOf(navArgument("id") { type = NavType.LongType }),
                             enterTransition = {
                                 slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
                                     animationSpec = tween(300)
                                 )
                             },
                             exitTransition = {
                                 slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                                     animationSpec = tween(300)
                                 )
                             }
                         ) { backStackEntry ->
                             val imageId = backStackEntry.arguments?.getLong("id") ?: -1L
-                            ImageDetailScreen(navController = navController, imageId = imageId)
+                            ImageDetailScreen(
+                                navController = navController,
+                                imageId = imageId
+                            )
                         }
                     }
                 }

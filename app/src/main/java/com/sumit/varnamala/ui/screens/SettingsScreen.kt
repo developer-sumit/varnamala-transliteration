@@ -1,8 +1,12 @@
 package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
+import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
+import com.sumit.varnamala.data.preferences.OCRSettingsRepository
+import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
+import com.sumit.varnamala.data.preferences.AppLanguageRepository
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,18 +19,25 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,8 +53,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
-    navController: NavController,
-    isDarkTheme: Boolean
+    navController: NavController, themeRepository: ThemeSettingsRepository
 ) {
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
     val scrollState = rememberScrollState()
@@ -55,6 +65,15 @@ fun SettingsScreen(
 
     val scope = rememberCoroutineScope()
     val cacheRepository = remember { OCRCacheRepository(context) }
+    val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
+    val languageRepository = remember { AppLanguageRepository(context) }
+
+    val isDarkTheme by themeRepository.isDarkTheme.collectAsState(initial = true)
+    val enableCacheStorage by ocrSettingsRepository.enableCacheStorage.collectAsState(initial = true)
+    val currentAppLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
+    val currentLanguageDisplayName =
+        AppLanguageRepository.getLanguageDisplayName(currentAppLanguage)
+    var showClearCacheDialog by remember { mutableStateOf(false) }
 
     val appName = stringResource(R.string.app_name)
     val appVersion = packageInfo?.versionName ?: "Unknown"
@@ -86,14 +105,29 @@ fun SettingsScreen(
                 ),
                 trailingContent = {
                     Switch(
-                        checked = isDarkTheme,
-                        onCheckedChange = { })
+                        checked = isDarkTheme, onCheckedChange = { newValue ->
+                            scope.launch { themeRepository.setIsDarkTheme(newValue) }
+                        })
                 })
+
+            // Cache Storage
+            SettingItem(
+                title = "Enable Cache Storage",
+                subtitle = "Store OCR detection results for faster loading",
+                icon = painterResource(id = R.drawable.ic_database),
+                trailingContent = {
+                    Switch(
+                        checked = enableCacheStorage, onCheckedChange = { newValue ->
+                            scope.launch { ocrSettingsRepository.setEnableCacheStorage(newValue) }
+                        })
+                })
+
             // Language Selection
             SettingItem(
                 title = stringResource(R.string.language),
+                subtitle = currentLanguageDisplayName,
                 icon = painterResource(id = R.drawable.ic_language),
-                onClick = { },
+                onClick = { navController.navigate(Screen.Language.route) },
                 trailingContent = {
                     Icon(
                         painter = painterResource(R.drawable.ic_chevron_right),
@@ -101,6 +135,7 @@ fun SettingsScreen(
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 })
+
             // Terms of Service
             SettingItem(
                 title = stringResource(R.string.terms_of_service),
@@ -113,6 +148,7 @@ fun SettingsScreen(
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 })
+
             // Privacy Policy
             SettingItem(
                 title = stringResource(R.string.privacy_policy),
@@ -125,17 +161,14 @@ fun SettingsScreen(
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 })
+
             // Clear Cached Data (Detected Language, Text Blocks, etc)
             SettingItem(
                 title = stringResource(R.string.clear_cache),
                 icon = painterResource(id = R.drawable.ic_delete_outline),
                 textColor = MaterialTheme.colorScheme.errorContainer,
                 bgColor = MaterialTheme.colorScheme.error,
-                onClick = {
-                    scope.launch {
-                        cacheRepository.clearCache()
-                    }
-                })
+                onClick = { showClearCacheDialog = true })
 
             // App Version
             Text(
@@ -148,6 +181,33 @@ fun SettingsScreen(
             )
         }
     }
+
+    // Clear Cache Confirmation Dialog
+    if (showClearCacheDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearCacheDialog = false },
+            title = { Text(stringResource(R.string.clear_cache)) },
+            text = {
+                Text(stringResource(R.string.clear_cache_confirmation_settings))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            cacheRepository.clearCache()
+                        }
+                        showClearCacheDialog = false
+                    }) {
+                    Text(stringResource(R.string.clear), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showClearCacheDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            })
+    }
 }
 
 @Composable
@@ -157,7 +217,8 @@ fun SettingItem(
     bgColor: Color? = null,
     textColor: Color? = null,
     onClick: (() -> Unit)? = null,
-    trailingContent: @Composable (() -> Unit)? = null
+    trailingContent: @Composable (() -> Unit)? = null,
+    subtitle: String? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -168,6 +229,7 @@ fun SettingItem(
             .clickable(enabled = onClick != null) {
                 onClick?.invoke()
             }
+            .heightIn(min = 80.dp)
             .padding(16.dp, 10.dp)) {
         Row(
             modifier = Modifier.weight(1f),
@@ -179,11 +241,21 @@ fun SettingItem(
                 contentDescription = null,
                 tint = textColor ?: MaterialTheme.colorScheme.onSurface
             )
-            Text(
-                text = title,
-                color = textColor ?: MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-            )
+            Column {
+                Text(
+                    text = title,
+                    color = textColor ?: MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
+                )
+                if (subtitle != null) {
+                    Text(
+                        text = subtitle,
+                        color = (textColor
+                            ?: MaterialTheme.colorScheme.onSurface).copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
         }
 
         if (trailingContent != null) {

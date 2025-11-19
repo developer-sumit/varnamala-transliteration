@@ -23,4 +23,67 @@
     <string name="clear_cache">Clear Cache</string>
     <string name="gallery">Gallery</string>
     <string name="done">Done</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="retry">Retry</string>
+    <string name="copy">Copy</string>
+    <string name="share">Share</string>
+    <string name="refresh">Refresh</string>
+    <string name="clear">Clear</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR Text</string>
+    <string name="clear_all_ocr_cache">Clear All OCR Cache</string>
+    <string name="clear_cache_confirmation">This will remove cached OCR for all images. Continue?</string>
+    <string name="clear_cache_confirmation_settings">Are you sure you want to clear all cached OCR data? This action cannot be undone.</string>
+    <string name="detect_again">Detect Again</string>
+    <string name="clear_all">Clear All</string>
+    <string name="language_detection">Language Detection</string>
+    <string name="ocr_actions">OCR Actions</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">Show Bounding Boxes</string>
+    <string name="text_blocks">Text Blocks</string>
+    <string name="text_lines">Text Lines</string>
+    <string name="words">Words</string>
+    <string name="bounding_box_width">Bounding Box Width: %dpx</string>
+    <string name="show_text_overlay">Show Text Overlay</string>
+    <string name="text_background_opacity">Text Background Opacity: %d%%</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">Scanner Settings</string>
+    <string name="detection_interval">Detection Interval</string>
+    <string name="reading_time_per_word">Reading Time per Word</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR Screen</string>
+    <string name="browse_gallery">Browse Gallery</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">Zoom Out</string>
+    <string name="zoom_in">Zoom In</string>
+    <string name="rotate_90">Rotate 90°</string>
+    <string name="reset_view">Reset View</string>
+    <string name="copied">Copied</string>
+    <string name="select_language">Select language</string>
+    <string name="selected">Selected</string>
+    <string name="back">Back</string>
+    <string name="captured_image">Captured Image</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">Image Details</string>
+    <string name="ocr_result">OCR Result</string>
+    <string name="original">Original</string>
+    <string name="transliterated">Transliterated</string>
+    <string name="display_options">Display Options</string>
+    <string name="detection_options">Detection Options</string>
+    <string name="ocr_status">OCR Status</string>
+    <string name="ocr_results">OCR Results</string>
+    <string name="no_text_detected">No text detected in the image</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">Language changed. Please restart the app to see the changes.</string>
 </resources>

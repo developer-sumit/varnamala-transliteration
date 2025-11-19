@@ -1,0 +1,127 @@
+package com.sumit.varnamala.data.preferences
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+private val Context.ocrSettingsDataStore: DataStore<Preferences> by preferencesDataStore(name = "ocr_settings")
+
+class OCRSettingsRepository(private val context: Context) {
+    private object PreferencesKeys {
+        val SHOW_BOUNDING_BOXES = booleanPreferencesKey("show_bounding_boxes")
+        val SHOW_TEXT_OVERLAY = booleanPreferencesKey("show_text_overlay")
+        val SHOW_WORD_BOUNDING_BOXES = booleanPreferencesKey("show_word_bounding_boxes")
+        val SHOW_LINE_BOUNDING_BOXES = booleanPreferencesKey("show_line_bounding_boxes")
+        val SHOW_BLOCK_BOUNDING_BOXES = booleanPreferencesKey("show_block_bounding_boxes")
+        val TEXT_BACKGROUND_OPACITY = floatPreferencesKey("text_background_opacity")
+        val BOUNDING_BOX_STROKE_WIDTH = floatPreferencesKey("bounding_box_stroke_width")
+        val ML_KIT_LANGUAGE = stringPreferencesKey("ml_kit_language")
+        val ENABLE_CACHE_STORAGE = booleanPreferencesKey("enable_cache_storage")
+    }
+
+    val showBoundingBoxes: Flow<Boolean> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SHOW_BOUNDING_BOXES] ?: true
+        }
+
+    val showTextOverlay: Flow<Boolean> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SHOW_TEXT_OVERLAY] ?: true
+        }
+
+    val showWordBoundingBoxes: Flow<Boolean> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SHOW_WORD_BOUNDING_BOXES] ?: true
+        }
+
+    val showLineBoundingBoxes: Flow<Boolean> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SHOW_LINE_BOUNDING_BOXES] ?: true
+        }
+
+    val showBlockBoundingBoxes: Flow<Boolean> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SHOW_BLOCK_BOUNDING_BOXES] ?: true
+        }
+
+    val textBackgroundOpacity: Flow<Float> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.TEXT_BACKGROUND_OPACITY] ?: 0.8f
+        }
+
+    val boundingBoxStrokeWidth: Flow<Float> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.BOUNDING_BOX_STROKE_WIDTH] ?: 2f
+        }
+
+    val mlKitLanguage: Flow<String> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.ML_KIT_LANGUAGE] ?: "auto"
+        }
+
+    val enableCacheStorage: Flow<Boolean> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.ENABLE_CACHE_STORAGE] ?: true
+        }
+
+    suspend fun setShowBoundingBoxes(value: Boolean) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_BOUNDING_BOXES] = value
+        }
+    }
+
+    suspend fun setShowTextOverlay(value: Boolean) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_TEXT_OVERLAY] = value
+        }
+    }
+
+    suspend fun setShowWordBoundingBoxes(value: Boolean) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_WORD_BOUNDING_BOXES] = value
+        }
+    }
+
+    suspend fun setShowLineBoundingBoxes(value: Boolean) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_LINE_BOUNDING_BOXES] = value
+        }
+    }
+
+    suspend fun setShowBlockBoundingBoxes(value: Boolean) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SHOW_BLOCK_BOUNDING_BOXES] = value
+        }
+    }
+
+    suspend fun setTextBackgroundOpacity(value: Float) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.TEXT_BACKGROUND_OPACITY] = value
+        }
+    }
+
+    suspend fun setBoundingBoxStrokeWidth(value: Float) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.BOUNDING_BOX_STROKE_WIDTH] = value
+        }
+    }
+
+    suspend fun setMlKitLanguage(value: String) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.ML_KIT_LANGUAGE] = value
+        }
+    }
+
+    suspend fun setEnableCacheStorage(value: Boolean) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.ENABLE_CACHE_STORAGE] = value
+        }
+    }
+}

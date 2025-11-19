@@ -2,11 +2,17 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
-import com.sumit.varnamala.ui.components.ResultCard
+import com.sumit.varnamala.ui.components.OCRInfoCard
 import com.sumit.varnamala.ui.components.CameraPermissionHandler
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCRCameraPreview
+import com.sumit.varnamala.ui.components.DisplayOptionsDialog
+import com.sumit.varnamala.ui.components.DetectionOptionsDialog
+import com.sumit.varnamala.ui.components.CameraCaptureButton
+import com.sumit.varnamala.ui.components.CapturedImageOverlay
 import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.data.preferences.OCRSettingsRepository
+import com.sumit.varnamala.utils.LanguageDetector
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -24,13 +30,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.collectAsState
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
 fun CameraScreen(navController: NavController) {
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
 
+    // Initialize repositories
+    val settingsRepository = remember { OCRSettingsRepository(context) }
+
+    // Create the ViewModel
+    val viewModel: com.sumit.varnamala.ui.viewmodels.OCRViewModel =
+        androidx.lifecycle.viewmodel.compose.viewModel(
+            factory = com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory(context)
+        )
+
+    // State variables
     var flashEnabled by remember { mutableStateOf(false) }
     var detectionRunning by remember { mutableStateOf(false) }
     var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
@@ -44,10 +65,72 @@ fun CameraScreen(navController: NavController) {
     var maxExtraDelayMs by remember { mutableIntStateOf(5000) }
     var showSettingsDialog by remember { mutableStateOf(false) }
 
+    // Single capture functionality
+    var captureImage by remember { mutableStateOf(false) }
+    var isCapturing by remember { mutableStateOf(false) }
+    var capturedBitmap by remember { mutableStateOf<android.graphics.Bitmap?>(null) }
+    var capturedImageOCRResult by remember { mutableStateOf<OCRResult?>(null) }
+    var capturedImageProcessing by remember { mutableStateOf(false) }
+    var capturedImageError by remember { mutableStateOf<String?>(null) }
+
+    // OCR result processing variables
+    var rawOcrText by remember { mutableStateOf("") }
+    var detectedLanguage by remember { mutableStateOf("unknown") }
+    var languageConfidence by remember { mutableStateOf(0f) }
+    var showInfoDialog by remember { mutableStateOf(false) }
+    var showDisplayOptionsDialog by remember { mutableStateOf(false) }
+    var showDetectionOptionsDialog by remember { mutableStateOf(false) }
+
+    // Settings from repository
+    // Global settings from repository
+    val repoShowBoundingBoxes by settingsRepository.showBoundingBoxes.collectAsState(initial = true)
+    val repoShowTextOverlay by settingsRepository.showTextOverlay.collectAsState(initial = true)
+    val repoShowWordBoundingBoxes by settingsRepository.showWordBoundingBoxes.collectAsState(initial = true)
+    val repoShowLineBoundingBoxes by settingsRepository.showLineBoundingBoxes.collectAsState(initial = true)
+    val repoShowBlockBoundingBoxes by settingsRepository.showBlockBoundingBoxes.collectAsState(initial = true)
+    val textBackgroundOpacity by settingsRepository.textBackgroundOpacity.collectAsState(initial = 0.8f)
+    val boundingBoxStrokeWidth by settingsRepository.boundingBoxStrokeWidth.collectAsState(initial = 2f)
+    val savedMlKitLanguage by settingsRepository.mlKitLanguage.collectAsState(initial = "auto")
+
+    var mlKitLanguage by remember { mutableStateOf("auto") }
+
+    // Camera-screen specific display settings (start disabled for cleaner view)
+    var camShowBoundingBoxes by remember { mutableStateOf(false) }
+    var camShowTextOverlay by remember { mutableStateOf(false) }
+    var camShowWordBoundingBoxes by remember { mutableStateOf(false) }
+    var camShowLineBoundingBoxes by remember { mutableStateOf(false) }
+    var camShowBlockBoundingBoxes by remember { mutableStateOf(false) }
+
+    // When user opens display options first time, initialize with repo values to allow enabling
+    LaunchedEffect(showDisplayOptionsDialog) {
+        if (showDisplayOptionsDialog && !camShowTextOverlay && !camShowBoundingBoxes) {
+            camShowBoundingBoxes = repoShowBoundingBoxes
+            camShowTextOverlay = repoShowTextOverlay
+            camShowWordBoundingBoxes = repoShowWordBoundingBoxes
+            camShowLineBoundingBoxes = repoShowLineBoundingBoxes
+            camShowBlockBoundingBoxes = repoShowBlockBoundingBoxes
+        }
+    }
+
+    // Update mlKitLanguage when settings change
+    LaunchedEffect(savedMlKitLanguage) {
+        mlKitLanguage = savedMlKitLanguage
+        preferredLanguage = if (savedMlKitLanguage == "auto") null else savedMlKitLanguage
+    }
+
+    // Initialize ViewModel
+    LaunchedEffect(Unit) {
+        try {
+            viewModel.initialize()
+        } catch (e: Exception) {
+            // Failure will be handled during OCR if needed
+        }
+    }
+
     if (showSettingsDialog) {
         AlertDialog(
             onDismissRequest = { showSettingsDialog = false },
-            title = { Text("Scanner Settings") },
+            title = { Text(stringResource(R.string.scanner_settings)) },
             text = {
                 Column(
                     modifier = Modifier
@@ -56,7 +139,10 @@ fun CameraScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     // Detection interval controls
-                    Text("Detection Interval", fontWeight = FontWeight.Medium)
+                    Text(
+                        stringResource(R.string.detection_interval),
+                        fontWeight = FontWeight.Medium
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -94,7 +180,10 @@ fun CameraScreen(navController: NavController) {
                     HorizontalDivider()
 
                     // Reading speed controls
-                    Text("Reading Time per Word", fontWeight = FontWeight.Medium)
+                    Text(
+                        stringResource(R.string.reading_time_per_word),
+                        fontWeight = FontWeight.Medium
+                    )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -143,13 +232,24 @@ fun CameraScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Settings button
+            // Display Options button
             GlassButton(
-                icon = painterResource(R.drawable.ic_settings_outline),
-                size = 44.dp,
+                icon = painterResource(R.drawable.ic_image_outline),
+                onClick = { showDisplayOptionsDialog = true }
+            )
+
+            // Detection Options button
+            GlassButton(
+                icon = painterResource(R.drawable.ic_language),
+                onClick = { showDetectionOptionsDialog = true }
+            )
+
+            // Camera Settings button
+            GlassButton(
+                icon = painterResource(R.drawable.ic_time),
                 onClick = { showSettingsDialog = true }
             )
         }
@@ -173,15 +273,65 @@ fun CameraScreen(navController: NavController) {
                         readingMsPerWord = readingMsPerWord,
                         maxExtraDelayMs = maxExtraDelayMs,
                         skipFrames = 5,
+                        // Display settings
+                        showBoundingBoxes = camShowBoundingBoxes,
+                        showTextOverlay = camShowTextOverlay,
+                        showWordBoundingBoxes = camShowWordBoundingBoxes,
+                        showLineBoundingBoxes = camShowLineBoundingBoxes,
+                        showBlockBoundingBoxes = camShowBlockBoundingBoxes,
+                        textBackgroundOpacity = textBackgroundOpacity,
+                        boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+                        // Single capture functionality
+                        captureImage = captureImage,
+                        onCaptureComplete = {
+                            captureImage = false
+                            capturedImageProcessing = false
+                        },
+                        onImageCaptured = { bitmap ->
+                            capturedBitmap = bitmap
+                            capturedImageProcessing = true
+                            capturedImageError = null
+                            capturedImageOCRResult = null
+                            isCapturing = false
+                        },
                         onOCRResult = { result ->
-                            lastOCRResult = result
-                            errorMessage = null
-                            detectionCount += 1
-                            lastUpdateTime = System.currentTimeMillis()
+                            if (capturedBitmap != null) {
+                                // This is a result from captured image
+                                capturedImageOCRResult = result
+                                capturedImageProcessing = false
+                                capturedImageError = null
+                            } else {
+                                // This is a real-time OCR result
+                                lastOCRResult = result
+                                rawOcrText = result.text
+                                errorMessage = null
+                                detectionCount += 1
+                                lastUpdateTime = System.currentTimeMillis()
+
+                                // Detect language for OCR results
+                                if (result.text.isNotBlank()) {
+                                    val lang = LanguageDetector.detectLanguage(result.text)
+                                    detectedLanguage = lang
+                                    languageConfidence =
+                                        LanguageDetector.getDetectionConfidenceMap(result.text)[lang]
+                                            ?: 0f
+                                }
+                            }
                         },
                         onManualLanguageRequired = { manualLanguageRequired = true },
                         onError = { error ->
-                            errorMessage = error
+                            if (capturedBitmap != null) {
+                                // This is an error from captured image processing
+                                capturedImageError = error
+                                capturedImageProcessing = false
+                            } else {
+                                // This is a real-time OCR error
+                                errorMessage = error
+                            }
+
+                            if (isCapturing) {
+                                isCapturing = false
+                            }
                         }
                     )
 
@@ -200,18 +350,30 @@ fun CameraScreen(navController: NavController) {
                             )
                             .padding(14.dp, 10.dp)
                     ) {
-                        if (detectionRunning) {
+                        if (detectionRunning || isCapturing) {
                             Surface(
                                 modifier = Modifier.size(8.dp),
                                 shape = RoundedCornerShape(4.dp),
-                                color = Color.Green
+                                color = when {
+                                    isCapturing -> Color.Blue
+                                    detectionRunning -> Color.Green
+                                    else -> Color.Gray
+                                }
                             ) {}
                         }
                         Text(
-                            text = if (detectionRunning) "Scanning" else "Ready",
+                            text = when {
+                                isCapturing -> "Capturing"
+                                detectionRunning -> "Scanning"
+                                else -> "Ready"
+                            },
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            color = if (detectionRunning) Color.Green else MaterialTheme.colorScheme.outline
+                            color = when {
+                                isCapturing -> Color.Blue
+                                detectionRunning -> Color.Green
+                                else -> MaterialTheme.colorScheme.outline
+                            }
                         )
                         if (detectionRunning && detectionCount > 0) {
                             Text(
@@ -222,12 +384,58 @@ fun CameraScreen(navController: NavController) {
                         }
                     }
 
-                    ResultCard(
-                        lastOCRResult,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 10.dp)
-                    )
+                    // OCR Info Card at bottom - show if there's content or error
+                    if (rawOcrText.isNotBlank() || errorMessage != null || lastOCRResult != null) {
+                        OCRInfoCard(
+                            ocrLoading = false,
+                            ocrError = errorMessage,
+                            rawOcrText = rawOcrText,
+                            detectedLanguage = detectedLanguage,
+                            languageConfidence = languageConfidence,
+                            lastResult = lastOCRResult,
+                            onCopy = {
+                                val clipboard =
+                                    context.getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                val clip = android.content.ClipData.newPlainText(
+                                    context.getString(R.string.ocr_text),
+                                    rawOcrText
+                                )
+                                clipboard.setPrimaryClip(clip)
+                            },
+                            onShare = {
+                                if (rawOcrText.isNotBlank()) {
+                                    val sendIntent = android.content.Intent().apply {
+                                        action = android.content.Intent.ACTION_SEND
+                                        putExtra(android.content.Intent.EXTRA_TEXT, rawOcrText)
+                                        type = "text/plain"
+                                    }
+                                    val chooser = android.content.Intent.createChooser(
+                                        sendIntent,
+                                        "Share text"
+                                    )
+                                    context.startActivity(chooser)
+                                }
+                            },
+                            onRefresh = {
+                                // For camera, restart detection
+                                if (!detectionRunning) {
+                                    detectionRunning = true
+                                    detectionCount = 0
+                                    lastUpdateTime = System.currentTimeMillis()
+                                }
+                            },
+                            onClear = {
+                                lastOCRResult = null
+                                rawOcrText = ""
+                                detectedLanguage = "unknown"
+                                languageConfidence = 0f
+                                errorMessage = null
+                            },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 16.dp)
+                        )
+                    }
                 }
             })
 
@@ -269,23 +477,50 @@ fun CameraScreen(navController: NavController) {
                     ), onClick = { flashEnabled = !flashEnabled }
                 )
 
-                // Start/Stop button
-                GlassButton(
-                    text = if (detectionRunning) stringResource(R.string.stop) else stringResource(
-                        R.string.start
-                    ),
+                // Enhanced Capture button - Snapchat-like behavior
+                CameraCaptureButton(
+                    text = when {
+                        isCapturing -> "Capturing..."
+                        detectionRunning -> "Scanning..."
+                        capturedBitmap != null -> "Captured"
+                        else -> "Hold/Tap"
+                    },
                     size = 80.dp,
                     textColor = Color.White,
-                    background = if (detectionRunning) Color(0xFFf44336) else Color(0xFF2196F3),
-                    onClick = {
-                        detectionRunning = !detectionRunning
-                        if (!detectionRunning) {
+                    backgroundColor = if (capturedBitmap != null) Color(0xFF4CAF50) else Color(
+                        0xFF2196F3
+                    ),
+                    longPressBackgroundColor = Color(0xFFf44336),
+                    progressColor = Color.White,
+                    isRealTimeMode = detectionRunning,
+                    onSingleCapture = {
+                        // Tap = capture single image (only if not in real-time mode and no captured image)
+                        if (!isCapturing && !detectionRunning && capturedBitmap == null) {
+                            isCapturing = true
+                            captureImage = true
                             errorMessage = null
-                            detectionCount = 0
-                        } else {
+                            // Clear any previous results
+                            capturedImageOCRResult = null
+                            capturedImageError = null
+                        }
+                    },
+                    onLongPressStart = {
+                        // Hold = start real-time scanning (only if no captured image)
+                        if (!isCapturing && capturedBitmap == null) {
+                            detectionRunning = true
                             detectionCount = 0
                             lastUpdateTime = System.currentTimeMillis()
+                            errorMessage = null
+                            // Clear any captured image data when starting real-time
+                            capturedBitmap = null
+                            capturedImageOCRResult = null
+                            capturedImageError = null
                         }
+                    },
+                    onLongPressEnd = {
+                        // Release = stop real-time scanning
+                        detectionRunning = false
+                        detectionCount = 0
                     }
                 )
 
@@ -296,5 +531,91 @@ fun CameraScreen(navController: NavController) {
                 )
             }
         }
+    }
+
+    // Display Options Dialog
+    if (showDisplayOptionsDialog) {
+        DisplayOptionsDialog(
+            onDismiss = { showDisplayOptionsDialog = false },
+            showBoundingBoxes = camShowBoundingBoxes,
+            onShowBoundingBoxesChange = {
+                camShowBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowBoundingBoxes(it) }
+            },
+            showTextOverlay = camShowTextOverlay,
+            onShowTextOverlayChange = {
+                camShowTextOverlay = it; coroutineScope.launch { settingsRepository.setShowTextOverlay(it) }
+            },
+            showWordBoundingBoxes = camShowWordBoundingBoxes,
+            onShowWordBoundingBoxesChange = {
+                camShowWordBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowWordBoundingBoxes(it) }
+            },
+            showLineBoundingBoxes = camShowLineBoundingBoxes,
+            onShowLineBoundingBoxesChange = {
+                camShowLineBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowLineBoundingBoxes(it) }
+            },
+            showBlockBoundingBoxes = camShowBlockBoundingBoxes,
+            onShowBlockBoundingBoxesChange = {
+                camShowBlockBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowBlockBoundingBoxes(it) }
+            },
+            textBackgroundOpacity = textBackgroundOpacity,
+            onTextBackgroundOpacityChange = { coroutineScope.launch { settingsRepository.setTextBackgroundOpacity(it) } },
+            boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+            onBoundingBoxStrokeWidthChange = { coroutineScope.launch { settingsRepository.setBoundingBoxStrokeWidth(it) } }
+        )
+    }
+
+    // Detection Options Dialog
+    if (showDetectionOptionsDialog) {
+        DetectionOptionsDialog(
+            onDismiss = { showDetectionOptionsDialog = false },
+            onLanguageSelected = { code ->
+                mlKitLanguage = code
+                coroutineScope.launch { settingsRepository.setMlKitLanguage(code) }
+                preferredLanguage = if (code == "auto") null else code
+            },
+            currentLanguage = mlKitLanguage,
+            onDetectAgain = {
+                // For camera, we don't need to detect again - it's real-time
+                // But we can restart detection if it's stopped
+                if (!detectionRunning) {
+                    detectionRunning = true
+                    detectionCount = 0
+                    lastUpdateTime = System.currentTimeMillis()
+                }
+            },
+            onClearCache = {
+                // For camera, we can clear the current result
+                lastOCRResult = null
+                rawOcrText = ""
+                detectedLanguage = "unknown"
+                languageConfidence = 0f
+            },
+            onClearAll = {
+                // For camera, same as clear cache
+                lastOCRResult = null
+                rawOcrText = ""
+                detectedLanguage = "unknown"
+                languageConfidence = 0f
+            },
+            ocrLoading = false // Camera OCR doesn't have a loading state like static images
+        )
+    }
+
+    // Captured Image Overlay (Snapchat-like functionality)
+    if (capturedBitmap != null) {
+        CapturedImageOverlay(
+            capturedBitmap = capturedBitmap,
+            ocrResult = capturedImageOCRResult,
+            isProcessing = capturedImageProcessing,
+            errorMessage = capturedImageError,
+            onClose = {
+                // Clear captured image and return to camera
+                capturedBitmap = null
+                capturedImageOCRResult = null
+                capturedImageProcessing = false
+                capturedImageError = null
+            },
+            modifier = Modifier.fillMaxSize()
+        )
     }
 }

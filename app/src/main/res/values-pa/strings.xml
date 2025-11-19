@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ਵਰਣਮਾਲਾ</string>
+
+    <string name="stop">ਰੋਕੋ</string>
+    <string name="start">ਸ਼ੁਰੂ</string>
+
+    <string name="dark_mode">ਗੂੜ੍ਹਾ ਮੋਡ</string>
+    <string name="language">ਭਾਸ਼ਾ</string>
+    <string name="terms_of_service">ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ</string>
+    <string name="privacy_policy">ਗੁਪਤਤਾ ਨੀਤੀ</string>
+
+    <string name="grant_permission">ਇਜਾਜ਼ਤ ਦਿਓ</string>
+    <string name="open_settings">ਸੈਟਿੰਗਾਂ ਖੋਲ੍ਹੋ</string>
+    <string name="camera_permission_required">ਕੈਮਰਾ ਦੀ ਇਜਾਜ਼ਤ ਚਾਹੀਦੀ ਹੈ</string>
+    <string name="camera_permission_description">ਰੀਅਲ-ਟਾਈਮ ਵਿੱਚ ਟੈਕਸਟ ਖੋਜਣ ਲਈ ਸਾਨੂੰ ਤੁਹਾਡੇ ਕੈਮਰੇ ਤੱਕ ਪਹੁੰਚ ਦੀ ਲੋੜ ਹੈ।</string>
+    <string name="camera_permission_denied_description">ਕੈਮਰਾ ਦੀ ਇਜਾਜ਼ਤ ਸਥਾਈ ਤੌਰ \'ਤੇ ਮਨ੍ਹਾ ਕਰ ਦਿੱਤੀ ਗਈ ਹੈ।</string>
+    <string name="camera_permission_allow_hint">ਜਾਰੀ ਰੱਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇਸਨੂੰ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਸਮਰੱਥ ਬਣਾਓ।</string>
+    <string name="media_permission_required">ਮੀਡੀਆ ਦੀ ਇਜਾਜ਼ਤ ਚਾਹੀਦੀ ਹੈ</string>
+    <string name="media_permission_description">ਗੈਲਰੀ ਵਿੱਚ ਤਸਵੀਰਾਂ ਪ੍ਰਦਰਸ਼ਿਤ ਕਰਨ ਲਈ ਸਾਨੂੰ ਤੁਹਾਡੀਆਂ ਤਸਵੀਰਾਂ ਤੱਕ ਪਹੁੰਚ ਦੀ ਲੋੜ ਹੈ।</string>
+    <string name="media_permission_denied_description">ਮੀਡੀਆ ਦੀ ਇਜਾਜ਼ਤ ਸਥਾਈ ਤੌਰ \'ਤੇ ਮਨ੍ਹਾ ਕਰ ਦਿੱਤੀ ਗਈ ਹੈ।</string>
+    <string name="media_permission_allow_hint">ਜਾਰੀ ਰੱਖਣ ਲਈ ਸਿਸਟਮ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਜਾਜ਼ਤ ਨੂੰ ਸਮਰੱਥ ਬਣਾਓ।</string>
+
+    <string name="clear_cache">ਕੈਸ਼ ਸਾਫ਼ ਕਰੋ</string>
+    <string name="gallery">ਗੈਲਰੀ</string>
+    <string name="done">ਹੋ ਗਿਆ</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">ਪੁਸ਼ਟੀ ਕਰੋ</string>
+    <string name="cancel">ਰੱਦ ਕਰੋ</string>
+    <string name="close">ਬੰਦ ਕਰੋ</string>
+    <string name="retry">ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
+    <string name="copy">ਕਾਪੀ ਕਰੋ</string>
+    <string name="share">ਸਾਂਝਾ ਕਰੋ</string>
+    <string name="refresh">ਤਾਜ਼ਾ ਕਰੋ</string>
+    <string name="clear">ਸਾਫ਼ ਕਰੋ</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR ਟੈਕਸਟ</string>
+    <string name="clear_all_ocr_cache">ਸਭ OCR ਕੈਸ਼ ਸਾਫ਼ ਕਰੋ</string>
+    <string name="clear_cache_confirmation">ਇਹ ਸਾਰੀਆਂ ਤਸਵੀਰਾਂ ਲਈ ਕੈਸ਼ਡ OCR ਨੂੰ ਹਟਾ ਦੇਵੇਗਾ। ਜਾਰੀ ਰੱਖੋ?</string>
+    <string name="clear_cache_confirmation_settings">ਕੀ ਤੁਸੀਂ ਸਾਰੇ ਕੈਸ਼ਡ OCR ਡਾਟਾ ਨੂੰ ਸਾਫ਼ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ? ਇਹ ਕਾਰਵਾਈ ਵਾਪਸ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ।</string>
+    <string name="detect_again">ਦੁਬਾਰਾ ਖੋਜੋ</string>
+    <string name="clear_all">ਸਭ ਸਾਫ਼ ਕਰੋ</string>
+    <string name="language_detection">ਭਾਸ਼ਾ ਖੋਜ</string>
+    <string name="ocr_actions">OCR ਕਾਰਵਾਈਆਂ</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">ਬਾਉਂਡਿੰਗ ਬਾਕਸ ਦਿਖਾਓ</string>
+    <string name="text_blocks">ਟੈਕਸਟ ਬਲਾਕ</string>
+    <string name="text_lines">ਟੈਕਸਟ ਲਾਈਨਾਂ</string>
+    <string name="words">ਸ਼ਬਦ</string>
+    <string name="bounding_box_width">ਬਾਉਂਡਿੰਗ ਬਾਕਸ ਚੌੜਾਈ: %dpx</string>
+    <string name="show_text_overlay">ਟੈਕਸਟ ਓਵਰਲੇ ਦਿਖਾਓ</string>
+    <string name="text_background_opacity">ਟੈਕਸਟ ਬੈਕਗਰਾਉਂਡ ਧੁੰਦਲਾਪਨ: %d%%</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">ਸਕੈਨਰ ਸੈਟਿੰਗਾਂ</string>
+    <string name="detection_interval">ਖੋਜ ਅੰਤਰਾਲ</string>
+    <string name="reading_time_per_word">ਪ੍ਰਤੀ ਸ਼ਬਦ ਪੜ੍ਹਨ ਦਾ ਸਮਾਂ</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR ਸਕਰੀਨ</string>
+    <string name="browse_gallery">ਗੈਲਰੀ ਬ੍ਰਾਉਜ਼ ਕਰੋ</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">ਜ਼ੂਮ ਆਉਟ</string>
+    <string name="zoom_in">ਜ਼ੂਮ ਇਨ</string>
+    <string name="rotate_90">90° ਘੁਮਾਓ</string>
+    <string name="reset_view">ਦ੍ਰਿਸ਼ ਰੀਸੈਟ ਕਰੋ</string>
+    <string name="copied">ਕਾਪੀ ਕੀਤਾ ਗਿਆ</string>
+    <string name="select_language">ਭਾਸ਼ਾ ਚੁਣੋ</string>
+    <string name="selected">ਚੁਣਿਆ ਗਿਆ</string>
+    <string name="back">ਵਾਪਸ</string>
+    <string name="captured_image">ਕੈਪਚਰ ਕੀਤੀ ਤਸਵੀਰ</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">ਚਿੱਤਰ ਵੇਰਵੇ</string>
+    <string name="ocr_result">OCR ਨਤੀਜਾ</string>
+    <string name="original">ਮੂਲ</string>
+    <string name="transliterated">ਲਿਪੀਅੰਤਰਣ</string>
+    <string name="display_options">ਪ੍ਰਦਰਸ਼ਨ ਵਿਕਲਪ</string>
+    <string name="detection_options">ਖੋਜ ਵਿਕਲਪ</string>
+    <string name="ocr_status">OCR ਸਥਿਤੀ</string>
+    <string name="ocr_results">OCR ਨਤੀਜੇ</string>
+    <string name="no_text_detected">ਚਿੱਤਰ ਵਿੱਚ ਕੋਈ ਟੈਕਸਟ ਨਹੀਂ ਮਿਲਿਆ</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ਭਾਸ਼ਾ ਬਦਲ ਗਈ। ਬਦਲਾਅ ਦੇਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਐਪ ਨੂੰ ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ।</string>
+</resources>

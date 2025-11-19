@@ -59,8 +59,7 @@ private val HighContrastColorScheme = lightColorScheme(
 
 @Composable
 fun VarnamalaTheme(
-//    darkTheme: Boolean = isSystemInDarkTheme(),
-    darkTheme: Boolean = true,
+    darkTheme: Boolean = isSystemInDarkTheme(),
     highContrast: Boolean = false,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,

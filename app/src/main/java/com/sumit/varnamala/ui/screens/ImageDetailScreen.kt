@@ -3,8 +3,9 @@ package com.sumit.varnamala.ui.screens
 import android.content.ClipData
 import android.content.ClipboardManager
 import com.sumit.varnamala.R
-import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCRInfoCard
+import com.sumit.varnamala.ui.components.DisplayOptionsDialog
+import com.sumit.varnamala.ui.components.DetectionOptionsDialog
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
 import com.sumit.varnamala.data.ocr.CachedOCRResult
 import com.sumit.varnamala.data.ocr.OCRResult
@@ -14,35 +15,27 @@ import com.sumit.varnamala.data.ocr.TextElement
 import com.sumit.varnamala.utils.LanguageDetector
 import com.sumit.varnamala.data.ocr.CachedLanguageGroup
 import com.sumit.varnamala.data.ocr.CachedTextElement
-import com.sumit.varnamala.ui.components.OCRInfoSection
+import com.sumit.varnamala.data.preferences.OCRSettingsRepository
+import com.sumit.varnamala.ui.components.GlassButton
+import com.sumit.varnamala.ui.components.OCROverlayCanvas
+import com.sumit.varnamala.data.ocr.OcrEngine
 
+import kotlinx.coroutines.flow.first
 import android.content.ContentUris
 import android.provider.MediaStore
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
-import android.util.Log
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.border
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -53,35 +46,28 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
-import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedButton
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
-import android.graphics.ImageDecoder
-import android.graphics.BitmapFactory
-import android.os.Build
+import androidx.compose.material3.*
+import androidx.compose.runtime.collectAsState
+import android.graphics.Rect
 import android.net.Uri
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resumeWithException
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.ui.platform.LocalDensity
-import com.google.android.gms.tasks.Task
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.sumit.varnamala.ocr.mlkit.MLKitOCRRepository
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.window.Dialog
+import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.VerticalDivider
 
-
-data class FilterItem(
-    val title: String,
-    val icon: Int
-)
 
 @Composable
 fun ImageDetailScreen(navController: NavController, imageId: Long) {
@@ -89,6 +75,15 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var meta by remember { mutableStateOf<ImageMeta?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val cacheRepository = remember { OCRCacheRepository(context) }
+    val settingsRepository = remember { OCRSettingsRepository(context) }
+
+    // Create the ViewModel
+    val viewModel: com.sumit.varnamala.ui.viewmodels.OCRViewModel =
+        androidx.lifecycle.viewmodel.compose.viewModel(
+            factory = com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory(context)
+        )
+
+    // OCR state variables
     var ocrLoading by remember { mutableStateOf(false) }
     var ocrError by remember { mutableStateOf<String?>(null) }
     var rawOcrText by remember { mutableStateOf("") }
@@ -97,24 +92,48 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var lastResult by remember { mutableStateOf<OCRResult?>(null) }
     var showClearAllDialog by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
+    var showDisplayOptionsDialog by remember { mutableStateOf(false) }
+    var showDetectionOptionsDialog by remember { mutableStateOf(false) }
+    var showImageDetailsDialog by remember { mutableStateOf(false) }
+    // Settings from repository
+    val showBoundingBoxes by settingsRepository.showBoundingBoxes.collectAsState(initial = true)
+    val showTextOverlay by settingsRepository.showTextOverlay.collectAsState(initial = true)
+    val showWordBoundingBoxes by settingsRepository.showWordBoundingBoxes.collectAsState(initial = true)
+    val showLineBoundingBoxes by settingsRepository.showLineBoundingBoxes.collectAsState(initial = true)
+    val showBlockBoundingBoxes by settingsRepository.showBlockBoundingBoxes.collectAsState(initial = true)
+    val textBackgroundOpacity by settingsRepository.textBackgroundOpacity.collectAsState(initial = 0.8f)
+    val boundingBoxStrokeWidth by settingsRepository.boundingBoxStrokeWidth.collectAsState(initial = 2f)
+    val savedMlKitLanguage by settingsRepository.mlKitLanguage.collectAsState(initial = "auto")
 
-    val filterItems = remember {
-        listOf(
-            FilterItem("None", R.drawable.ic_none),
-            FilterItem("English", R.drawable.ic_lang_english),
-            FilterItem("Hindi", R.drawable.ic_lang_hindi),
-            FilterItem("Gujrati", R.drawable.ic_lang_gujrati),
-            FilterItem("Punjabi", R.drawable.ic_lang_punjabi),
-            FilterItem("Bengali", R.drawable.ic_lang_bengali),
-            FilterItem("Tamil", R.drawable.ic_lang_tamil),
-            FilterItem("Telugu", R.drawable.ic_lang_telugu),
-        )
+    // Image display state
+    var imageSize by remember { mutableStateOf(IntSize.Zero) }
+    var scale by remember { mutableStateOf(1f) }
+    var offset by remember { mutableStateOf(Offset.Zero) }
+    var rotation by remember { mutableStateOf(0f) }
+
+    var selectedEngine by remember { mutableStateOf(OcrEngine.ML_KIT) }
+    var mlKitLanguage by remember { mutableStateOf("auto") }
+
+    // Update mlKitLanguage when settings change
+    LaunchedEffect(savedMlKitLanguage) {
+        mlKitLanguage = savedMlKitLanguage
     }
-    val listState = rememberLazyListState()
-    var centeredIndex by remember { mutableIntStateOf(0) }
 
-    val snapBehavior = rememberSnapFlingBehavior(lazyListState = listState)
-    val haptic = LocalHapticFeedback.current
+    // Observe OCR state from ViewModel
+    val ocrState by viewModel.ocrState.collectAsState()
+    val ocrResult by viewModel.ocrResult.collectAsState()
+    val currentEngine by viewModel.currentEngine.collectAsState()
+    val currentLanguage by viewModel.currentLanguage.collectAsState()
+
+    // Initialize any necessary resources
+    LaunchedEffect(Unit) {
+        try {
+            viewModel.initialize()
+        } catch (e: Exception) {
+            // Failure will be handled during OCR if needed
+        }
+    }
+
 
     LaunchedEffect(imageId) {
         meta = loadImageMeta(context.contentResolver, imageId)
@@ -122,6 +141,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             repository = cacheRepository,
             imageId = imageId,
             context = context,
+            settingsRepository = settingsRepository,
             setLoading = { ocrLoading = it },
             setError = { ocrError = it },
             setText = { rawOcrText = it },
@@ -130,427 +150,403 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                 languageConfidence =
                     LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang] ?: 0f
             },
-            setResult = { lastResult = it }
-        )
+            setResult = { lastResult = it })
     }
 
-    LaunchedEffect(listState) {
-        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
-            .collect {
-                val layoutInfo = listState.layoutInfo
-                val items = layoutInfo.visibleItemsInfo
-                if (items.isEmpty()) return@collect
-                val viewportCenter =
-                    (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-                var best = centeredIndex
-                var minDist = Int.MAX_VALUE
-                items.forEach { info ->
-                    val c = info.offset + info.size / 2
-                    val d = kotlin.math.abs(c - viewportCenter)
-                    if (d < minDist) {
-                        minDist = d; best = info.index
-                    }
-                }
-                if (best != centeredIndex) {
-                    centeredIndex = best
-                    haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                    Log.d(
-                        "ImageDetailSlider",
-                        "Selected item: ${filterItems.getOrNull(best)} (index=$best)"
-                    )
-                }
+    Column(Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(
+                    vertical = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
+                    horizontal = 16.dp
+                ),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GlassButton(
+                icon = painterResource(R.drawable.ic_chevron_left),
+                size = 52.dp,
+                onClick = { navController.popBackStack() })
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Image details button
+                GlassButton(
+                    icon = painterResource(R.drawable.ic_info),
+                    size = 52.dp,
+                    onClick = { showImageDetailsDialog = true })
+
+                // Display options button
+                GlassButton(
+                    icon = painterResource(R.drawable.ic_image_outline),
+                    size = 52.dp,
+                    onClick = { showDisplayOptionsDialog = true })
+
+                // Detection options button
+                GlassButton(
+                    icon = painterResource(R.drawable.ic_language),
+                    size = 52.dp,
+                    onClick = { showDetectionOptionsDialog = true })
             }
-    }
+        }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(vertical = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding())
-    ) {
-        Column(Modifier.fillMaxSize()) {
-            Row(
+        meta?.let { m ->
+            val targetUri = ContentUris.withAppendedId(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId
+            )
+            val aspectRatio =
+                if (m.width != null && m.height != null && m.height != 0) m.width.toFloat() / m.height.toFloat() else 1f
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .weight(1f)
+                    .padding(16.dp)
             ) {
-                GlassButton(
-                    icon = painterResource(R.drawable.ic_chevron_left),
-                    size = 52.dp,
-                    onClick = { navController.popBackStack() })
-                GlassButton(
-                    icon = painterResource(R.drawable.ic_settings_outline),
-                    size = 52.dp,
-                    onClick = { showInfoDialog = true })
-            }
+                // Enhanced image display with bounding boxes and zoom
+                val transformableState =
+                    rememberTransformableState { zoomChange, offsetChange, _ ->
+                        scale = (scale * zoomChange).coerceIn(1f, 5f)
+                        offset = offset + offsetChange
+                    }
 
-            meta?.let { m ->
-                val targetUri =
-                    ContentUris.withAppendedId(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        imageId
-                    )
-                val aspectRatio =
-                    if (m.width != null && m.height != null && m.height != 0) m.width.toFloat() / m.height.toFloat() else 1f
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxSize()
+                        .aspectRatio(aspectRatio)
+                        .clip(RoundedCornerShape(20.dp))
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(context).data(targetUri).crossfade(true)
                             .build(),
                         contentDescription = null,
                         modifier = Modifier
-                            .fillMaxHeight()
-                            .aspectRatio(aspectRatio)
+                            .fillMaxSize()
                             .border(
                                 color = MaterialTheme.colorScheme.onSurface,
                                 width = 2.dp,
                                 shape = RoundedCornerShape(20.dp)
                             )
-                            .clip(RoundedCornerShape(20.dp)),
-                        contentScale = ContentScale.Fit,
+                            .clip(RoundedCornerShape(20.dp))
+                            .graphicsLayer(
+                                scaleX = scale,
+                                scaleY = scale,
+                                translationX = offset.x,
+                                translationY = offset.y,
+                                rotationZ = rotation
+                            )
+                            .transformable(state = transformableState)
+                            .onGloballyPositioned { coordinates ->
+                                imageSize = coordinates.size
+                            },
+                        contentScale = ContentScale.Fit
                     )
 
-                    this@Column.AnimatedVisibility(
-                        visible = rawOcrText.isNotBlank() || ocrLoading,
-                        modifier = Modifier.align(Alignment.TopStart)
-                    ) {
-                        OCRInfoCard(
-                            ocrLoading = ocrLoading,
-                            ocrError = ocrError,
-                            rawOcrText = rawOcrText,
-                            detectedLanguage = detectedLanguage,
-                            languageConfidence = languageConfidence,
-                            lastResult = lastResult,
-
-                            onCopy = {
-                                val clip =
-                                    ClipData.newPlainText("OCR Text", rawOcrText)
-                                ClipboardManager::class.java
-                                    .cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
-                                    ?.setPrimaryClip(clip)
-                            },
-                            onShare = {
-                                if (rawOcrText.isNotBlank()) {
-                                    val sendIntent = Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TEXT, rawOcrText)
-                                        type = "text/plain"
-                                    }
-                                    val chooser = Intent.createChooser(
-                                        sendIntent,
-                                        "Share OCR Text"
-                                    )
-                                    context.startActivity(chooser)
-                                }
-                            },
-                            onRefresh = {
-                                coroutineScope.launch {
-                                    runOCRWithCache(
-                                        repository = cacheRepository,
-                                        imageId = imageId,
-                                        context = context,
-                                        forceRefresh = true,
-                                        setLoading = { ocrLoading = it },
-                                        setError = { ocrError = it },
-                                        setText = { rawOcrText = it },
-                                        setLang = { newLang ->
-                                            detectedLanguage = newLang
-                                            languageConfidence =
-                                                LanguageDetector.getDetectionConfidenceMap(
-                                                    rawOcrText
-                                                )[newLang] ?: 0f
-                                        },
-                                        setResult = { lastResult = it }
-                                    )
-                                }
-                            },
-                            onClear = {
-                                coroutineScope.launch {
-                                    cacheRepository.clearCache(imageId)
-                                    rawOcrText = ""
-                                    detectedLanguage = "unknown"
-                                    languageConfidence = 0f
-                                    lastResult = null
-                                }
-                            }
-                        )
-                    }
-                }
-
-                BoxWithConstraints(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val maxW = constraints.maxWidth.toFloat()
-                    val unselectedMinScale = 0.55f
-                    val selectedScale = 1.25f
-                    val baseItemSizeDp = 64.dp
-                    val ringSizeDp =
-                        baseItemSizeDp * selectedScale
-                    val density = LocalDensity.current
-                    val baseItemSizePx = with(density) { baseItemSizeDp.toPx() }
-                    val sidePadPx = ((maxW - baseItemSizePx) / 2f).coerceAtLeast(0f)
-                    val sidePadDp = with(density) { sidePadPx.toDp() }
-
-                    // Center ring
-                    Box(
+                    // OCR Overlay using unified canvas with transformations
+                    OCROverlayCanvas(
+                        result = lastResult,
+                        containerSize = imageSize,
+                        showBoundingBoxes = showBoundingBoxes,
+                        showTextOverlay = showTextOverlay,
+                        showWordBoundingBoxes = showWordBoundingBoxes,
+                        showLineBoundingBoxes = showLineBoundingBoxes,
+                        showBlockBoundingBoxes = showBlockBoundingBoxes,
+                        textBackgroundOpacity = textBackgroundOpacity,
+                        boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+                        enableTextCopy = true,
                         modifier = Modifier
-                            .size(ringSizeDp + 4.dp)
-                            .clip(CircleShape)
-                            .background(Color.Transparent)
-                            .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                                shape = CircleShape
+                            .fillMaxSize()
+                            .aspectRatio(aspectRatio)
+                            .clip(RoundedCornerShape(20.dp))
+                            .graphicsLayer(
+                                scaleX = scale,
+                                scaleY = scale,
+                                translationX = offset.x,
+                                translationY = offset.y,
+                                rotationZ = rotation
                             )
                     )
+                }
 
-                    val selectedItem = filterItems.getOrNull(centeredIndex)
-                    if (selectedItem != null) {
-                        this@Column.AnimatedVisibility(visible = true) {
-                            Text(
-                                text = selectedItem.title.uppercase(),
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = MaterialTheme.colorScheme.onBackground,
-                                modifier = Modifier
-                                    .align(Alignment.Center)
-                                    .offset(y = -((ringSizeDp + 4.dp) / 2 + 18.dp))
+                // Only show OCR info card if there's content or loading/error state
+                if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) {
+                    OCRInfoCard(
+                        ocrLoading = ocrLoading,
+                        ocrError = ocrError,
+                        rawOcrText = rawOcrText,
+                        detectedLanguage = detectedLanguage,
+                        languageConfidence = languageConfidence,
+                        lastResult = lastResult,
+                        onCopy = {
+                            val clip = ClipData.newPlainText(
+                                context.getString(R.string.ocr_text),
+                                rawOcrText
                             )
-                        }
-                    }
-
-                    LazyRow(
-                        state = listState,
-                        flingBehavior = snapBehavior,
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(18.dp),
-                        contentPadding = PaddingValues(horizontal = sidePadDp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 20.dp)
-                    ) {
-                        itemsIndexed(filterItems) { index, item ->
-                            val layoutInfo = listState.layoutInfo
-                            val viewportCenter =
-                                (layoutInfo.viewportStartOffset + layoutInfo.viewportEndOffset) / 2
-                            val info = layoutInfo.visibleItemsInfo.find { it.index == index }
-                            val scaleTarget = if (info != null) {
-                                val itemCenter = info.offset + info.size / 2
-                                val dist = kotlin.math.abs(itemCenter - viewportCenter).toFloat()
-                                val halfWidth = maxW / 2f
-                                val norm = (dist / halfWidth).coerceIn(0f, 1f)
-                                val eased = 1f - FastOutSlowInEasing.transform(norm)
-                                var s =
-                                    (unselectedMinScale + (selectedScale - unselectedMinScale) * eased)
-                                if (dist < 0.75f) s = selectedScale
-                                s
-                            } else {
-                                if (index == centeredIndex) selectedScale else unselectedMinScale
+                            ClipboardManager::class.java.cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
+                                ?.setPrimaryClip(clip)
+                        },
+                        onShare = {
+                            if (rawOcrText.isNotBlank()) {
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, rawOcrText)
+                                    type = "text/plain"
+                                }
+                                val chooser = Intent.createChooser(
+                                    sendIntent, "Share OCR Text"
+                                )
+                                context.startActivity(chooser)
                             }
-                            val animatedScale by animateFloatAsState(
-                                targetValue = scaleTarget,
-                                animationSpec = tween(180, easing = FastOutSlowInEasing),
-                                label = "carousel_scale"
-                            )
-                            val isSelected = index == centeredIndex
-                            GlassButton(
-                                icon = painterResource(item.icon),
-                                size = baseItemSizeDp,
-                                background = if (isSelected) MaterialTheme.colorScheme.primary.copy(
-                                    alpha = 0.85f
-                                ) else MaterialTheme.colorScheme.surface.copy(alpha = 0.38f),
-                                textColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface.copy(
-                                    alpha = 0.65f
-                                ),
-                                onClick = {
-                                    coroutineScope.launch {
-                                        listState.animateScrollToItem(
-                                            index
-                                        )
-                                    }
-                                },
-                                modifier = Modifier.graphicsLayer {
-                                    val s = animatedScale
-                                    scaleX = s
-                                    scaleY = s
-                                }
-                            )
-                        }
-                    }
-                }
-
-            } ?: run {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp), contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "Loading...",
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-                    )
-                }
-            }
-        }
-
-        // Info dialog
-        if (showInfoDialog) {
-            AlertDialog(
-                onDismissRequest = { showInfoDialog = false },
-                confirmButton = {
-                    TextButton(onClick = { showInfoDialog = false }) { Text("Close") }
-                },
-                title = { Text("File Info") },
-                text = {
-                    Column(Modifier.fillMaxWidth()) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            OutlinedButton(onClick = {
-                                val clip =
-                                    ClipData.newPlainText("OCR Text", rawOcrText)
-                                ClipboardManager::class.java
-                                    .cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
-                                    ?.setPrimaryClip(clip)
-                            }, enabled = rawOcrText.isNotBlank()) { Text("Copy") }
-                            OutlinedButton(onClick = {
-                                if (rawOcrText.isNotBlank()) {
-                                    val sendIntent = Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TEXT, rawOcrText)
-                                        type = "text/plain"
-                                    }
-                                    val chooser = Intent.createChooser(
-                                        sendIntent,
-                                        "Share OCR Text"
-                                    )
-                                    context.startActivity(chooser)
-                                }
-                            }, enabled = rawOcrText.isNotBlank()) { Text("Share") }
-                        }
-                        Spacer(Modifier.height(8.dp))
-                        Text("Details", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Spacer(Modifier.height(8.dp))
-                        meta?.let { m ->
-                            InfoRow("ID", imageId.toString())
-                            InfoRow("Display Name", m.displayName ?: "-")
-                            InfoRow("Mime", m.mimeType ?: "-")
-                            InfoRow("Width", m.width?.toString() ?: "-")
-                            InfoRow("Height", m.height?.toString() ?: "-")
-                            InfoRow("Size (KB)", m.size?.let { (it / 1024).toString() } ?: "-")
-                            InfoRow("Date Added (s)", m.dateAdded?.toString() ?: "-")
-                            InfoRow("Orientation", m.orientation?.toString() ?: "-")
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        Text("OCR", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Spacer(Modifier.height(8.dp))
-                        OCRInfoSection(
-                            ocrLoading = ocrLoading,
-                            ocrError = ocrError,
-                            rawOcrText = rawOcrText,
-                            detectedLanguage = detectedLanguage,
-                            languageConfidence = languageConfidence,
-                            lastResult = lastResult,
-                            onCopy = {
-                                val clip =
-                                    ClipData.newPlainText("OCR Text", rawOcrText)
-                                android.content.ClipboardManager::class.java
-                                    .cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
-                                    ?.setPrimaryClip(clip)
-                            },
-                            onShare = {
-                                if (rawOcrText.isNotBlank()) {
-                                    val sendIntent = Intent().apply {
-                                        action = Intent.ACTION_SEND
-                                        putExtra(Intent.EXTRA_TEXT, rawOcrText)
-                                        type = "text/plain"
-                                    }
-                                    val chooser = Intent.createChooser(
-                                        sendIntent,
-                                        "Share OCR Text"
-                                    )
-                                    context.startActivity(chooser)
-                                }
+                        },
+                        onRefresh = {
+                            coroutineScope.launch {
+                                runOCRWithCache(
+                                    repository = cacheRepository,
+                                    imageId = imageId,
+                                    context = context,
+                                    forceRefresh = true,
+                                    setLoading = { ocrLoading = it },
+                                    setError = { ocrError = it },
+                                    setText = { rawOcrText = it },
+                                    setLang = { newLang ->
+                                        detectedLanguage = newLang
+                                        languageConfidence =
+                                            LanguageDetector.getDetectionConfidenceMap(
+                                                rawOcrText
+                                            )[newLang] ?: 0f
+                                    },
+                                    setResult = { lastResult = it })
                             }
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Button(onClick = {
-                                coroutineScope.launch {
-                                    runOCRWithCache(
-                                        repository = cacheRepository,
-                                        imageId = imageId,
-                                        context = context,
-                                        forceRefresh = true,
-                                        setLoading = { ocrLoading = it },
-                                        setError = { ocrError = it },
-                                        setText = { rawOcrText = it },
-                                        setLang = { newLang ->
-                                            detectedLanguage = newLang
-                                            languageConfidence =
-                                                LanguageDetector.getDetectionConfidenceMap(
-                                                    rawOcrText
-                                                )[newLang] ?: 0f
-                                        },
-                                        setResult = { lastResult = it }
-                                    )
-                                }
-                            }, enabled = !ocrLoading) { Text("Detect Again") }
-                            OutlinedButton(onClick = {
-                                coroutineScope.launch {
-                                    cacheRepository.clearCache(imageId)
-                                    rawOcrText = ""
-                                    detectedLanguage = "unknown"
-                                    languageConfidence = 0f
-                                    lastResult = null
-                                }
-                            }, enabled = !ocrLoading) { Text("Clear Cache") }
-                            OutlinedButton(
-                                onClick = { showClearAllDialog = true },
-                                enabled = !ocrLoading
-                            ) { Text("Clear All") }
-                        }
-                    }
-                }
-            )
-        }
-
-        if (showClearAllDialog) {
-            AlertDialog(
-                onDismissRequest = { showClearAllDialog = false },
-                confirmButton = {
-                    TextButton(onClick = {
-                        showClearAllDialog = false
-                        coroutineScope.launch {
-                            cacheRepository.clearCache(null)
-                            if (!ocrLoading) {
+                        },
+                        onClear = {
+                            coroutineScope.launch {
+                                cacheRepository.clearCache(imageId)
                                 rawOcrText = ""
                                 detectedLanguage = "unknown"
                                 languageConfidence = 0f
                                 lastResult = null
                             }
-                        }
-                    }) { Text("Confirm") }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        showClearAllDialog = false
-                    }) { Text("Cancel") }
-                },
-                title = { Text("Clear All OCR Cache") },
-                text = { Text("This will remove cached OCR for all images. Continue?") }
-            )
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                    )
+                }
+            }
+        }
+
+        // Zoom and Rotation Controls
+        Card(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(20.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
+            ),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Row(
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Zoom Out
+                IconButton(
+                    onClick = {
+                        scale = (scale / 1.2f).coerceAtLeast(1f)
+                    },
+                    enabled = scale > 1f
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_zoom_out),
+                        contentDescription = stringResource(R.string.zoom_out),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // Zoom indicator
+                Text(
+                    text = "${(scale * 100).toInt()}%",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.widthIn(min = 40.dp),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+
+                // Zoom In
+                IconButton(
+                    onClick = {
+                        scale = (scale * 1.2f).coerceAtMost(5f)
+                    },
+                    enabled = scale < 5f
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_zoom_in),
+                        contentDescription = stringResource(R.string.zoom_in),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                VerticalDivider(
+                    modifier = Modifier.height(32.dp),
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                // Rotate
+                IconButton(
+                    onClick = {
+                        rotation = (rotation + 90f) % 360f
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_rotate_right),
+                        contentDescription = stringResource(R.string.rotate_90),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // Reset
+//                IconButton(
+//                    onClick = {
+//                        scale = 1f
+//                        offset = Offset.Zero
+//                        rotation = 0f
+//                    },
+//                    enabled = scale != 1f || offset != Offset.Zero || rotation != 0f
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Default.Refresh,
+//                        contentDescription = stringResource(R.string.reset_view),
+//                        tint = MaterialTheme.colorScheme.onSurface
+//                    )
+//                }
+            }
         }
     }
+
+    // Display Options Dialog
+    if (showDisplayOptionsDialog) {
+        DisplayOptionsDialog(
+            onDismiss = { showDisplayOptionsDialog = false },
+            showBoundingBoxes = showBoundingBoxes,
+            onShowBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowBoundingBoxes(it) } },
+            showTextOverlay = showTextOverlay,
+            onShowTextOverlayChange = { coroutineScope.launch { settingsRepository.setShowTextOverlay(it) } },
+            showWordBoundingBoxes = showWordBoundingBoxes,
+            onShowWordBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowWordBoundingBoxes(it) } },
+            showLineBoundingBoxes = showLineBoundingBoxes,
+            onShowLineBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowLineBoundingBoxes(it) } },
+            showBlockBoundingBoxes = showBlockBoundingBoxes,
+            onShowBlockBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowBlockBoundingBoxes(it) } },
+            textBackgroundOpacity = textBackgroundOpacity,
+            onTextBackgroundOpacityChange = { coroutineScope.launch { settingsRepository.setTextBackgroundOpacity(it) } },
+            boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+            onBoundingBoxStrokeWidthChange = { coroutineScope.launch { settingsRepository.setBoundingBoxStrokeWidth(it) } }
+        )
+    }
+
+    // Detection Options Dialog
+    if (showDetectionOptionsDialog) {
+        DetectionOptionsDialog(
+            onDismiss = { showDetectionOptionsDialog = false },
+            onLanguageSelected = { code ->
+                mlKitLanguage = code
+                coroutineScope.launch { settingsRepository.setMlKitLanguage(code) }
+                // Re-run OCR with selected language and refresh cache
+                coroutineScope.launch {
+                    runOCRWithCache(
+                        repository = cacheRepository,
+                        imageId = imageId,
+                        context = context,
+                        forceRefresh = true,
+                        preferredLanguage = if (code == "auto") null else code,
+                        settingsRepository = settingsRepository,
+                        setLoading = { ocrLoading = it },
+                        setError = { ocrError = it },
+                        setText = { rawOcrText = it },
+                        setLang = { newLang ->
+                            detectedLanguage = newLang
+                            languageConfidence =
+                                LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang]
+                                    ?: 0f
+                        },
+                        setResult = { lastResult = it }
+                    )
+                }
+            },
+            currentLanguage = mlKitLanguage,
+            onDetectAgain = {
+                coroutineScope.launch {
+                    runOCRWithCache(
+                        repository = cacheRepository,
+                        imageId = imageId,
+                        context = context,
+                        forceRefresh = true,
+                        preferredLanguage = mlKitLanguage,
+                        settingsRepository = settingsRepository,
+                        setLoading = { ocrLoading = it },
+                        setError = { ocrError = it },
+                        setText = { rawOcrText = it },
+                        setLang = { newLang ->
+                            detectedLanguage = newLang
+                            languageConfidence =
+                                LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang]
+                                    ?: 0f
+                        },
+                        setResult = { lastResult = it }
+                    )
+                }
+            },
+            onClearCache = {
+                coroutineScope.launch {
+                    cacheRepository.clearCache(imageId)
+                    rawOcrText = ""
+                    detectedLanguage = "unknown"
+                    languageConfidence = 0f
+                    lastResult = null
+                }
+            },
+            onClearAll = { showClearAllDialog = true },
+            ocrLoading = ocrLoading
+        )
+    }
+
+    // Image Details Dialog
+    if (showImageDetailsDialog) {
+        ImageDetailsDialog(
+            onDismiss = { showImageDetailsDialog = false },
+            imageId = imageId,
+            imageMeta = meta
+        )
+    }
+
+// Clear All confirmation dialog
+    if (showClearAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showClearAllDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    showClearAllDialog = false
+                    coroutineScope.launch {
+                        cacheRepository.clearCache(null)
+                        if (!ocrLoading) {
+                            rawOcrText = ""
+                            detectedLanguage = "unknown"
+                            languageConfidence = 0f
+                            lastResult = null
+                        }
+                    }
+                }) { Text(stringResource(R.string.confirm)) }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showClearAllDialog = false
+                }) { Text(stringResource(R.string.cancel)) }
+            },
+            title = { Text(stringResource(R.string.clear_all_ocr_cache)) },
+            text = { Text(stringResource(R.string.clear_cache_confirmation)) })
+    }
 }
+
 
 data class ImageMeta(
     val id: Long,
@@ -563,22 +559,6 @@ data class ImageMeta(
     val orientation: Int?
 )
 
-@Composable
-private fun InfoRow(label: String, value: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text(label, fontWeight = FontWeight.Medium)
-        Text(
-            value,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
 
 private suspend fun loadImageMeta(resolver: ContentResolver, id: Long): ImageMeta? =
     withContext(Dispatchers.IO) {
@@ -627,22 +607,108 @@ private suspend fun runOCRWithCache(
     imageId: Long,
     context: Context,
     forceRefresh: Boolean = false,
+    preferredLanguage: String? = null,
+    settingsRepository: OCRSettingsRepository? = null,
     setLoading: (Boolean) -> Unit,
     setError: (String?) -> Unit,
     setText: (String) -> Unit,
     setLang: (String) -> Unit,
     setResult: (OCRResult) -> Unit
 ) {
-    if (!forceRefresh) {
+    val enableCacheStorage = settingsRepository?.enableCacheStorage?.let { flow ->
+        flow.first()
+    } ?: true
+
+    if (!forceRefresh && enableCacheStorage) {
         repository.getCachedResult(imageId)?.let { cached ->
             setText(cached.text)
             setLang(cached.detectedLanguage)
+
+            // Convert cached language groups back to OCRResult with bounding boxes
+            val textBlocks = mutableListOf<TextBlock>()
+
+            // Group elements by their position to reconstruct text blocks and lines
+            val sortedGroups = cached.languageGroups.sortedBy { group ->
+                group.elements.minOfOrNull { it.boundingBox.top } ?: 0
+            }
+
+            sortedGroups.forEach { group ->
+                // Create text elements from cached elements
+                val elements = group.elements.map { cachedElement ->
+                    TextElement(
+                        text = cachedElement.text,
+                        confidence = cachedElement.confidence,
+                        boundingBox = cachedElement.boundingBox
+                    )
+                }
+
+                // Group elements into lines by Y position (approximate)
+                val lineGroups = elements.groupBy { element ->
+                    // Group by approximate line (within 10 pixels)
+                    element.boundingBox.top / 10
+                }.values.sortedBy { lineElements ->
+                    lineElements.minOf { it.boundingBox.top }
+                }
+
+                val lines = lineGroups.map { lineElements ->
+                    val sortedElements = lineElements.sortedBy { it.boundingBox.left }
+                    val lineText = sortedElements.joinToString(" ") { it.text }
+                    val lineBounds =
+                        sortedElements.fold(sortedElements.first().boundingBox) { acc, element ->
+                            Rect(
+                                minOf(acc.left, element.boundingBox.left),
+                                minOf(acc.top, element.boundingBox.top),
+                                maxOf(acc.right, element.boundingBox.right),
+                                maxOf(acc.bottom, element.boundingBox.bottom)
+                            )
+                        }
+
+                    TextLine(
+                        text = lineText,
+                        confidence = sortedElements.map { it.confidence }.average().toFloat(),
+                        boundingBox = lineBounds,
+                        elements = sortedElements
+                    )
+                }
+
+                // Create text block from lines
+                if (lines.isNotEmpty()) {
+                    val blockText = lines.joinToString("\n") { it.text }
+                    val blockBounds = lines.fold(lines.first().boundingBox) { acc, line ->
+                        Rect(
+                            minOf(acc.left, line.boundingBox.left),
+                            minOf(acc.top, line.boundingBox.top),
+                            maxOf(acc.right, line.boundingBox.right),
+                            maxOf(acc.bottom, line.boundingBox.bottom)
+                        )
+                    }
+
+                    textBlocks.add(
+                        TextBlock(
+                            text = blockText,
+                            confidence = group.confidence,
+                            boundingBox = blockBounds,
+                            lines = lines
+                        )
+                    )
+                }
+            }
+
+            // Get image dimensions for proper bounding box scaling
+            // Use the existing suspend helper `loadImageMeta` which accepts a ContentResolver
+            val uri =
+                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
+            val imageMeta = loadImageMeta(context.contentResolver, imageId)
+
             setResult(
                 OCRResult(
                     text = cached.text,
                     confidence = cached.confidence,
                     language = cached.detectedLanguage,
-                    processingTimeMs = cached.processingTimeMs
+                    processingTimeMs = cached.processingTimeMs,
+                    boundingBoxes = textBlocks,
+                    imageWidth = imageMeta?.width ?: 1920, // fallback dimensions
+                    imageHeight = imageMeta?.height ?: 1080
                 )
             )
             return
@@ -652,7 +718,7 @@ private suspend fun runOCRWithCache(
     setError(null)
     try {
         val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
-        val result = runSingleImageOcr(context, uri)
+        val result = runSingleImageOcr(context, uri, preferredLanguage)
         setText(result.text)
         val lang = LanguageDetector.detectLanguage(result.text)
         setLang(lang)
@@ -672,28 +738,26 @@ private suspend fun runOCRWithCache(
             val combinedText = elements.joinToString(" ") { it.text }
             val conf = LanguageDetector.getDetectionConfidenceMap(combinedText)[languageCode] ?: 0f
             CachedLanguageGroup(
-                language = languageCode,
-                confidence = conf,
-                elements = elements.map { e ->
+                language = languageCode, confidence = conf, elements = elements.map { e ->
                     CachedTextElement(
-                        text = e.text,
-                        confidence = e.confidence,
-                        boundingBox = e.boundingBox
+                        text = e.text, confidence = e.confidence, boundingBox = e.boundingBox
                     )
-                }
+                })
+        }
+        // Only cache if cache storage is enabled
+        if (enableCacheStorage) {
+            repository.cacheResult(
+                CachedOCRResult(
+                    imageId = imageId,
+                    text = enriched.text,
+                    confidence = enriched.confidence,
+                    detectedLanguage = enriched.language ?: lang,
+                    languageGroups = cachedGroups,
+                    processingTimeMs = enriched.processingTimeMs,
+                    timestamp = System.currentTimeMillis()
+                )
             )
         }
-        repository.cacheResult(
-            CachedOCRResult(
-                imageId = imageId,
-                text = enriched.text,
-                confidence = enriched.confidence,
-                detectedLanguage = enriched.language ?: lang,
-                languageGroups = cachedGroups,
-                processingTimeMs = enriched.processingTimeMs,
-                timestamp = System.currentTimeMillis()
-            )
-        )
     } catch (e: Exception) {
         setError(e.message ?: "OCR failed")
     } finally {
@@ -701,71 +765,100 @@ private suspend fun runOCRWithCache(
     }
 }
 
-private suspend fun runSingleImageOcr(context: Context, uri: Uri): OCRResult =
-    withContext(Dispatchers.IO) {
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val src = ImageDecoder.createSource(context.contentResolver, uri)
-            ImageDecoder.decodeBitmap(src)
-        } else {
-            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it) }
-                ?: throw IllegalArgumentException("Cannot decode image")
-        }
-        val image = InputImage.fromBitmap(bitmap, 0)
-        val latinRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-        val devRecognizer =
-            TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build())
-        val start = System.currentTimeMillis()
-        val latin = latinRecognizer.process(image).await()
-        val dev = devRecognizer.process(image).await()
-        val duration = System.currentTimeMillis() - start
+private suspend fun runSingleImageOcr(
+    context: Context, uri: Uri, preferredLanguage: String? = null
+): OCRResult = withContext(Dispatchers.IO) {
+    // Initialize ML Kit OCR repository
+    val mlKitRepository = MLKitOCRRepository(context)
 
-        val allBlocks = mutableListOf<TextBlock>()
-        fun collect(from: com.google.mlkit.vision.text.Text) {
-            from.textBlocks.forEach { b ->
-                val lines = b.lines.map { l ->
-                    TextLine(
-                        text = l.text,
-                        confidence = 0.9f,
-                        boundingBox = l.boundingBox ?: android.graphics.Rect(),
-                        elements = l.elements.map { e ->
-                            TextElement(
-                                text = e.text,
-                                confidence = 0.9f,
-                                boundingBox = e.boundingBox ?: android.graphics.Rect()
-                            )
-                        }
+    // Process the image with ML Kit OCR based on language preference
+    if (preferredLanguage == null || preferredLanguage == "auto") {
+        mlKitRepository.processImageWithAutoDetection(uri)
+    } else {
+        mlKitRepository.processImageFromUri(uri, preferredLanguage)
+    }
+}
+
+
+/**
+ * Dialog for displaying image metadata details
+ */
+@Composable
+private fun ImageDetailsDialog(
+    onDismiss: () -> Unit,
+    imageId: Long,
+    imageMeta: ImageMeta?
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.surface,
+            tonalElevation = 6.dp
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(24.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.image_details),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                HorizontalDivider()
+
+                imageMeta?.let { m ->
+                    InfoRow("ID", imageId.toString())
+                    InfoRow("Display Name", m.displayName ?: "-")
+                    InfoRow("Mime Type", m.mimeType ?: "-")
+                    InfoRow("Width", m.width?.toString() ?: "-")
+                    InfoRow("Height", m.height?.toString() ?: "-")
+                    InfoRow("Size (KB)", m.size?.let { (it / 1024).toString() } ?: "-")
+                    InfoRow("Date Added", m.dateAdded?.toString() ?: "-")
+                    InfoRow("Orientation", m.orientation?.toString() ?: "-")
+                } ?: run {
+                    Text(
+                        "Image metadata not available",
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
-                allBlocks.add(
-                    TextBlock(
-                        text = b.text,
-                        confidence = 0.9f,
-                        boundingBox = b.boundingBox ?: android.graphics.Rect(),
-                        lines = lines
-                    )
-                )
+
+                // Close button
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.close))
+                    }
+                }
             }
         }
-        collect(latin)
-        collect(dev)
+    }
+}
 
-        val combined = allBlocks.joinToString("\n") { it.text }.trim()
-
-        OCRResult(
-            text = combined,
-            confidence = 0.9f,
-            language = null,
-            boundingBoxes = allBlocks,
-            processingTimeMs = duration,
-            imageWidth = bitmap.width,
-            imageHeight = bitmap.height,
-            imageRotation = 0
+@Composable
+private fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            label,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(0.4f)
+        )
+        Text(
+            value,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            modifier = Modifier.weight(0.6f)
         )
     }
-
-@OptIn(ExperimentalCoroutinesApi::class)
-private suspend fun <T> Task<T>.await(): T =
-    suspendCancellableCoroutine { cont ->
-        addOnSuccessListener { r -> if (cont.isActive) cont.resume(r) {} }
-        addOnFailureListener { e -> if (cont.isActive) cont.resumeWithException(e) }
-    }
+}

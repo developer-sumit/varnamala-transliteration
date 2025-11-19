@@ -17,6 +17,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.IntSize
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -44,6 +46,18 @@ fun OCRCameraPreview(
     // maximum extra delay (ms) based on reading estimate
     maxExtraDelayMs: Int = 5000,
     skipFrames: Int = 5,
+    // Display settings
+    showBoundingBoxes: Boolean = true,
+    showTextOverlay: Boolean = true,
+    showWordBoundingBoxes: Boolean = false,
+    showLineBoundingBoxes: Boolean = true,
+    showBlockBoundingBoxes: Boolean = true,
+    textBackgroundOpacity: Float = 0.8f,
+    boundingBoxStrokeWidth: Float = 2f,
+    // Single capture functionality
+    captureImage: Boolean = false,
+    onCaptureComplete: () -> Unit = {},
+    onImageCaptured: (android.graphics.Bitmap) -> Unit = {},
     onOCRResult: (OCRResult) -> Unit = {},
     onManualLanguageRequired: () -> Unit = {},
     onError: (String) -> Unit = {}
@@ -56,6 +70,7 @@ fun OCRCameraPreview(
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
     var preview: Preview? by remember { mutableStateOf(null) }
     var imageAnalyzer: ImageAnalysis? by remember { mutableStateOf(null) }
+    var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
     var previewView: PreviewView? by remember { mutableStateOf(null) }
 
     val latinRecognizer =
@@ -64,10 +79,15 @@ fun OCRCameraPreview(
         remember { TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build()) }
 
     var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
+    var previewSize by remember { mutableStateOf(IntSize.Zero) }
 
     Box(modifier = modifier) {
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .onGloballyPositioned { coordinates ->
+                    previewSize = coordinates.size
+                },
             factory = { ctx ->
                 PreviewView(ctx).apply {
                     scaleType = PreviewView.ScaleType.FILL_CENTER
@@ -80,15 +100,31 @@ fun OCRCameraPreview(
                         context = context,
                         lifecycleOwner = lifecycleOwner,
                         previewView = currentPreviewView,
-                        onCameraProviderReady = { provider, cam, prev ->
+                        onCameraProviderReady = { provider, cam, prev, imgCapture ->
                             cameraProvider = provider
                             camera = cam
                             preview = prev
+                            imageCapture = imgCapture
                         },
                         onError = onError
                     )
                 }
             }
+        )
+
+        // OCR Overlay using unified canvas
+        OCROverlayCanvas(
+            result = lastOCRResult,
+            containerSize = previewSize,
+            showBoundingBoxes = showBoundingBoxes,
+            showTextOverlay = showTextOverlay,
+            showWordBoundingBoxes = showWordBoundingBoxes,
+            showLineBoundingBoxes = showLineBoundingBoxes,
+            showBlockBoundingBoxes = showBlockBoundingBoxes,
+            textBackgroundOpacity = textBackgroundOpacity,
+            boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+            enableTextCopy = true,
+            modifier = Modifier.fillMaxSize()
         )
 
         LaunchedEffect(isDetectionRunning) {
@@ -102,6 +138,7 @@ fun OCRCameraPreview(
                     cameraProvider = provider,
                     lifecycleOwner = lifecycleOwner,
                     preview = preview,
+                    imageCapture = imageCapture,
                     isDetectionRunning = isDetectionRunning,
                     cameraExecutor = cameraExecutor,
                     skipFrames = skipFrames,
@@ -134,6 +171,58 @@ fun OCRCameraPreview(
                 )
             }
         }
+
+        // Handle single image capture
+        LaunchedEffect(captureImage) {
+            if (captureImage && imageCapture != null) {
+                try {
+                    imageCapture!!.takePicture(
+                        ContextCompat.getMainExecutor(context),
+                        object : ImageCapture.OnImageCapturedCallback() {
+                            override fun onCaptureSuccess(imageProxy: ImageProxy) {
+                                try {
+                                    // Convert ImageProxy to Bitmap
+                                    val bitmap = imageProxyToBitmap(imageProxy)
+                                    
+                                    // Pass bitmap to parent for overlay display
+                                    onImageCaptured(bitmap)
+                                    
+                                    // Process the captured image for OCR
+                                    processCapturedImageProxy(
+                                        imageProxy = imageProxy,
+                                        preferredLanguage = preferredLanguage,
+                                        latinRecognizer = latinRecognizer,
+                                        devanagariRecognizer = devanagariRecognizer,
+                                        onOCRResult = { result ->
+                                            lastOCRResult = result
+                                            onOCRResult(result)
+                                            onCaptureComplete()
+                                        },
+                                        onError = { error ->
+                                            onError(error)
+                                            onCaptureComplete()
+                                        }
+                                    )
+                                } catch (e: Exception) {
+                                    onError("Failed to process captured image: ${e.message}")
+                                    onCaptureComplete()
+                                } finally {
+                                    imageProxy.close()
+                                }
+                            }
+                            
+                            override fun onError(exception: ImageCaptureException) {
+                                onError("Image capture failed: ${exception.message}")
+                                onCaptureComplete()
+                            }
+                        }
+                    )
+                } catch (e: Exception) {
+                    onError("Failed to capture image: ${e.message}")
+                    onCaptureComplete()
+                }
+            }
+        }
     }
 
     DisposableEffect(Unit) {
@@ -150,7 +239,7 @@ private fun setupCameraOnce(
     context: Context,
     lifecycleOwner: LifecycleOwner,
     previewView: PreviewView,
-    onCameraProviderReady: (ProcessCameraProvider, Camera, Preview) -> Unit,
+    onCameraProviderReady: (ProcessCameraProvider, Camera, Preview, ImageCapture) -> Unit,
     onError: (String) -> Unit
 ) {
     val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -160,10 +249,20 @@ private fun setupCameraOnce(
             val cameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build()
                 .also { it.setSurfaceProvider(previewView.surfaceProvider) }
+            
+            val imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .build()
+            
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             cameraProvider.unbindAll()
-            val camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview)
-            onCameraProviderReady(cameraProvider, camera, preview)
+            val camera = cameraProvider.bindToLifecycle(
+                lifecycleOwner, 
+                cameraSelector, 
+                preview, 
+                imageCapture
+            )
+            onCameraProviderReady(cameraProvider, camera, preview, imageCapture)
         } catch (exc: Exception) {
             Log.e("OCRCameraPreview", "Camera setup failed", exc)
             onError("Camera initialization failed: ${exc.message}")
@@ -176,6 +275,7 @@ private fun updateAnalysisUseCase(
     cameraProvider: ProcessCameraProvider,
     lifecycleOwner: LifecycleOwner,
     preview: Preview?,
+    imageCapture: ImageCapture?,
     isDetectionRunning: Boolean,
     cameraExecutor: ExecutorService,
     skipFrames: Int,
@@ -257,18 +357,26 @@ private fun updateAnalysisUseCase(
                 }
 
             cameraProvider.unbindAll()
+            val useCases = mutableListOf<UseCase>()
+            preview?.let { useCases.add(it) }
+            imageAnalyzer.let { useCases.add(it) }
+            imageCapture?.let { useCases.add(it) }
             val cam = cameraProvider.bindToLifecycle(
                 lifecycleOwner,
                 cameraSelector,
-                preview!!,
-                imageAnalyzer
+                *useCases.toTypedArray()
             )
 
             onAnalyzerReady(imageAnalyzer)
             onCameraReady(cam)
         } else {
             cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, preview!!)
+            val useCases = mutableListOf<UseCase>()
+            preview?.let { useCases.add(it) }
+            imageCapture?.let { useCases.add(it) }
+            if (useCases.isNotEmpty()) {
+                cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, *useCases.toTypedArray())
+            }
             onAnalyzerReady(null)
         }
     } catch (exc: Exception) {
@@ -408,3 +516,152 @@ private fun convertToOCRResult(
         imageRotation = imageRotation
     )
 }
+
+/**
+ * Process a captured image for OCR
+ */
+private fun processCapturedImage(
+    context: Context,
+    uri: android.net.Uri,
+    preferredLanguage: String?,
+    latinRecognizer: TextRecognizer,
+    devanagariRecognizer: TextRecognizer,
+    onOCRResult: (OCRResult) -> Unit,
+    onError: (String) -> Unit
+) {
+    try {
+        val startTime = System.currentTimeMillis()
+        val image = InputImage.fromFilePath(context, uri)
+
+        fun handleNoText() {
+            val emptyResult = OCRResult(
+                text = "",
+                confidence = 0f,
+                language = "Unknown",
+                boundingBoxes = emptyList(),
+                processingTimeMs = System.currentTimeMillis() - startTime,
+                imageWidth = image.width,
+                imageHeight = image.height,
+                imageRotation = 0
+            )
+            onOCRResult(emptyResult)
+        }
+
+        val tryLatin: () -> Unit = {
+            latinRecognizer.process(image)
+                .addOnSuccessListener { latinResult ->
+                    val finalProcessingTime = System.currentTimeMillis() - startTime
+                    if (latinResult.text.isNotEmpty()) {
+                        onOCRResult(
+                            convertToOCRResult(
+                                latinResult,
+                                "English",
+                                finalProcessingTime,
+                                image.width,
+                                image.height,
+                                0
+                            )
+                        )
+                    } else {
+                        handleNoText()
+                    }
+                }
+                .addOnFailureListener { _ -> handleNoText() }
+        }
+
+        val tryDevanagari: () -> Unit = {
+            devanagariRecognizer.process(image)
+                .addOnSuccessListener { devanagariResult ->
+                    val processingTime = System.currentTimeMillis() - startTime
+                    if (devanagariResult.text.isNotEmpty()) {
+                        onOCRResult(
+                            convertToOCRResult(
+                                devanagariResult,
+                                "Devanagari",
+                                processingTime,
+                                image.width,
+                                image.height,
+                                0
+                            )
+                        )
+                    } else {
+                        tryLatin()
+                    }
+                }
+                .addOnFailureListener { _ -> tryLatin() }
+        }
+
+        when (preferredLanguage?.lowercase()) {
+            null -> tryDevanagari()
+            "english", "en", "latin" -> tryLatin()
+            "devanagari", "hi", "hindi" -> tryDevanagari()
+            else -> tryDevanagari()
+        }
+
+    } catch (exc: Exception) {
+        onError("Image processing failed: ${exc.message}")
+    }
+}
+
+/**
+ * Convert ImageProxy to Bitmap for display
+ */
+private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap {
+    val buffer = imageProxy.planes[0].buffer
+    val bytes = ByteArray(buffer.remaining())
+    buffer.get(bytes)
+    return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+}
+
+
+private fun processCapturedImageProxy(
+    imageProxy: ImageProxy,
+    preferredLanguage: String?,
+    latinRecognizer: TextRecognizer,
+    devanagariRecognizer: TextRecognizer,
+    onOCRResult: (OCRResult) -> Unit,
+    onError: (String) -> Unit
+) {
+    try {
+        val inputImage = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
+        val startTime = System.currentTimeMillis()
+
+        fun tryLatin() {
+            latinRecognizer.process(inputImage)
+                .addOnSuccessListener { visionText ->
+                    val processingTime = System.currentTimeMillis() - startTime
+                    val result = convertToOCRResult(visionText, "latin", processingTime)
+                    onOCRResult(result)
+                }
+                .addOnFailureListener { exc ->
+                    onError("Latin OCR failed: ${exc.message}")
+                }
+        }
+
+        fun tryDevanagari() {
+            devanagariRecognizer.process(inputImage)
+                .addOnSuccessListener { visionText ->
+                    val processingTime = System.currentTimeMillis() - startTime
+                    val result = convertToOCRResult(visionText, "devanagari", processingTime)
+                    
+                    if (result.text.isNotBlank()) {
+                        onOCRResult(result)
+                    } else {
+                        tryLatin()
+                    }
+                }
+                .addOnFailureListener { _ -> tryLatin() }
+        }
+
+        when (preferredLanguage?.lowercase()) {
+            null -> tryDevanagari()
+            "english", "en", "latin" -> tryLatin()
+            "devanagari", "hi", "hindi" -> tryDevanagari()
+            else -> tryDevanagari()
+        }
+
+    } catch (exc: Exception) {
+        onError("Image processing failed: ${exc.message}")
+    }
+}
+
