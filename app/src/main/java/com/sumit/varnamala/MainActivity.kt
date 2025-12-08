@@ -57,16 +57,12 @@ class MainActivity : ComponentActivity() {
             // Update locale when language changes
             val currentLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
             LaunchedEffect(currentLanguage) {
-                // Apply locale change immediately
                 val locale = Locale(currentLanguage)
                 Locale.setDefault(locale)
                 val config = Configuration(resources.configuration)
                 config.setLocale(locale)
 
-                // Update resources configuration
                 resources.updateConfiguration(config, resources.displayMetrics)
-
-                // Also update the application context configuration
                 applicationContext.resources.updateConfiguration(
                     config,
                     applicationContext.resources.displayMetrics

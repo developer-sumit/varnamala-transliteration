@@ -4,30 +4,33 @@ import com.sumit.varnamala.data.ocr.OCRResult
 import com.sumit.varnamala.data.ocr.TextBlock
 import com.sumit.varnamala.data.ocr.TextLine
 import com.sumit.varnamala.data.ocr.TextElement
+import com.sumit.varnamala.utils.await
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.net.Uri
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
-import com.sumit.varnamala.utils.await
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 class MLKitOCRRepository(private val context: Context) {
     private val latinRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     private val devanagariRecognizer =
         TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build())
 
-    companion object {
-        private const val TAG = "MLKitOCR"
+    private val recognizers: Map<String, TextRecognizer> = mapOf(
+        "latin" to TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS),
+        "devanagari" to TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build())
+    )
 
+    companion object {
         // Devanagari script
         private val DEVANAGARI_LANGUAGES = setOf(
             "hin", // Hindi
@@ -37,114 +40,72 @@ class MLKitOCRRepository(private val context: Context) {
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     suspend fun processImageFromUri(uri: Uri, preferredScript: String? = null): OCRResult {
         return withContext(Dispatchers.IO) {
-            try {
-                // Load bitmap from URI
-                val bitmap = loadBitmapFromUri(uri)
+            val bitmap = loadBitmapFromUri(uri)
+            val inputImage = InputImage.fromBitmap(bitmap, 0)
 
-                // Process image
-                val inputImage = InputImage.fromBitmap(bitmap, 0)
-
-                // Choose recognizer based on preferred script
-                val recognizer = when {
-                    preferredScript == "devanagari" ||
-                            DEVANAGARI_LANGUAGES.contains(preferredScript) -> devanagariRecognizer
-
-                    else -> latinRecognizer
-                }
-
-                // Process with ML Kit
-                val mlKitResult = recognizeText(inputImage, recognizer)
-
-                // Convert ML Kit result to our common OCRResult format
-                convertToOCRResult(mlKitResult, bitmap.width, bitmap.height)
-            } catch (e: Exception) {
-                Log.e(TAG, "Error processing image", e)
-                throw e
+            val script = when {
+                preferredScript in DEVANAGARI_LANGUAGES -> "devanagari"
+                preferredScript != null -> preferredScript
+                else -> "latin"
             }
+
+            val recognizer = recognizers[script] ?: recognizers["latin"]!!
+
+            val mlKitResult = recognizeText(inputImage, recognizer)
+            convertToOCRResult(mlKitResult, bitmap.width, bitmap.height)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     suspend fun processImageWithAutoDetection(uri: Uri): OCRResult {
         return withContext(Dispatchers.IO) {
-            try {
-                // Load bitmap from URI
-                val bitmap = loadBitmapFromUri(uri)
-                val inputImage = InputImage.fromBitmap(bitmap, 0)
+            val bitmap = loadBitmapFromUri(uri)
+            val inputImage = InputImage.fromBitmap(bitmap, 0)
+            val results = mutableListOf<Pair<OCRResult, String>>()
 
-                Log.d(TAG, "Running comprehensive language detection...")
+            val latinResult = recognizeText(inputImage, latinRecognizer)
+            if (latinResult.text.isNotBlank()) {
+                val ocrResult =
+                    convertToOCRResult(latinResult, bitmap.width, bitmap.height, "latin")
+                results.add(ocrResult to "latin")
+            }
 
-                // Try both recognizers and collect results
-                val results = mutableListOf<Pair<OCRResult, String>>()
+            val devanagariResult = recognizeText(inputImage, devanagariRecognizer)
+            if (devanagariResult.text.isNotBlank()) {
+                val ocrResult = convertToOCRResult(
+                    devanagariResult,
+                    bitmap.width,
+                    bitmap.height,
+                    "devanagari"
+                )
+                results.add(ocrResult to "devanagari")
+            }
 
-                try {
-                    Log.d(TAG, "Testing Latin script recognizer...")
-                    val latinResult = recognizeText(inputImage, latinRecognizer)
-                    if (latinResult.text.isNotBlank()) {
-                        val ocrResult =
-                            convertToOCRResult(latinResult, bitmap.width, bitmap.height, "latin")
-                        results.add(ocrResult to "latin")
-                        Log.d(
-                            TAG,
-                            "Latin result: ${latinResult.text.length} characters, ${latinResult.textBlocks.size} blocks"
-                        )
-                    }
-                } catch (e: Exception) {
-                    Log.w(TAG, "Latin recognizer failed", e)
-                }
+            // Select the best result based on multiple criteria
+            val bestResult = results.maxByOrNull { (result, _) ->
+                // Score based on text length, number of blocks, and character variety
+                val textScore = result.text.length
+                val blockScore = result.boundingBoxes.size * 10
+                val varietyScore = result.text.toSet().size
+                textScore + blockScore + varietyScore
+            }
 
-                try {
-                    Log.d(TAG, "Testing Devanagari script recognizer...")
-                    val devanagariResult = recognizeText(inputImage, devanagariRecognizer)
-                    if (devanagariResult.text.isNotBlank()) {
-                        val ocrResult = convertToOCRResult(
-                            devanagariResult,
-                            bitmap.width,
-                            bitmap.height,
-                            "devanagari"
-                        )
-                        results.add(ocrResult to "devanagari")
-                        Log.d(
-                            TAG,
-                            "Devanagari result: ${devanagariResult.text.length} characters, ${devanagariResult.textBlocks.size} blocks"
-                        )
-                    }
-                } catch (e: Exception) {
-                    Log.w(TAG, "Devanagari recognizer failed", e)
-                }
-
-                // Select the best result based on multiple criteria
-                val bestResult = results.maxByOrNull { (result, _) ->
-                    // Score based on text length, number of blocks, and character variety
-                    val textScore = result.text.length
-                    val blockScore = result.boundingBoxes.size * 10
-                    val varietyScore = result.text.toSet().size
-                    textScore + blockScore + varietyScore
-                }
-
-                return@withContext if (bestResult != null) {
-                    Log.d(
-                        TAG,
-                        "Selected ${bestResult.second} as best result with ${bestResult.first.text.length} characters"
-                    )
-                    bestResult.first
-                } else {
-                    Log.w(TAG, "No valid OCR results found, returning empty result")
-                    // Return empty result if no recognizer produced text
-                    OCRResult(
-                        text = "",
-                        confidence = 0f,
-                        language = "unknown",
-                        processingTimeMs = 0L,
-                        boundingBoxes = emptyList(),
-                        imageWidth = bitmap.width,
-                        imageHeight = bitmap.height
-                    )
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error processing image with auto-detection", e)
-                throw e
+            return@withContext if (bestResult != null) {
+                bestResult.first
+            } else {
+                // Return empty result if no recognizer produced text
+                OCRResult(
+                    text = "",
+                    confidence = 0f,
+                    language = "unknown",
+                    processingTimeMs = 0L,
+                    boundingBoxes = emptyList(),
+                    imageWidth = bitmap.width,
+                    imageHeight = bitmap.height
+                )
             }
         }
     }
@@ -247,6 +208,7 @@ class MLKitOCRRepository(private val context: Context) {
         return recognizer.process(image).await()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun loadBitmapFromUri(uri: Uri): Bitmap {
         val contentResolver = context.contentResolver
         return android.graphics.ImageDecoder.decodeBitmap(
@@ -258,7 +220,6 @@ class MLKitOCRRepository(private val context: Context) {
     }
 
     private fun detectScriptFromContent(text: String): String {
-        // Simple check for Devanagari characters
         val devanagariRange = '\u0900'..'\u097F'
         val devanagariChars = text.count { it in devanagariRange }
 
@@ -290,6 +251,6 @@ class MLKitOCRRepository(private val context: Context) {
     }
 
     fun getAvailableLanguages(): List<String> {
-        return listOf("auto", "latin", "devanagari")
+        return listOf("auto") + recognizers.keys.toList()
     }
 }

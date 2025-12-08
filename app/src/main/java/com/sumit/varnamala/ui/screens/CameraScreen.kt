@@ -11,7 +11,9 @@ import com.sumit.varnamala.ui.components.DetectionOptionsDialog
 import com.sumit.varnamala.ui.components.CameraCaptureButton
 import com.sumit.varnamala.ui.components.CapturedImageOverlay
 import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.ui.viewmodels.OCRViewModel
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
+import com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory
 import com.sumit.varnamala.utils.LanguageDetector
 
 import androidx.compose.runtime.Composable
@@ -32,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
@@ -42,14 +45,9 @@ fun CameraScreen(navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
 
-    // Initialize repositories
     val settingsRepository = remember { OCRSettingsRepository(context) }
 
-    // Create the ViewModel
-    val viewModel: com.sumit.varnamala.ui.viewmodels.OCRViewModel =
-        androidx.lifecycle.viewmodel.compose.viewModel(
-            factory = com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory(context)
-        )
+    val ocrViewModel: OCRViewModel = viewModel(factory = OCRViewModelFactory(context))
 
     // State variables
     var flashEnabled by remember { mutableStateOf(false) }
@@ -82,12 +80,13 @@ fun CameraScreen(navController: NavController) {
     var showDetectionOptionsDialog by remember { mutableStateOf(false) }
 
     // Settings from repository
-    // Global settings from repository
     val repoShowBoundingBoxes by settingsRepository.showBoundingBoxes.collectAsState(initial = true)
     val repoShowTextOverlay by settingsRepository.showTextOverlay.collectAsState(initial = true)
     val repoShowWordBoundingBoxes by settingsRepository.showWordBoundingBoxes.collectAsState(initial = true)
     val repoShowLineBoundingBoxes by settingsRepository.showLineBoundingBoxes.collectAsState(initial = true)
-    val repoShowBlockBoundingBoxes by settingsRepository.showBlockBoundingBoxes.collectAsState(initial = true)
+    val repoShowBlockBoundingBoxes by settingsRepository.showBlockBoundingBoxes.collectAsState(
+        initial = true
+    )
     val textBackgroundOpacity by settingsRepository.textBackgroundOpacity.collectAsState(initial = 0.8f)
     val boundingBoxStrokeWidth by settingsRepository.boundingBoxStrokeWidth.collectAsState(initial = 2f)
     val savedMlKitLanguage by settingsRepository.mlKitLanguage.collectAsState(initial = "auto")
@@ -121,7 +120,7 @@ fun CameraScreen(navController: NavController) {
     // Initialize ViewModel
     LaunchedEffect(Unit) {
         try {
-            viewModel.initialize()
+            ocrViewModel.initialize()
         } catch (e: Exception) {
             // Failure will be handled during OCR if needed
         }
@@ -539,28 +538,45 @@ fun CameraScreen(navController: NavController) {
             onDismiss = { showDisplayOptionsDialog = false },
             showBoundingBoxes = camShowBoundingBoxes,
             onShowBoundingBoxesChange = {
-                camShowBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowBoundingBoxes(it) }
+                camShowBoundingBoxes =
+                    it; coroutineScope.launch { settingsRepository.setShowBoundingBoxes(it) }
             },
             showTextOverlay = camShowTextOverlay,
             onShowTextOverlayChange = {
-                camShowTextOverlay = it; coroutineScope.launch { settingsRepository.setShowTextOverlay(it) }
+                camShowTextOverlay =
+                    it; coroutineScope.launch { settingsRepository.setShowTextOverlay(it) }
             },
             showWordBoundingBoxes = camShowWordBoundingBoxes,
             onShowWordBoundingBoxesChange = {
-                camShowWordBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowWordBoundingBoxes(it) }
+                camShowWordBoundingBoxes =
+                    it; coroutineScope.launch { settingsRepository.setShowWordBoundingBoxes(it) }
             },
             showLineBoundingBoxes = camShowLineBoundingBoxes,
             onShowLineBoundingBoxesChange = {
-                camShowLineBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowLineBoundingBoxes(it) }
+                camShowLineBoundingBoxes =
+                    it; coroutineScope.launch { settingsRepository.setShowLineBoundingBoxes(it) }
             },
             showBlockBoundingBoxes = camShowBlockBoundingBoxes,
             onShowBlockBoundingBoxesChange = {
-                camShowBlockBoundingBoxes = it; coroutineScope.launch { settingsRepository.setShowBlockBoundingBoxes(it) }
+                camShowBlockBoundingBoxes =
+                    it; coroutineScope.launch { settingsRepository.setShowBlockBoundingBoxes(it) }
             },
             textBackgroundOpacity = textBackgroundOpacity,
-            onTextBackgroundOpacityChange = { coroutineScope.launch { settingsRepository.setTextBackgroundOpacity(it) } },
+            onTextBackgroundOpacityChange = {
+                coroutineScope.launch {
+                    settingsRepository.setTextBackgroundOpacity(
+                        it
+                    )
+                }
+            },
             boundingBoxStrokeWidth = boundingBoxStrokeWidth,
-            onBoundingBoxStrokeWidthChange = { coroutineScope.launch { settingsRepository.setBoundingBoxStrokeWidth(it) } }
+            onBoundingBoxStrokeWidthChange = {
+                coroutineScope.launch {
+                    settingsRepository.setBoundingBoxStrokeWidth(
+                        it
+                    )
+                }
+            }
         )
     }
 
@@ -601,7 +617,7 @@ fun CameraScreen(navController: NavController) {
         )
     }
 
-    // Captured Image Overlay (Snapchat-like functionality)
+    // Captured Image Overlay
     if (capturedBitmap != null) {
         CapturedImageOverlay(
             capturedBitmap = capturedBitmap,

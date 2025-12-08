@@ -15,11 +15,9 @@ private val DarkColorScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
-
     secondary = secondaryDark,
     onSecondary = onSecondaryDark,
     secondaryContainer = secondaryContainerDark,
-
     background = backgroundDark,
     onBackground = onBackgroundDark,
     surface = surfaceDark,
@@ -31,13 +29,9 @@ private val LightColorScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
     primaryContainer = primaryContainerLight,
-
-
     secondary = secondaryLight,
     onSecondary = onSecondaryLight,
     secondaryContainer = secondaryContainerLight,
-
-
     background = backgroundLight,
     onBackground = onBackgroundLight,
     surface = surfaceLight,
@@ -45,7 +39,6 @@ private val LightColorScheme = lightColorScheme(
 )
 
 
-// High contrast scheme
 private val HighContrastColorScheme = lightColorScheme(
     primary = primaryHighContrast,
     onPrimary = onPrimaryHighContrast,

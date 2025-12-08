@@ -2,9 +2,9 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Language
+import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository as AppLanguagePrefsRepository
-import com.sumit.varnamala.ui.components.GlassButton
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -101,9 +101,7 @@ fun LanguageScreen(navController: NavController) {
                         isSelected = currentLanguage == language.code,
                         onLanguageSelected = {
                             scope.launch {
-                                // Set the new language
                                 languageRepository.setAppLanguage(language.code)
-                                // Navigate back immediately - the language change will be applied
                                 navController.popBackStack()
                             }
                         }
@@ -134,7 +132,6 @@ private fun LanguageItem(
             .clickable { onLanguageSelected() }
             .padding(20.dp)
     ) {
-        // Flag and Language Info
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,

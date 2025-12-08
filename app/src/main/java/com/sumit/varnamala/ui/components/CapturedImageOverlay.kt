@@ -1,5 +1,8 @@
 package com.sumit.varnamala.ui.components
 
+import com.sumit.varnamala.R
+import com.sumit.varnamala.data.ocr.OCRResult
+
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,8 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sumit.varnamala.R
-import com.sumit.varnamala.data.ocr.OCRResult
 
 @Composable
 fun CapturedImageOverlay(

@@ -112,7 +112,6 @@ fun OCRCameraPreview(
             }
         )
 
-        // OCR Overlay using unified canvas
         OCROverlayCanvas(
             result = lastOCRResult,
             containerSize = previewSize,

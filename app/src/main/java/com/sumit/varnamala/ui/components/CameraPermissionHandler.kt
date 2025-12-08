@@ -1,5 +1,6 @@
 package com.sumit.varnamala.ui.components
 
+import com.sumit.varnamala.R
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
@@ -24,7 +25,6 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import com.sumit.varnamala.R
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

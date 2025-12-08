@@ -1,7 +1,5 @@
 package com.sumit.varnamala.ui.screens
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import com.sumit.varnamala.R
 import com.sumit.varnamala.ui.components.OCRInfoCard
 import com.sumit.varnamala.ui.components.DisplayOptionsDialog
@@ -19,7 +17,12 @@ import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCROverlayCanvas
 import com.sumit.varnamala.data.ocr.OcrEngine
+import com.sumit.varnamala.ocr.mlkit.MLKitOCRRepository
+import com.sumit.varnamala.ui.viewmodels.OCRViewModel
+import com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import kotlinx.coroutines.flow.first
 import android.content.ContentUris
 import android.provider.MediaStore
@@ -52,7 +55,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import android.graphics.Rect
 import android.net.Uri
-import com.sumit.varnamala.ocr.mlkit.MLKitOCRRepository
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.rememberScrollState
@@ -67,7 +69,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.VerticalDivider
-
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun ImageDetailScreen(navController: NavController, imageId: Long) {
@@ -77,24 +79,21 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val cacheRepository = remember { OCRCacheRepository(context) }
     val settingsRepository = remember { OCRSettingsRepository(context) }
 
-    // Create the ViewModel
-    val viewModel: com.sumit.varnamala.ui.viewmodels.OCRViewModel =
-        androidx.lifecycle.viewmodel.compose.viewModel(
-            factory = com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory(context)
-        )
+    val ocrViewModel: OCRViewModel = viewModel(factory = OCRViewModelFactory(context))
 
     // OCR state variables
     var ocrLoading by remember { mutableStateOf(false) }
     var ocrError by remember { mutableStateOf<String?>(null) }
     var rawOcrText by remember { mutableStateOf("") }
     var detectedLanguage by remember { mutableStateOf("unknown") }
-    var languageConfidence by remember { mutableStateOf(0f) }
+    var languageConfidence by remember { mutableFloatStateOf(0f) }
     var lastResult by remember { mutableStateOf<OCRResult?>(null) }
     var showClearAllDialog by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
     var showDisplayOptionsDialog by remember { mutableStateOf(false) }
     var showDetectionOptionsDialog by remember { mutableStateOf(false) }
     var showImageDetailsDialog by remember { mutableStateOf(false) }
+
     // Settings from repository
     val showBoundingBoxes by settingsRepository.showBoundingBoxes.collectAsState(initial = true)
     val showTextOverlay by settingsRepository.showTextOverlay.collectAsState(initial = true)
@@ -114,21 +113,18 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var selectedEngine by remember { mutableStateOf(OcrEngine.ML_KIT) }
     var mlKitLanguage by remember { mutableStateOf("auto") }
 
-    // Update mlKitLanguage when settings change
     LaunchedEffect(savedMlKitLanguage) {
         mlKitLanguage = savedMlKitLanguage
     }
 
-    // Observe OCR state from ViewModel
-    val ocrState by viewModel.ocrState.collectAsState()
-    val ocrResult by viewModel.ocrResult.collectAsState()
-    val currentEngine by viewModel.currentEngine.collectAsState()
-    val currentLanguage by viewModel.currentLanguage.collectAsState()
+    val ocrState by ocrViewModel.ocrState.collectAsState()
+    val ocrResult by ocrViewModel.ocrResult.collectAsState()
+    val currentEngine by ocrViewModel.currentEngine.collectAsState()
+    val currentLanguage by ocrViewModel.currentLanguage.collectAsState()
 
-    // Initialize any necessary resources
     LaunchedEffect(Unit) {
         try {
-            viewModel.initialize()
+            ocrViewModel.initialize()
         } catch (e: Exception) {
             // Failure will be handled during OCR if needed
         }
@@ -203,11 +199,10 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     .weight(1f)
                     .padding(16.dp)
             ) {
-                // Enhanced image display with bounding boxes and zoom
                 val transformableState =
                     rememberTransformableState { zoomChange, offsetChange, _ ->
                         scale = (scale * zoomChange).coerceIn(1f, 5f)
-                        offset = offset + offsetChange
+                        offset += offsetChange
                     }
 
                 Box(
@@ -242,7 +237,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         contentScale = ContentScale.Fit
                     )
 
-                    // OCR Overlay using unified canvas with transformations
                     OCROverlayCanvas(
                         result = lastResult,
                         containerSize = imageSize,
@@ -268,7 +262,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     )
                 }
 
-                // Only show OCR info card if there's content or loading/error state
                 if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) {
                     OCRInfoCard(
                         ocrLoading = ocrLoading,
@@ -428,19 +421,61 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
         DisplayOptionsDialog(
             onDismiss = { showDisplayOptionsDialog = false },
             showBoundingBoxes = showBoundingBoxes,
-            onShowBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowBoundingBoxes(it) } },
+            onShowBoundingBoxesChange = {
+                coroutineScope.launch {
+                    settingsRepository.setShowBoundingBoxes(
+                        it
+                    )
+                }
+            },
             showTextOverlay = showTextOverlay,
-            onShowTextOverlayChange = { coroutineScope.launch { settingsRepository.setShowTextOverlay(it) } },
+            onShowTextOverlayChange = {
+                coroutineScope.launch {
+                    settingsRepository.setShowTextOverlay(
+                        it
+                    )
+                }
+            },
             showWordBoundingBoxes = showWordBoundingBoxes,
-            onShowWordBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowWordBoundingBoxes(it) } },
+            onShowWordBoundingBoxesChange = {
+                coroutineScope.launch {
+                    settingsRepository.setShowWordBoundingBoxes(
+                        it
+                    )
+                }
+            },
             showLineBoundingBoxes = showLineBoundingBoxes,
-            onShowLineBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowLineBoundingBoxes(it) } },
+            onShowLineBoundingBoxesChange = {
+                coroutineScope.launch {
+                    settingsRepository.setShowLineBoundingBoxes(
+                        it
+                    )
+                }
+            },
             showBlockBoundingBoxes = showBlockBoundingBoxes,
-            onShowBlockBoundingBoxesChange = { coroutineScope.launch { settingsRepository.setShowBlockBoundingBoxes(it) } },
+            onShowBlockBoundingBoxesChange = {
+                coroutineScope.launch {
+                    settingsRepository.setShowBlockBoundingBoxes(
+                        it
+                    )
+                }
+            },
             textBackgroundOpacity = textBackgroundOpacity,
-            onTextBackgroundOpacityChange = { coroutineScope.launch { settingsRepository.setTextBackgroundOpacity(it) } },
+            onTextBackgroundOpacityChange = {
+                coroutineScope.launch {
+                    settingsRepository.setTextBackgroundOpacity(
+                        it
+                    )
+                }
+            },
             boundingBoxStrokeWidth = boundingBoxStrokeWidth,
-            onBoundingBoxStrokeWidthChange = { coroutineScope.launch { settingsRepository.setBoundingBoxStrokeWidth(it) } }
+            onBoundingBoxStrokeWidthChange = {
+                coroutineScope.launch {
+                    settingsRepository.setBoundingBoxStrokeWidth(
+                        it
+                    )
+                }
+            }
         )
     }
 
@@ -451,7 +486,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             onLanguageSelected = { code ->
                 mlKitLanguage = code
                 coroutineScope.launch { settingsRepository.setMlKitLanguage(code) }
-                // Re-run OCR with selected language and refresh cache
                 coroutineScope.launch {
                     runOCRWithCache(
                         repository = cacheRepository,
@@ -519,7 +553,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
         )
     }
 
-// Clear All confirmation dialog
+    // Clear All confirmation dialog
     if (showClearAllDialog) {
         AlertDialog(
             onDismissRequest = { showClearAllDialog = false },
@@ -816,11 +850,22 @@ private fun ImageDetailsDialog(
                     InfoRow("ID", imageId.toString())
                     InfoRow("Display Name", m.displayName ?: "-")
                     InfoRow("Mime Type", m.mimeType ?: "-")
-                    InfoRow("Width", m.width?.toString() ?: "-")
-                    InfoRow("Height", m.height?.toString() ?: "-")
+                    InfoRow("Width", m.width?.let { "$it px" } ?: "-")
+                    InfoRow("Height", m.height?.let { "$it px" } ?: "-")
                     InfoRow("Size (KB)", m.size?.let { (it / 1024).toString() } ?: "-")
-                    InfoRow("Date Added", m.dateAdded?.toString() ?: "-")
-                    InfoRow("Orientation", m.orientation?.toString() ?: "-")
+                    InfoRow("Date Added", m.dateAdded?.let { 
+                        java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
+                            .format(java.util.Date(it * 1000)) 
+                    } ?: "-")
+                    InfoRow("Orientation", m.orientation?.let { 
+                        when(it) {
+                            0 -> "Normal (0°)"
+                            90 -> "Rotate 90°"
+                            180 -> "Rotate 180°"
+                            270 -> "Rotate 270°"
+                            else -> "$it°"
+                        }
+                    } ?: "-")
                 } ?: run {
                     Text(
                         "Image metadata not available",
