@@ -4,6 +4,11 @@ import com.sumit.varnamala.R
 import com.sumit.varnamala.ui.components.OCRInfoCard
 import com.sumit.varnamala.ui.components.DisplayOptionsDialog
 import com.sumit.varnamala.ui.components.DetectionOptionsDialog
+import com.sumit.varnamala.ui.components.LanguageSelectionRow
+import com.sumit.varnamala.ui.components.LanguageSelectionDialog
+import com.sumit.varnamala.ui.components.OCREngineSelectionDialog
+import com.sumit.varnamala.data.Language
+import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
 import com.sumit.varnamala.data.ocr.CachedOCRResult
 import com.sumit.varnamala.data.ocr.OCRResult
@@ -11,6 +16,7 @@ import com.sumit.varnamala.data.ocr.TextBlock
 import com.sumit.varnamala.data.ocr.TextLine
 import com.sumit.varnamala.data.ocr.TextElement
 import com.sumit.varnamala.utils.LanguageDetector
+import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.ocr.CachedLanguageGroup
 import com.sumit.varnamala.data.ocr.CachedTextElement
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
@@ -93,6 +99,15 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var showDisplayOptionsDialog by remember { mutableStateOf(false) }
     var showDetectionOptionsDialog by remember { mutableStateOf(false) }
     var showImageDetailsDialog by remember { mutableStateOf(false) }
+    
+    // Language selection state
+    var showSourceLanguageDialog by remember { mutableStateOf(false) }
+    var showTargetLanguageDialog by remember { mutableStateOf(false) }
+    var showEngineSelectionDialog by remember { mutableStateOf(false) }
+    var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
+    var selectedTargetLanguage by remember { mutableStateOf<Language?>(
+        AppLanguageRepository.getLanguageByCode("en")
+    ) }
 
     // Settings from repository
     val showBoundingBoxes by settingsRepository.showBoundingBoxes.collectAsState(initial = true)
@@ -178,12 +193,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     icon = painterResource(R.drawable.ic_image_outline),
                     size = 52.dp,
                     onClick = { showDisplayOptionsDialog = true })
-
-                // Detection options button
-                GlassButton(
-                    icon = painterResource(R.drawable.ic_language),
-                    size = 52.dp,
-                    onClick = { showDetectionOptionsDialog = true })
             }
         }
 
@@ -262,14 +271,33 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     )
                 }
 
+                // Language Selection Row
+                LanguageSelectionRow(
+                    sourceLanguage = selectedSourceLanguage,
+                    targetLanguage = selectedTargetLanguage,
+                    onSourceLanguageClick = { showSourceLanguageDialog = true },
+                    onTargetLanguageClick = { showTargetLanguageDialog = true },
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) 16.dp else 80.dp)
+                )
+
                 if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) {
+                    val transliteratedText = selectedTargetLanguage?.let { targetLang ->
+                        if (rawOcrText.isNotBlank()) {
+                            Transliterator.transliterate(
+                                text = rawOcrText,
+                                sourceLanguage = detectedLanguage,
+                                targetLanguage = targetLang.code
+                            )
+                        } else rawOcrText
+                    } ?: rawOcrText
+                    
                     OCRInfoCard(
                         ocrLoading = ocrLoading,
                         ocrError = ocrError,
                         rawOcrText = rawOcrText,
-                        detectedLanguage = detectedLanguage,
-                        languageConfidence = languageConfidence,
-                        lastResult = lastResult,
+                        transliteratedText = transliteratedText,
                         onCopy = {
                             val clip = ClipData.newPlainText(
                                 context.getString(R.string.ocr_text),
@@ -277,48 +305,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                             )
                             ClipboardManager::class.java.cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
                                 ?.setPrimaryClip(clip)
-                        },
-                        onShare = {
-                            if (rawOcrText.isNotBlank()) {
-                                val sendIntent = Intent().apply {
-                                    action = Intent.ACTION_SEND
-                                    putExtra(Intent.EXTRA_TEXT, rawOcrText)
-                                    type = "text/plain"
-                                }
-                                val chooser = Intent.createChooser(
-                                    sendIntent, "Share OCR Text"
-                                )
-                                context.startActivity(chooser)
-                            }
-                        },
-                        onRefresh = {
-                            coroutineScope.launch {
-                                runOCRWithCache(
-                                    repository = cacheRepository,
-                                    imageId = imageId,
-                                    context = context,
-                                    forceRefresh = true,
-                                    setLoading = { ocrLoading = it },
-                                    setError = { ocrError = it },
-                                    setText = { rawOcrText = it },
-                                    setLang = { newLang ->
-                                        detectedLanguage = newLang
-                                        languageConfidence =
-                                            LanguageDetector.getDetectionConfidenceMap(
-                                                rawOcrText
-                                            )[newLang] ?: 0f
-                                    },
-                                    setResult = { lastResult = it })
-                            }
-                        },
-                        onClear = {
-                            coroutineScope.launch {
-                                cacheRepository.clearCache(imageId)
-                                rawOcrText = ""
-                                detectedLanguage = "unknown"
-                                languageConfidence = 0f
-                                lastResult = null
-                            }
                         },
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
@@ -578,6 +564,79 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             },
             title = { Text(stringResource(R.string.clear_all_ocr_cache)) },
             text = { Text(stringResource(R.string.clear_cache_confirmation)) })
+    }
+
+    // Source Language Selection Dialog
+    if (showSourceLanguageDialog) {
+        LanguageSelectionDialog(
+            title = "Select OCR Language",
+            currentLanguage = selectedSourceLanguage,
+            onLanguageSelected = { language ->
+                selectedSourceLanguage = language
+                // Trigger OCR with new language
+                coroutineScope.launch {
+                    runOCRWithCache(
+                        repository = cacheRepository,
+                        imageId = imageId,
+                        context = context,
+                        forceRefresh = true,
+                        preferredLanguage = language.code,
+                        settingsRepository = settingsRepository,
+                        setLoading = { ocrLoading = it },
+                        setError = { ocrError = it },
+                        setText = { rawOcrText = it },
+                        setLang = { newLang ->
+                            detectedLanguage = newLang
+                            languageConfidence = LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang] ?: 0f
+                        },
+                        setResult = { lastResult = it }
+                    )
+                }
+            },
+            onDismiss = { showSourceLanguageDialog = false }
+        )
+    }
+
+    // Target Language Selection Dialog
+    if (showTargetLanguageDialog) {
+        LanguageSelectionDialog(
+            title = "Transliterate To",
+            currentLanguage = selectedTargetLanguage,
+            onLanguageSelected = { language ->
+                selectedTargetLanguage = language
+            },
+            onDismiss = { showTargetLanguageDialog = false }
+        )
+    }
+
+    // OCR Engine Selection Dialog
+    if (showEngineSelectionDialog) {
+        OCREngineSelectionDialog(
+            currentEngine = selectedEngine,
+            onEngineSelected = { engine ->
+                selectedEngine = engine
+                // Trigger OCR with new engine
+                coroutineScope.launch {
+                    runOCRWithCache(
+                        repository = cacheRepository,
+                        imageId = imageId,
+                        context = context,
+                        forceRefresh = true,
+                        preferredLanguage = selectedSourceLanguage?.code,
+                        settingsRepository = settingsRepository,
+                        setLoading = { ocrLoading = it },
+                        setError = { ocrError = it },
+                        setText = { rawOcrText = it },
+                        setLang = { newLang ->
+                            detectedLanguage = newLang
+                            languageConfidence = LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang] ?: 0f
+                        },
+                        setResult = { lastResult = it }
+                    )
+                }
+            },
+            onDismiss = { showEngineSelectionDialog = false }
+        )
     }
 }
 

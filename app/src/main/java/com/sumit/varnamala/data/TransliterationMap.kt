@@ -6,10 +6,12 @@ data class MappingEntry(
     val teluguScript: String,          // Telugu script (e.g., "క")
     val punjabiScript: String? = null, // Punjabi/Gurmukhi script (e.g., "ਕ")
     val malayalamScript: String? = null, // Malayalam script (e.g., "ക")
+    val tamilScript: String? = null,   // Tamil script (e.g., "க")
     val hindiMatra: String? = null,    // Hindi matra/vowel modifier if applicable
     val teluguMatra: String? = null,   // Telugu matra/vowel modifier if applicable
     val punjabiMatra: String? = null,  // Punjabi matra/vowel modifier if applicable
     val malayalamMatra: String? = null, // Malayalam matra/vowel modifier if applicable
+    val tamilMatra: String? = null,    // Tamil matra/vowel modifier if applicable
     val description: String? = null    // Optional description/notes
 )
 
@@ -27,6 +29,7 @@ object TransliterationMappingRepository {
                 teluguScript = "అ",
                 punjabiScript = "ਅ",
                 malayalamScript = "അ",
+                tamilScript = "அ",
                 description = "Inherent 'a' sound"
             ),
             MappingEntry(
@@ -35,10 +38,12 @@ object TransliterationMappingRepository {
                 teluguScript = "ఆ",
                 punjabiScript = "ਆ",
                 malayalamScript = "ആ",
+                tamilScript = "ஆ",
                 hindiMatra = "ा",
                 teluguMatra = "ా",
                 punjabiMatra = "ਾ",
                 malayalamMatra = "ാ",
+                tamilMatra = "ா",
                 description = "Long 'a' sound"
             ),
             MappingEntry(
@@ -183,6 +188,7 @@ object TransliterationMappingRepository {
                 teluguScript = "క",
                 punjabiScript = "ਕ",
                 malayalamScript = "ക",
+                tamilScript = "க",
                 description = "Unvoiced velar stop"
             ),
             MappingEntry(
@@ -191,6 +197,7 @@ object TransliterationMappingRepository {
                 teluguScript = "ఖ",
                 punjabiScript = "ਖ",
                 malayalamScript = "ഖ",
+                tamilScript = "க",
                 description = "Aspirated unvoiced velar stop"
             ),
             MappingEntry(
@@ -199,6 +206,7 @@ object TransliterationMappingRepository {
                 teluguScript = "గ",
                 punjabiScript = "ਗ",
                 malayalamScript = "ഗ",
+                tamilScript = "க",
                 description = "Voiced velar stop"
             ),
             MappingEntry(
@@ -207,6 +215,7 @@ object TransliterationMappingRepository {
                 teluguScript = "ఘ",
                 punjabiScript = "ਘ",
                 malayalamScript = "ഘ",
+                tamilScript = "க",
                 description = "Aspirated voiced velar stop"
             ),
             MappingEntry(
@@ -215,6 +224,7 @@ object TransliterationMappingRepository {
                 teluguScript = "ఙ",
                 punjabiScript = "ਙ",
                 malayalamScript = "ങ",
+                tamilScript = "ங",
                 description = "Nasal velar stop"
             ),
 
@@ -225,6 +235,7 @@ object TransliterationMappingRepository {
                 teluguScript = "చ",
                 punjabiScript = "ਚ",
                 malayalamScript = "ച",
+                tamilScript = "ச",
                 description = "Unvoiced palatal stop"
             ),
             MappingEntry(
@@ -233,6 +244,7 @@ object TransliterationMappingRepository {
                 teluguScript = "ఛ",
                 punjabiScript = "ਛ",
                 malayalamScript = "ഛ",
+                tamilScript = "ச",
                 description = "Aspirated unvoiced palatal stop"
             ),
             MappingEntry(
@@ -241,6 +253,7 @@ object TransliterationMappingRepository {
                 teluguScript = "జ",
                 punjabiScript = "ਜ",
                 malayalamScript = "ജ",
+                tamilScript = "ஜ",
                 description = "Voiced palatal stop"
             ),
             MappingEntry(
@@ -522,19 +535,7 @@ object TransliterationMappingRepository {
      * Returns mappings for numbers and special symbols
      */
     fun getSpecialSymbols(): List<MappingEntry> {
-        return listOf(
-            // Numbers
-            MappingEntry("0", "०", "౦", "੦", "൦"),
-            MappingEntry("1", "१", "౧", "੧", "൧"),
-            MappingEntry("2", "२", "౨", "੨", "൨"),
-            MappingEntry("3", "३", "౩", "੩", "൩"),
-            MappingEntry("4", "४", "౪", "੪", "൪"),
-            MappingEntry("5", "५", "౫", "੫", "൫"),
-            MappingEntry("6", "६", "౬", "੬", "൬"),
-            MappingEntry("7", "७", "౭", "੭", "൭"),
-            MappingEntry("8", "८", "౮", "੮", "൮"),
-            MappingEntry("9", "९", "౯", "੯", "൯"),
-            
+        return listOf(            
             // Punctuation
             MappingEntry(".", ".", ".", ".", "."),
             MappingEntry(",", ",", ",", ",", ","),
@@ -663,7 +664,79 @@ object TransliterationMappingRepository {
             MappingEntry("please", "प्लीज़", "దయచేసి"),
             MappingEntry("sorry", "सॉरी", "క్షమించండి"),
             MappingEntry("yes", "हाँ", "అవును"),
-            MappingEntry("ok", "ओके", "సరే")
+            MappingEntry("ok", "ओके", "సరే"),
+            
+            // Street/Shop Sign Common Words
+            MappingEntry("shop", "शॉप", "షాప్", "ਸ਼ਾਪ", "ഷോപ്പ്", "ஷாப்"),
+            MappingEntry("store", "स्टोर", "స్టోర్", "ਸਟੋਰ", "സ്റ്റോർ", "ஸ்டோர்"),
+            MappingEntry("open", "खुला", "తెరిచారు", "ਖੁੱਲ੍ਹਾ", "തുറന്നു", "திறந்து"),
+            MappingEntry("closed", "बंद", "మూసివేసాయి", "ਬੰਦ", "അടച്ചു", "மூடியது"),
+            MappingEntry("hotel", "होटल", "హోటల్", "ਹੋਟਲ", "ഹോട്ടൽ", "ஹோட்டல்"),
+            MappingEntry("restaurant", "रेस्टोरेंट", "రెస్టారెంట్", "ਰੈਸਟੋਰੈਂਟ", "റെസ്റ്റോറന്റ്", "ரெஸ்டாரண்ட்"),
+            MappingEntry("cafe", "कैफे", "కేఫ్", "ਕੈਫ਼ੇ", "കഫേ", "கஃபே"),
+            MappingEntry("bank", "बैंक", "బ్యాంక్", "ਬੈਂਕ", "ബാങ്ക്", "வங்கி"),
+            MappingEntry("atm", "एटीएम", "ఏటీఎం", "ਏਟੀਐਮ", "എടിഎം", "ஏடிஎம்"),
+            MappingEntry("hospital", "अस्पताल", "ఆసుపత్రి", "ਹਸਪਤਾਲ", "ആശുപത്രി", "மருத்துவமனை"),
+            MappingEntry("clinic", "क्लिनिक", "క్లినిక్", "ਕਲੀਨਿਕ", "ക്ലിനിക്", "கிளினிக்"),
+            MappingEntry("pharmacy", "फार्मेसी", "ఫార్మసీ", "ਫਾਰਮੇਸੀ", "ഫാർമസി", "மருந்தகம்"),
+            MappingEntry("medical", "मेडिकल", "మెడికల్", "ਮੈਡੀਕਲ", "മെഡിക്കൽ", "மருத்துவ"),
+            MappingEntry("market", "बाज़ार", "మార్కెట్", "ਬਾਜ਼ਾਰ", "മാർക്കറ്റ്", "சந்தை"),
+            MappingEntry("mall", "मॉल", "మాల్", "ਮਾਲ", "മാൾ", "மால்"),
+            MappingEntry("parking", "पार्किंग", "పార్కింగ్", "ਪਾਰਕਿੰਗ", "പാർക്കിംഗ്", "பார்க்கிங்"),
+            MappingEntry("entry", "प्रवेश", "ప్రవేశం", "ਐਂਟਰੀ", "എൻട്രി", "நுழைவு"),
+            MappingEntry("exit", "निकास", "నిష్క్రమణ", "ਐਗਜ਼ਿਟ", "എക്സിറ്റ്", "வெளியேறு"),
+            MappingEntry("entrance", "प्रवेश", "ప్రవేశద్వారం", "ਪ੍ਰਵੇਸ਼", "പ്രവേശനം", "நுழைவாயில்"),
+            MappingEntry("school", "स्कूल", "పాఠశాల", "ਸਕੂਲ", "സ്കൂൾ", "பள்ளி"),
+            MappingEntry("college", "कॉलेज", "కళాశాల", "ਕਾਲਜ", "കോളേജ്", "கல்லூரி"),
+            MappingEntry("office", "ऑफिस", "కార్యాలయం", "ਦਫ਼ਤਰ", "ഓഫീസ്", "அலுவலகம்"),
+            MappingEntry("police", "पुलिस", "పోలీసు", "ਪੁਲਿਸ", "പോലീസ്", "காவல்துறை"),
+            MappingEntry("station", "स्टेशन", "స్టేషన్", "ਸਟੇਸ਼ਨ", "സ്റ്റേഷൻ", "நிலையம்"),
+            MappingEntry("bus", "बस", "బస్", "ਬੱਸ", "ബസ്", "பேருந்து"),
+            MappingEntry("taxi", "टैक्सी", "టాక్సీ", "ਟੈਕਸੀ", "ടാക്സി", "டாக்ஸி"),
+            MappingEntry("petrol", "पेट्रोल", "పెట్రోల్", "ਪੈਟਰੋਲ", "പെട്രോൾ", "பெட்ரோல்"),
+            MappingEntry("gas", "गैस", "గ్యాస్", "ਗੈਸ", "ഗ്യാസ്", "எரிவாயு"),
+            MappingEntry("food", "खाना", "ఆహారం", "ਖਾਣਾ", "ഭക്ഷണം", "உணவு"),
+            MappingEntry("drink", "पीना", "పానీయం", "ਪੀਣਾ", "പാനീയം", "பானம்"),
+            MappingEntry("tea", "चाय", "టీ", "ਚਾਹ", "ചായ", "தேநீர்"),
+            MappingEntry("coffee", "कॉफी", "కాఫీ", "ਕਾਫ਼ੀ", "കോഫി", "காபி"),
+            MappingEntry("breakfast", "नाश्ता", "అల్పాహారం", "ਨਾਸ਼ਤਾ", "പ്രഭാതഭക്ഷണം", "காலை உணவு"),
+            MappingEntry("lunch", "दोपहर का खाना", "మధ్యాహ్న భోజనం", "ਦੁਪਹਿਰ ਦਾ ਖਾਣਾ", "ഉച്ചഭക്ഷണം", "மதிய உணவு"),
+            MappingEntry("dinner", "रात का खाना", "రాత్రి భోజనం", "ਰਾਤ ਦਾ ਖਾਣਾ", "അത്താഴം", "இரவு உணவு"),
+            MappingEntry("bakery", "बेकरी", "బేకరీ", "ਬੇਕਰੀ", "ബേക്കറി", "பேக்கரி"),
+            MappingEntry("grocery", "किराना", "కిరాణా", "ਕਿਰਾਨਾ", "പലചരക്ക്", "மளிகை"),
+            MappingEntry("vegetable", "सब्जी", "కూరగాయ", "ਸਬਜ਼ੀ", "പച്ചക്കറി", "காய்கறி"),
+            MappingEntry("fruit", "फल", "పండు", "ਫਲ", "പഴം", "பழம்"),
+            MappingEntry("meat", "मांस", "మాంసం", "ਮੀਟ", "മാംസം", "இறைச்சி"),
+            MappingEntry("fish", "मछली", "చేప", "ਮੱਛੀ", "മത്സ്യം", "மீன்"),
+            MappingEntry("chicken", "चिकन", "చికెన్", "ਚਿਕਨ", "ചിക്കൻ", "கோழி"),
+            MappingEntry("price", "कीमत", "ధర", "ਕੀਮਤ", "വില", "விலை"),
+            MappingEntry("sale", "बिक्री", "అమ్మకం", "ਵਿਕਰੀ", "വില്പന", "விற்பனை"),
+            MappingEntry("discount", "छूट", "డిస్కౌంట్", "ਛੋਟ", "കിഴിവ്", "தள்ளுபடி"),
+            MappingEntry("offer", "ऑफर", "ఆఫర్", "ਪੇਸ਼ਕਸ਼", "ഓഫർ", "சலுகை"),
+            MappingEntry("free", "मुफ्त", "ఉచితం", "ਮੁਫ਼ਤ", "സൗജന്യം", "இலவசம்"),
+            MappingEntry("new", "नया", "కొత్త", "ਨਵਾਂ", "പുതിയ", "புதிய"),
+            MappingEntry("old", "पुराना", "పాత", "ਪੁਰਾਣਾ", "പഴയ", "பழைய"),
+            MappingEntry("fresh", "ताज़ा", "తాజా", "ਤਾਜ਼ਾ", "പുതിയ", "புதிய"),
+            MappingEntry("hot", "गर्म", "వేడి", "ਗਰਮ", "ചൂട്", "சூடான"),
+            MappingEntry("cold", "ठंडा", "చల్లని", "ਠੰਡਾ", "തണുത്ത", "குளிர்"),
+            MappingEntry("toilet", "शौचालय", "టాయిలెట్", "ਟਾਇਲਟ", "ടോയ്ലറ്റ്", "கழிப்பறை"),
+            MappingEntry("washroom", "वॉशरूम", "వాష్రూమ్", "ਵਾਸ਼ਰੂਮ", "വാഷ്റൂം", "கழிவறை"),
+            MappingEntry("bathroom", "बाथरूम", "బాత్రూమ్", "ਬਾਥਰੂਮ", "ബാത്ത്റൂം", "குளியலறை"),
+            MappingEntry("temple", "मंदिर", "ఆలయం", "ਮੰਦਰ", "ക്ഷേത്രം", "கோயில்"),
+            MappingEntry("church", "चर्च", "చర్చి", "ਚਰਚ", "പള്ളി", "தேவாலயம்"),
+            MappingEntry("mosque", "मस्जिद", "మసీదు", "ਮਸਜਿਦ", "പള്ളി", "மசூதி"),
+            MappingEntry("salon", "सैलून", "సెలూన్", "ਸੈਲੂਨ", "സലൂൺ", "சலூன்"),
+            MappingEntry("barber", "नाई", "క్షురకుడు", "ਨਾਈ", "നാപിത്", "முடிதிருத்துபவர்"),
+            MappingEntry("laundry", "धोबी", "లాండ్రీ", "ਧੋਬੀ", "അലക്കുകാരൻ", "சலவை"),
+            MappingEntry("tailor", "दर्जी", "దర్జీ", "ਦਰਜ਼ੀ", "തയ്യൽക്കാരൻ", "தையல்காரர்"),
+            MappingEntry("repair", "मरम्मत", "రిపేర్", "ਮੁਰੰਮਤ", "റിപ്പയർ", "பழுதுபார்"),
+            MappingEntry("service", "सेवा", "సేవ", "ਸੇਵਾ", "സേവനം", "சேவை"),
+            MappingEntry("center", "केंद्र", "కేంద్రం", "ਕੇਂਦਰ", "കേന്ദ്രം", "மையம்"),
+            MappingEntry("reception", "रिसेप्शन", "రిసెప్షన్", "ਰਿਸੈਪਸ਼ਨ", "റിസപ്ഷൻ", "வரவேற்பு"),
+            MappingEntry("counter", "काउंटर", "కౌంటర్", "ਕਾਊਂਟਰ", "കൗണ്ടർ", "கவுண்டர்"),
+            MappingEntry("cash", "नकद", "నగదు", "ਨਕਦ", "പണം", "பணம்"),
+            MappingEntry("card", "कार्ड", "కార్డు", "ਕਾਰਡ", "കാർഡ്", "அட்டை"),
+            MappingEntry("payment", "भुगतान", "చెల్లింపు", "ਭੁਗਤਾਨ", "പണമടയ്ക്കൽ", "கட்டணம்")
         )
     }
 

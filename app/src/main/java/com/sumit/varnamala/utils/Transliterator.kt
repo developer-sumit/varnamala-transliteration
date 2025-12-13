@@ -9,8 +9,9 @@ object Transliterator {
         const val TELUGU = "te"
         const val PUNJABI = "pa"
         const val MALAYALAM = "ml"
+        const val TAMIL = "ta"
 
-        val ALL = listOf(ENGLISH, HINDI, TELUGU, PUNJABI, MALAYALAM)
+        val ALL = listOf(ENGLISH, HINDI, TELUGU, PUNJABI, MALAYALAM, TAMIL)
 
         fun getDisplayName(code: String): String = when (code) {
             ENGLISH -> "English"
@@ -18,6 +19,7 @@ object Transliterator {
             TELUGU -> "Telugu"
             PUNJABI -> "Punjabi"
             MALAYALAM -> "Malayalam"
+            TAMIL -> "Tamil"
             else -> code.uppercase()
         }
     }
@@ -52,6 +54,7 @@ object Transliterator {
             "telugu", "te" -> englishToTelugu(latinText)
             "punjabi", "pa", "gurmukhi" -> englishToPunjabi(latinText)
             "malayalam", "ml" -> englishToMalayalam(latinText)
+            "tamil", "ta" -> englishToTamil(latinText)
             else -> latinText
         }
     }
@@ -294,16 +297,30 @@ object Transliterator {
         return transliterateToScript(lowerText, englishToMalayalamMap)
     }
 
+    private fun englishToTamil(text: String): String {
+        val lowerText = text.lowercase()
+        val englishToTamilMap = mutableMapOf<String, String>()
+
+        allMappings.forEach { entry ->
+            entry.tamilScript?.let {
+                englishToTamilMap[entry.englishRoman.lowercase()] = it
+            }
+        }
+
+        return transliterateToScript(lowerText, englishToTamilMap)
+    }
+
     fun getSupportedTargetLanguages(sourceLanguage: String?): List<String> {
         if (sourceLanguage == null) return emptyList()
 
-        // We support conversion from any language to English, Hindi, Telugu, Punjabi, and Malayalam
+        // We support conversion from any language to English, Hindi, Telugu, Punjabi, Malayalam, and Tamil
         return listOf(
             Languages.ENGLISH,
             Languages.HINDI,
             Languages.TELUGU,
             Languages.PUNJABI,
-            Languages.MALAYALAM
+            Languages.MALAYALAM,
+            Languages.TAMIL
         )
     }
 }

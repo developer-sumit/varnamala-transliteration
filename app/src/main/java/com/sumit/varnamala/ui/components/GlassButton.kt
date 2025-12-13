@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 fun GlassButton(
     text: String? = null,
     icon: Painter? = null,
-    size: Dp = 56.dp,
+    size: Dp = 60.dp,
     textColor: Color? = null,
     background: Color? = null,
     onClick: () -> Unit,

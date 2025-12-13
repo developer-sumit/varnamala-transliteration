@@ -11,6 +11,7 @@ composeBom = "2025.09.00"
 cameraX = "1.5.2"
 accompanistPermissions = "0.36.0"
 navigationCompose = "2.9.6"
+tesseract4androidOpenmp = "4.9.0"
 textRecognition = "16.0.1"
 coil = "2.7.0"
 datastore = "1.2.0"
@@ -38,6 +39,7 @@ androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", 
 
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+tesseract4android-openmp = { module = "cz.adaptech.tesseract4android:tesseract4android-openmp", version.ref = "tesseract4androidOpenmp" }
 text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "textRecognition" }
 text-recognition-devanagari = { module = "com.google.mlkit:text-recognition-devanagari", version.ref = "textRecognition" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }

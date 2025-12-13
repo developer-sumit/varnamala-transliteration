@@ -18,13 +18,67 @@ object AppLanguageRepository {
                 flagEmoji = "🇺🇸"
             ),
             Language(
+                code = "asm",
+                name = "Assamese",
+                nativeName = "অসমীয়া",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "ben",
+                name = "Bengali",
+                nativeName = "বাংলা",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "guj",
+                name = "Gujarati",
+                nativeName = "ગુજરાતી",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
                 code = "hi",
                 name = "Hindi",
                 nativeName = "हिन्दी",
                 flagEmoji = "🇮🇳"
             ),
             Language(
-                code = "te",
+                code = "kan",
+                name = "Kannada",
+                nativeName = "ಕನ್ನಡ",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "mal",
+                name = "Malayalam",
+                nativeName = "മലയാളം",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "mar",
+                name = "Marathi",
+                nativeName = "मराठी",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "ori",
+                name = "Odia",
+                nativeName = "ଓଡ଼ିଆ",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "pan",
+                name = "Punjabi",
+                nativeName = "ਪੰਜਾਬੀ",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "tam",
+                name = "Tamil",
+                nativeName = "தமிழ்",
+                flagEmoji = "🇮🇳"
+            ),
+            Language(
+                code = "tel",
                 name = "Telugu",
                 nativeName = "తెలుగు",
                 flagEmoji = "🇮🇳"

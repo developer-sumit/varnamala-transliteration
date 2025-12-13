@@ -71,6 +71,9 @@ dependencies {
     implementation(libs.text.recognition)
     implementation(libs.text.recognition.devanagari)
 
+    // Tesseract OCR for offline text recognition
+    implementation(libs.tesseract4android.openmp)
+
     // CameraX
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

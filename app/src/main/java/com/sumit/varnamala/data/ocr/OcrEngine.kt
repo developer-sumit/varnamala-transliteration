@@ -7,5 +7,10 @@ enum class OcrEngine {
      */
     ML_KIT,
 
+    /**
+     * Tesseract OCR engine - offline open-source OCR
+     */
+    TESSERACT,
+
     CUSTOM
 }
