@@ -73,12 +73,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.VerticalDivider
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val context = LocalContext.current
+    val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
     var meta by remember { mutableStateOf<ImageMeta?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val cacheRepository = remember { OCRCacheRepository(context) }
@@ -94,7 +94,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var languageConfidence by remember { mutableFloatStateOf(0f) }
     var lastResult by remember { mutableStateOf<OCRResult?>(null) }
     var showClearAllDialog by remember { mutableStateOf(false) }
-    var showInfoDialog by remember { mutableStateOf(false) }
     var showDisplayOptionsDialog by remember { mutableStateOf(false) }
     var showDetectionOptionsDialog by remember { mutableStateOf(false) }
     var showImageDetailsDialog by remember { mutableStateOf(false) }
@@ -156,225 +155,141 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             setResult = { lastResult = it })
     }
 
-    Column(Modifier.fillMaxSize()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(
-                    vertical = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding(),
-                    horizontal = 16.dp
-                ),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            GlassButton(
-                icon = painterResource(R.drawable.ic_chevron_left),
-                size = 52.dp,
-                onClick = { navController.popBackStack() })
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Image details button
-                GlassButton(
-                    icon = painterResource(R.drawable.ic_info),
-                    size = 52.dp,
-                    onClick = { showImageDetailsDialog = true })
-
-                // Display options button
-                GlassButton(
-                    icon = painterResource(R.drawable.ic_image_outline),
-                    size = 52.dp,
-                    onClick = { showDisplayOptionsDialog = true })
-            }
-        }
-
+    Box(Modifier.fillMaxSize()) {
         meta?.let { m ->
             val targetUri = ContentUris.withAppendedId(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId
             )
             val aspectRatio =
                 if (m.width != null && m.height != null && m.height != 0) m.width.toFloat() / m.height.toFloat() else 1f
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(16.dp)
-            ) {
-                val transformableState =
-                    rememberTransformableState { zoomChange, offsetChange, _ ->
-                        scale = (scale * zoomChange).coerceIn(1f, 5f)
-                        offset += offsetChange
-                    }
+            val transformableState =
+                rememberTransformableState { zoomChange, offsetChange, _ ->
+                    scale = (scale * zoomChange).coerceIn(1f, 5f)
+                    offset += offsetChange
+                }
 
-                Box(
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .aspectRatio(aspectRatio)) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context).data(targetUri).crossfade(true)
+                        .build(),
+                    contentDescription = null,
                     modifier = Modifier
                         .fillMaxSize()
                         .aspectRatio(aspectRatio)
-                        .clip(RoundedCornerShape(20.dp))
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context).data(targetUri).crossfade(true)
-                            .build(),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .border(
-                                color = MaterialTheme.colorScheme.onSurface,
-                                width = 2.dp,
-                                shape = RoundedCornerShape(20.dp)
-                            )
-                            .clip(RoundedCornerShape(20.dp))
-                            .graphicsLayer(
-                                scaleX = scale,
-                                scaleY = scale,
-                                translationX = offset.x,
-                                translationY = offset.y,
-                                rotationZ = rotation
-                            )
-                            .transformable(state = transformableState)
-                            .onGloballyPositioned { coordinates ->
-                                imageSize = coordinates.size
-                            },
-                        contentScale = ContentScale.Fit
-                    )
-
-                    OCROverlayCanvas(
-                        result = lastResult,
-                        containerSize = imageSize,
-                        showBoundingBoxes = showBoundingBoxes,
-                        showTextOverlay = showTextOverlay,
-                        showWordBoundingBoxes = showWordBoundingBoxes,
-                        showLineBoundingBoxes = showLineBoundingBoxes,
-                        showBlockBoundingBoxes = showBlockBoundingBoxes,
-                        textBackgroundOpacity = textBackgroundOpacity,
-                        boundingBoxStrokeWidth = boundingBoxStrokeWidth,
-                        enableTextCopy = true,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .aspectRatio(aspectRatio)
-                            .clip(RoundedCornerShape(20.dp))
-                            .graphicsLayer(
-                                scaleX = scale,
-                                scaleY = scale,
-                                translationX = offset.x,
-                                translationY = offset.y,
-                                rotationZ = rotation
-                            )
-                    )
-                }
-
-                // Language Selection Row
-                LanguageSelectionRow(
-                    sourceLanguage = selectedSourceLanguage,
-                    targetLanguage = selectedTargetLanguage,
-                    onSourceLanguageClick = { showSourceLanguageDialog = true },
-                    onTargetLanguageClick = { showTargetLanguageDialog = true },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) 16.dp else 80.dp)
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale,
+                            translationX = offset.x,
+                            translationY = offset.y,
+                            rotationZ = rotation
+                        )
+                        .transformable(state = transformableState)
+                        .onGloballyPositioned { coordinates ->
+                            imageSize = coordinates.size
+                        },
+                    contentScale = ContentScale.Fit
                 )
 
-                if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) {
-                    val transliteratedText = selectedTargetLanguage?.let { targetLang ->
-                        if (rawOcrText.isNotBlank()) {
-                            Transliterator.transliterate(
-                                text = rawOcrText,
-                                sourceLanguage = detectedLanguage,
-                                targetLanguage = targetLang.code
-                            )
-                        } else rawOcrText
-                    } ?: rawOcrText
-
-                    OCRInfoCard(
-                        ocrLoading = ocrLoading,
-                        ocrError = ocrError,
-                        rawOcrText = rawOcrText,
-                        transliteratedText = transliteratedText,
-                        onCopy = {
-                            val clip = ClipData.newPlainText(
-                                context.getString(R.string.ocr_text),
-                                rawOcrText
-                            )
-                            ClipboardManager::class.java.cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
-                                ?.setPrimaryClip(clip)
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                    )
-                }
+                OCROverlayCanvas(
+                    result = lastResult,
+                    containerSize = imageSize,
+                    showBoundingBoxes = showBoundingBoxes,
+                    showTextOverlay = showTextOverlay,
+                    showWordBoundingBoxes = showWordBoundingBoxes,
+                    showLineBoundingBoxes = showLineBoundingBoxes,
+                    showBlockBoundingBoxes = showBlockBoundingBoxes,
+                    textBackgroundOpacity = textBackgroundOpacity,
+                    boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+                    enableTextCopy = true,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .aspectRatio(aspectRatio)
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale,
+                            translationX = offset.x,
+                            translationY = offset.y,
+                            rotationZ = rotation
+                        )
+                )
             }
         }
 
-        // Zoom and Rotation Controls
-        Card(
+        Row(
             modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f)
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                .fillMaxWidth()
+                .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Zoom Out
-                IconButton(
-                    onClick = {
-                        scale = (scale / 1.2f).coerceAtLeast(1f)
-                    },
-                    enabled = scale > 1f
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_zoom_out),
-                        contentDescription = stringResource(R.string.zoom_out),
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+            GlassButton(
+                icon = painterResource(R.drawable.ic_chevron_left),
+                size = 45.dp,
+                onClick = { navController.popBackStack() })
 
-                // Zoom indicator
-                Text(
-                    text = "${(scale * 100).toInt()}%",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.widthIn(min = 40.dp),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Image details button
+                GlassButton(
+                    icon = painterResource(R.drawable.ic_info),
+                    size = 45.dp,
+                    onClick = { showImageDetailsDialog = true })
 
-                // Zoom In
-                IconButton(
-                    onClick = {
-                        scale = (scale * 1.2f).coerceAtMost(5f)
-                    },
-                    enabled = scale < 5f
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_zoom_in),
-                        contentDescription = stringResource(R.string.zoom_in),
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                VerticalDivider(
-                    modifier = Modifier.height(32.dp),
-                    color = MaterialTheme.colorScheme.outline
-                )
-
-                // Rotate
-                IconButton(
-                    onClick = {
-                        rotation = (rotation + 90f) % 360f
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_rotate_right),
-                        contentDescription = stringResource(R.string.rotate_90),
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                // Display options button
+                GlassButton(
+                    icon = painterResource(R.drawable.ic_image_outline),
+                    size = 45.dp,
+                    onClick = { showDisplayOptionsDialog = true })
             }
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(bottom = topInset * 3),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (ocrLoading || ocrError != null || rawOcrText.isNotBlank() || lastResult != null) {
+                val transliteratedText = selectedTargetLanguage?.let { targetLang ->
+                    if (rawOcrText.isNotBlank()) {
+                        Transliterator.transliterate(
+                            text = rawOcrText,
+                            sourceLanguage = detectedLanguage,
+                            targetLanguage = targetLang.code
+                        )
+                    } else rawOcrText
+                } ?: rawOcrText
+
+                OCRInfoCard(
+                    ocrLoading = ocrLoading,
+                    ocrError = ocrError,
+                    rawOcrText = rawOcrText,
+                    transliteratedText = transliteratedText,
+                    onCopy = {
+                        val clip = ClipData.newPlainText(
+                            context.getString(R.string.ocr_text),
+                            rawOcrText
+                        )
+                        ClipboardManager::class.java.cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
+                            ?.setPrimaryClip(clip)
+                    },
+                )
+            }
+
+            LanguageSelectionRow(
+                sourceLanguage = selectedSourceLanguage,
+                targetLanguage = selectedTargetLanguage,
+                onSourceLanguageClick = { showSourceLanguageDialog = true },
+                onTargetLanguageClick = { showTargetLanguageDialog = true },
+            )
+
+//            GlassButton(
+//                icon = painterResource(R.drawable.ic_settings_outline),
+//                background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+//                onClick = { rotation = (rotation + 90f) % 360f })
         }
     }
 
@@ -667,9 +582,7 @@ private suspend fun runOCRWithCache(
     setLang: (String) -> Unit,
     setResult: (OCRResult) -> Unit
 ) {
-    val enableCacheStorage = settingsRepository?.enableCacheStorage?.let { flow ->
-        flow.first()
-    } ?: true
+    val enableCacheStorage = settingsRepository?.enableCacheStorage?.first() ?: true
 
     if (!forceRefresh && enableCacheStorage) {
         repository.getCachedResult(imageId)?.let { cached ->
@@ -743,12 +656,7 @@ private suspend fun runOCRWithCache(
                 }
             }
 
-            // Get image dimensions for proper bounding box scaling
-            // Use the existing suspend helper `loadImageMeta` which accepts a ContentResolver
-            val uri =
-                ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
             val imageMeta = loadImageMeta(context.contentResolver, imageId)
-
             setResult(
                 OCRResult(
                     text = cached.text,
@@ -761,6 +669,7 @@ private suspend fun runOCRWithCache(
             return
         }
     }
+
     setLoading(true)
     setError(null)
     try {

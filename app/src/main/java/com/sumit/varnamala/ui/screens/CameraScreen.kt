@@ -1,9 +1,5 @@
 package com.sumit.varnamala.ui.screens
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.graphics.Bitmap
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.OCRInfoCard
@@ -21,6 +17,10 @@ import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.AppLanguageRepository
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
@@ -72,7 +72,6 @@ fun CameraScreen(navController: NavController) {
     var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
     var selectedTargetLanguage by remember { mutableStateOf(availableLanguages.firstOrNull { it.code == "hi" }) }
 
-    // Initialize ViewModel
     LaunchedEffect(Unit) {
         try {
             ocrViewModel.initialize()
@@ -176,13 +175,28 @@ fun CameraScreen(navController: NavController) {
                 }
             })
 
-        // Bottom section - always visible
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GlassButton(
+                icon = painterResource(R.drawable.ic_settings_outline),
+                background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                onClick = { navController.navigate(Screen.Settings.route) })
+        }
+
+        // Bottom section
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
+                .padding(bottom = topInset),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // OCR Result Card - only show when there's content
+            // OCR Result Card
             if (rawOcrText.isNotBlank() || errorMessage != null) {
                 val targetLang = selectedTargetLanguage
                 val transliteratedText = if (targetLang != null) {
@@ -211,13 +225,11 @@ fun CameraScreen(navController: NavController) {
                 )
             }
 
-            // Language Selection Row
             LanguageSelectionRow(
                 sourceLanguage = selectedSourceLanguage,
                 targetLanguage = selectedTargetLanguage,
                 onSourceLanguageClick = { showSourceLanguageDialog = true },
-                onTargetLanguageClick = { showTargetLanguageDialog = true },
-                modifier = Modifier.padding(horizontal = 0.dp, vertical = 8.dp)
+                onTargetLanguageClick = { showTargetLanguageDialog = true }
             )
 
             // Bottom controls
@@ -232,7 +244,9 @@ fun CameraScreen(navController: NavController) {
                 GlassButton(
                     icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
                         R.drawable.ic_flash_off_outline
-                    ), onClick = { flashEnabled = !flashEnabled }
+                    ),
+                    size = 60.dp,
+                    onClick = { flashEnabled = !flashEnabled }
                 )
 
                 // Capture button
@@ -282,6 +296,7 @@ fun CameraScreen(navController: NavController) {
                 // Gallery button
                 GlassButton(
                     icon = painterResource(R.drawable.ic_image_outline),
+                    size = 60.dp,
                     onClick = { navController.navigate(Screen.Gallery.route) }
                 )
             }
@@ -344,7 +359,7 @@ fun CameraScreen(navController: NavController) {
                                 )
                             } else rawOcrText
                         } ?: rawOcrText
-                        
+
                         OCRInfoCard(
                             ocrLoading = capturedImageProcessing,
                             ocrError = errorMessage,

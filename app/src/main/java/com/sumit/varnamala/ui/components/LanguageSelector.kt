@@ -1,5 +1,8 @@
 package com.sumit.varnamala.ui.components
 
+import com.sumit.varnamala.data.Language
+import com.sumit.varnamala.data.AppLanguageRepository
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,25 +11,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.sumit.varnamala.data.Language
-import com.sumit.varnamala.data.AppLanguageRepository
 
-/**
- * Google Lens-style language selector
- * Horizontal row with: [Source Language] -> [Target Language]
- */
 @Composable
 fun LanguageSelectionRow(
     sourceLanguage: Language?,
@@ -35,49 +34,46 @@ fun LanguageSelectionRow(
     onTargetLanguageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
-        tonalElevation = 2.dp
+            .fillMaxWidth(0.8f)
+            .clip(RoundedCornerShape(100.dp))
+            .background(MaterialTheme.colorScheme.surface),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
+        // Source Language Button
+        LanguageButton(
+            language = sourceLanguage,
+            label = "Detect",
+            onClick = onSourceLanguageClick,
             modifier = Modifier
-                .padding(8.dp)
-                .height(48.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Source Language Button
-            LanguageButton(
-                language = sourceLanguage,
-                label = "Detect",
-                onClick = onSourceLanguageClick,
-                modifier = Modifier.weight(1f)
-            )
+                .weight(1f)
+                .clip(RoundedCornerShape(100.dp, 0.dp, 0.dp, 100.dp))
+        )
 
-            // Arrow Icon
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "To",
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .size(20.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
+        // Arrow Icon
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = "To",
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .size(30.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
 
-            // Target Language Button
-            LanguageButton(
-                language = targetLanguage,
-                label = "Translate",
-                onClick = onTargetLanguageClick,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        // Target Language Button
+        LanguageButton(
+            language = targetLanguage,
+            label = "Translate",
+            onClick = onTargetLanguageClick,
+            modifier = Modifier
+                .weight(1f)
+                .clip(RoundedCornerShape(0.dp, 100.dp, 100.dp, 0.dp))
+        )
     }
 }
+
 
 @Composable
 private fun LanguageButton(
@@ -86,40 +82,33 @@ private fun LanguageButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Surface(
+    Row(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 1.dp
+            .clickable(onClick = onClick)
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            if (language != null) {
-                Text(
-                    text = language.flagEmoji,
-                    fontSize = 18.sp,
-                    modifier = Modifier.padding(end = 6.dp)
-                )
-                Text(
-                    text = language.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1
-                )
-            } else {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Medium
-                )
-            }
+        if (language != null) {
+            Text(
+                text = language.flagEmoji,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(end = 6.dp)
+            )
+            Text(
+                text = language.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1
+            )
+        } else {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

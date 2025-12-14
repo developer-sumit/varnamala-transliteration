@@ -22,13 +22,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun GlassButton(
+    modifier: Modifier = Modifier,
     text: String? = null,
     icon: Painter? = null,
-    size: Dp = 60.dp,
+    size: Dp = 50.dp,
+    iconSize: Dp = 24.dp,
     textColor: Color? = null,
     background: Color? = null,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -50,7 +51,7 @@ fun GlassButton(
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(iconSize)
                     .clip(CircleShape)
             )
         }
