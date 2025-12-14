@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">বর্ণমালা</string>
+
+    <string name="stop">থামুন</string>
+    <string name="start">শুরু করুন</string>
+
+    <string name="dark_mode">ডার্ক মোড</string>
+    <string name="language">ভাষা</string>
+    <string name="terms_of_service">পরিষেবার শর্তাবলী</string>
+    <string name="privacy_policy">গোপনীয়তা নীতি</string>
+
+    <string name="grant_permission">অনুমতি দিন</string>
+    <string name="open_settings">সেটিংস খুলুন</string>
+    <string name="camera_permission_required">ক্যামেরা অনুমতি প্রয়োজন</string>
+    <string name="camera_permission_description">রিয়েল-টাইমে টেক্সট সনাক্ত করতে আমাদের আপনার ক্যামেরায় অ্যাক্সেস প্রয়োজন।</string>
+    <string name="camera_permission_denied_description">ক্যামেরা অনুমতি স্থায়ীভাবে অস্বীকার করা হয়েছে।</string>
+    <string name="camera_permission_allow_hint">চালিয়ে যেতে অনুগ্রহ করে সেটিংসে এটি সক্ষম করুন।</string>
+    <string name="media_permission_required">মিডিয়া অনুমতি প্রয়োজন</string>
+    <string name="media_permission_description">গ্যালারিতে ছবি প্রদর্শন করতে আমাদের আপনার ছবিতে অ্যাক্সেস প্রয়োজন।</string>
+    <string name="media_permission_denied_description">মিডিয়া অনুমতি স্থায়ীভাবে অস্বীকার করা হয়েছে।</string>
+    <string name="media_permission_allow_hint">চালিয়ে যেতে সিস্টেম সেটিংসে অনুমতি সক্ষম করুন।</string>
+    <string name="overlay_permission_required">অ্যাপের উপর প্রদর্শন অনুমতি প্রয়োজন</string>
+    <string name="overlay_permission_description">অন্যান্য অ্যাপের উপরে ওভারলে উইন্ডো প্রদর্শন করতে আমাদের অনুমতি প্রয়োজন।</string>
+    <string name="overlay_permission_denied_description">অ্যাপের উপর প্রদর্শন অনুমতি অস্বীকার করা হয়েছে।</string>
+    <string name="overlay_permission_allow_hint">এই বৈশিষ্ট্য ব্যবহার করতে অনুগ্রহ করে সেটিংসে এটি সক্ষম করুন।</string>
+
+    <string name="clear_cache">ক্যাশে সাফ করুন</string>
+    <string name="gallery">গ্যালারি</string>
+    <string name="done">সম্পন্ন</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">নিশ্চিত করুন</string>
+    <string name="cancel">বাতিল করুন</string>
+    <string name="close">বন্ধ করুন</string>
+    <string name="retry">পুনরায় চেষ্টা করুন</string>
+    <string name="copy">কপি করুন</string>
+    <string name="share">শেয়ার করুন</string>
+    <string name="refresh">রিফ্রেশ করুন</string>
+    <string name="clear">সাফ করুন</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR টেক্সট</string>
+    <string name="clear_all_ocr_cache">সমস্ত OCR ক্যাশে সাফ করুন</string>
+    <string name="clear_cache_confirmation">এটি সমস্ত ছবির জন্য ক্যাশে করা OCR সরিয়ে দেবে। চালিয়ে যাবেন?</string>
+    <string name="clear_cache_confirmation_settings">আপনি কি সত্যিই সমস্ত ক্যাশে করা OCR ডেটা সাফ করতে চান? এই ক্রিয়াটি পূর্বাবস্থায় ফেরানো যাবে না।</string>
+    <string name="detect_again">আবার সনাক্ত করুন</string>
+    <string name="clear_all">সব সাফ করুন</string>
+    <string name="language_detection">ভাষা সনাক্তকরণ</string>
+    <string name="ocr_actions">OCR ক্রিয়া</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">বাউন্ডিং বক্স দেখান</string>
+    <string name="text_blocks">টেক্সট ব্লক</string>
+    <string name="text_lines">টেক্সট লাইন</string>
+    <string name="words">শব্দ</string>
+    <string name="bounding_box_width">বাউন্ডিং বক্স প্রস্থ: %dpx</string>
+    <string name="show_text_overlay">টেক্সট ওভারলে দেখান</string>
+    <string name="text_background_opacity">টেক্সট পটভূমি অস্বচ্ছতা: %d%%</string>
+    <string name="enable_cache_storage">ক্যাশে স্টোরেজ সক্ষম করুন</string>
+    <string name="enable_cache_storage_hint">দ্রুত লোডিংয়ের জন্য OCR সনাক্তকরণ ফলাফল সংরক্ষণ করুন</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">স্ক্যানার সেটিংস</string>
+    <string name="detection_interval">সনাক্তকরণ ব্যবধান</string>
+    <string name="reading_time_per_word">প্রতি শব্দে পড়ার সময়</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR স্ক্রিন</string>
+    <string name="browse_gallery">গ্যালারি ব্রাউজ করুন</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">জুম আউট</string>
+    <string name="zoom_in">জুম ইন</string>
+    <string name="rotate_90">90° ঘোরান</string>
+    <string name="reset_view">ভিউ রিসেট করুন</string>
+    <string name="copied">কপি করা হয়েছে</string>
+    <string name="select_language">ভাষা নির্বাচন করুন</string>
+    <string name="selected">নির্বাচিত</string>
+    <string name="back">পিছনে</string>
+    <string name="captured_image">ক্যাপচার করা ছবি</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">ছবির বিবরণ</string>
+    <string name="ocr_result">OCR ফলাফল</string>
+    <string name="original">মূল</string>
+    <string name="transliterated">লিপ্যন্তরিত</string>
+    <string name="display_options">প্রদর্শন বিকল্প</string>
+    <string name="detection_options">সনাক্তকরণ বিকল্প</string>
+    <string name="ocr_status">OCR স্ট্যাটাস</string>
+    <string name="ocr_results">OCR ফলাফল</string>
+    <string name="no_text_detected">ছবিতে কোনো টেক্সট পাওয়া যায়নি</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ভাষা পরিবর্তন করা হয়েছে। পরিবর্তন দেখতে অনুগ্রহ করে অ্যাপ পুনরায় চালু করুন।</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ওভারলে সেটিংস</string>
+    <string name="enable_overlay">ওভারলে সক্ষম করুন</string>
+    <string name="overlay_enabled">ওভারলে সক্ষম আছে</string>
+    <string name="overlay_disabled">ওভারলে নিষ্ক্রিয় আছে</string>
+    <string name="start_overlay">ওভারলে শুরু করুন</string>
+    <string name="stop_overlay">ওভারলে থামুন</string>
+</resources>

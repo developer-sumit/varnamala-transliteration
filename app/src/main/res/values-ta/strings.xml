@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">வர்ணமாலா</string>
+
+    <string name="stop">நிறுத்து</string>
+    <string name="start">தொடங்கு</string>
+
+    <string name="dark_mode">இருண்ட பயன்முறை</string>
+    <string name="language">மொழி</string>
+    <string name="terms_of_service">சேவை விதிமுறைகள்</string>
+    <string name="privacy_policy">தனியுரிமைக் கொள்கை</string>
+
+    <string name="grant_permission">அனுமதி வழங்கு</string>
+    <string name="open_settings">அமைப்புகளைத் திற</string>
+    <string name="camera_permission_required">கேமரா அனுமதி தேவை</string>
+    <string name="camera_permission_description">நிகழ்நேரத்தில் உரையைக் கண்டறிய உங்கள் கேமராவுக்கான அணுகல் எங்களுக்குத் தேவை.</string>
+    <string name="camera_permission_denied_description">கேமரா அனுமதி நிரந்தரமாக மறுக்கப்பட்டது.</string>
+    <string name="camera_permission_allow_hint">தொடர அமைப்புகளில் இதை இயக்கவும்.</string>
+    <string name="media_permission_required">மீடியா அனுமதி தேவை</string>
+    <string name="media_permission_description">கேலரியில் படங்களைக் காட்ட உங்கள் படங்களுக்கான அணுகல் எங்களுக்குத் தேவை.</string>
+    <string name="media_permission_denied_description">மீடியா அனுமதி நிரந்தரமாக மறுக்கப்பட்டது.</string>
+    <string name="media_permission_allow_hint">தொடர கணினி அமைப்புகளில் அனுமதியை இயக்கவும்.</string>
+    <string name="overlay_permission_required">பயன்பாடுகளின் மேல் காட்சி அனுமதி தேவை</string>
+    <string name="overlay_permission_description">பிற பயன்பாடுகளின் மேல் மேலடுக்கு சாளரத்தைக் காட்ட எங்களுக்கு அனுமதி தேவை.</string>
+    <string name="overlay_permission_denied_description">பயன்பாடுகளின் மேல் காட்சி அனுமதி மறுக்கப்பட்டது.</string>
+    <string name="overlay_permission_allow_hint">இந்த அம்சத்தைப் பயன்படுத்த அமைப்புகளில் இதை இயக்கவும்.</string>
+
+    <string name="clear_cache">தற்காலிக சேமிப்பை அழி</string>
+    <string name="gallery">கேலரி</string>
+    <string name="done">முடிந்தது</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">உறுதிப்படுத்து</string>
+    <string name="cancel">ரத்துசெய்</string>
+    <string name="close">மூடு</string>
+    <string name="retry">மீண்டும் முயற்சி செய்</string>
+    <string name="copy">நகலெடு</string>
+    <string name="share">பகிர்</string>
+    <string name="refresh">புதுப்பி</string>
+    <string name="clear">அழி</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR உரை</string>
+    <string name="clear_all_ocr_cache">அனைத்து OCR தற்காலிக சேமிப்பையும் அழி</string>
+    <string name="clear_cache_confirmation">இது அனைத்து படங்களுக்கான தற்காலிக OCR ஐ அகற்றும். தொடரவா?</string>
+    <string name="clear_cache_confirmation_settings">அனைத்து தற்காலிக OCR தரவையும் அழிக்க விரும்புகிறீர்களா? இந்த செயலை செயல்தவிர்க்க முடியாது.</string>
+    <string name="detect_again">மீண்டும் கண்டறி</string>
+    <string name="clear_all">அனைத்தையும் அழி</string>
+    <string name="language_detection">மொழி கண்டறிதல்</string>
+    <string name="ocr_actions">OCR செயல்கள்</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">எல்லைப் பெட்டிகளைக் காட்டு</string>
+    <string name="text_blocks">உரைத் தொகுதிகள்</string>
+    <string name="text_lines">உரை வரிகள்</string>
+    <string name="words">சொற்கள்</string>
+    <string name="bounding_box_width">எல்லைப் பெட்டி அகலம்: %dpx</string>
+    <string name="show_text_overlay">உரை மேலடுக்கைக் காட்டு</string>
+    <string name="text_background_opacity">உரை பின்னணி ஒளிபுகாமை: %d%%</string>
+    <string name="enable_cache_storage">தற்காலிக சேமிப்பை இயக்கு</string>
+    <string name="enable_cache_storage_hint">விரைவான ஏற்றத்திற்கு OCR கண்டறிதல் முடிவுகளைச் சேமி</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">ஸ்கேனர் அமைப்புகள்</string>
+    <string name="detection_interval">கண்டறிதல் இடைவெளி</string>
+    <string name="reading_time_per_word">ஒரு சொல்லுக்கான வாசிப்பு நேரம்</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR திரை</string>
+    <string name="browse_gallery">கேலரியை உலாவு</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">சிறிதாக்கு</string>
+    <string name="zoom_in">பெரிதாக்கு</string>
+    <string name="rotate_90">90° சுழற்று</string>
+    <string name="reset_view">காட்சியை மீட்டமை</string>
+    <string name="copied">நகலெடுக்கப்பட்டது</string>
+    <string name="select_language">மொழியைத் தேர்ந்தெடு</string>
+    <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
+    <string name="back">பின்னால்</string>
+    <string name="captured_image">கைப்பற்றப்பட்ட படம்</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">படத் தகவல்கள்</string>
+    <string name="ocr_result">OCR முடிவு</string>
+    <string name="original">அசல்</string>
+    <string name="transliterated">எழுத்துபெயர்ப்பு</string>
+    <string name="display_options">காட்சி விருப்பங்கள்</string>
+    <string name="detection_options">கண்டறிதல் விருப்பங்கள்</string>
+    <string name="ocr_status">OCR நிலை</string>
+    <string name="ocr_results">OCR முடிவுகள்</string>
+    <string name="no_text_detected">படத்தில் உரை எதுவும் கண்டறியப்படவில்லை</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">மொழி மாற்றப்பட்டது. மாற்றங்களைப் பார்க்க பயன்பாட்டை மீண்டும் தொடங்கவும்.</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">மேலடுக்கு அமைப்புகள்</string>
+    <string name="enable_overlay">மேலடுக்கை இயக்கு</string>
+    <string name="overlay_enabled">மேலடுக்கு இயக்கப்பட்டது</string>
+    <string name="overlay_disabled">மேலடுக்கு முடக்கப்பட்டது</string>
+    <string name="start_overlay">மேலடுக்கை தொடங்கு</string>
+    <string name="stop_overlay">மேலடுக்கை நிறுத்து</string>
+</resources>

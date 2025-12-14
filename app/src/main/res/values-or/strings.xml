@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ବର୍ଣ୍ଣମାଳା</string>
+
+    <string name="stop">ବନ୍ଦ କରନ୍ତୁ</string>
+    <string name="start">ଆରମ୍ଭ କରନ୍ତୁ</string>
+
+    <string name="dark_mode">ଡାର୍କ ମୋଡ୍</string>
+    <string name="language">ଭାଷା</string>
+    <string name="terms_of_service">ସେବା ସର୍ତ୍ତାବଳୀ</string>
+    <string name="privacy_policy">ଗୋପନୀୟତା ନୀତି</string>
+
+    <string name="grant_permission">ଅନୁମତି ଦିଅନ୍ତୁ</string>
+    <string name="open_settings">ସେଟିଂସ୍ ଖୋଲନ୍ତୁ</string>
+    <string name="camera_permission_required">କ୍ୟାମେରା ଅନୁମତି ଆବଶ୍ୟକ</string>
+    <string name="camera_permission_description">ରିଏଲ୍-ଟାଇମ୍‌ରେ ଟେକ୍ସଟ୍ ଚିହ୍ନଟ କରିବା ପାଇଁ ଆମକୁ ଆପଣଙ୍କ କ୍ୟାମେରାର ଆକ୍ସେସ୍ ଆବଶ୍ୟକ।</string>
+    <string name="camera_permission_denied_description">କ୍ୟାମେରା ଅନୁମତି ସ୍ଥାୟୀ ଭାବରେ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି।</string>
+    <string name="camera_permission_allow_hint">ଜାରି ରଖିବା ପାଇଁ ଦୟାକରି ସେଟିଂସ୍‌ରେ ଏହାକୁ ସକ୍ଷମ କରନ୍ତୁ।</string>
+    <string name="media_permission_required">ମିଡିଆ ଅନୁମତି ଆବଶ୍ୟକ</string>
+    <string name="media_permission_description">ଗ୍ୟାଲେରୀରେ ଚିତ୍ର ପ୍ରଦର୍ଶନ କରିବା ପାଇଁ ଆମକୁ ଆପଣଙ୍କ ଚିତ୍ରଗୁଡିକର ଆକ୍ସେସ୍ ଆବଶ୍ୟକ।</string>
+    <string name="media_permission_denied_description">ମିଡିଆ ଅନୁମତି ସ୍ଥାୟୀ ଭାବରେ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି।</string>
+    <string name="media_permission_allow_hint">ଜାରି ରଖିବା ପାଇଁ ସିସ୍ଟମ୍ ସେଟିଂସ୍‌ରେ ଅନୁମତି ସକ୍ଷମ କରନ୍ତୁ।</string>
+    <string name="overlay_permission_required">ଆପ୍‌ଗୁଡିକ ଉପରେ ପ୍ରଦର୍ଶନ ଅନୁମତି ଆବଶ୍ୟକ</string>
+    <string name="overlay_permission_description">ଅନ୍ୟ ଆପ୍‌ଗୁଡିକ ଉପରେ ଓଭରଲେ ୱିଣ୍ଡୋ ପ୍ରଦର୍ଶନ କରିବା ପାଇଁ ଆମକୁ ଅନୁମତି ଆବଶ୍ୟକ।</string>
+    <string name="overlay_permission_denied_description">ଆପ୍‌ଗୁଡିକ ଉପରେ ପ୍ରଦର୍ଶନ ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି।</string>
+    <string name="overlay_permission_allow_hint">ଏହି ବୈଶିଷ୍ଟ୍ୟ ବ୍ୟବହାର କରିବା ପାଇଁ ଦୟାକରି ସେଟିଂସ୍‌ରେ ଏହାକୁ ସକ୍ଷମ କରନ୍ତୁ।</string>
+
+    <string name="clear_cache">କ୍ୟାଶ୍ ସଫା କରନ୍ତୁ</string>
+    <string name="gallery">ଗ୍ୟାଲେରୀ</string>
+    <string name="done">ସମ୍ପୂର୍ଣ୍ଣ</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">ନିଶ୍ଚିତ କରନ୍ତୁ</string>
+    <string name="cancel">ବାତିଲ କରନ୍ତୁ</string>
+    <string name="close">ବନ୍ଦ କରନ୍ତୁ</string>
+    <string name="retry">ପୁନଃ ଚେଷ୍ଟା କରନ୍ତୁ</string>
+    <string name="copy">କପି କରନ୍ତୁ</string>
+    <string name="share">ସେୟାର କରନ୍ତୁ</string>
+    <string name="refresh">ରିଫ୍ରେସ୍ କରନ୍ତୁ</string>
+    <string name="clear">ସଫା କରନ୍ତୁ</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR ଟେକ୍ସଟ୍</string>
+    <string name="clear_all_ocr_cache">ସମସ୍ତ OCR କ୍ୟାଶ୍ ସଫା କରନ୍ତୁ</string>
+    <string name="clear_cache_confirmation">ଏହା ସମସ୍ତ ଚିତ୍ର ପାଇଁ କ୍ୟାଶ୍ କରାଯାଇଥିବା OCR କୁ ହଟାଇବ। ଜାରି ରଖିବେ?</string>
+    <string name="clear_cache_confirmation_settings">ଆପଣ ନିଶ୍ଚିତ ଭାବରେ ସମସ୍ତ କ୍ୟାଶ୍ କରାଯାଇଥିବା OCR ଡାଟା ସଫା କରିବାକୁ ଚାହୁଁଛନ୍ତି କି? ଏହି କାର୍ଯ୍ୟକୁ ପୂର୍ବବତ କରାଯାଇପାରିବ ନାହିଁ।</string>
+    <string name="detect_again">ପୁନଃ ଚିହ୍ନଟ କରନ୍ତୁ</string>
+    <string name="clear_all">ସବୁ ସଫା କରନ୍ତୁ</string>
+    <string name="language_detection">ଭାଷା ଚିହ୍ନଟ</string>
+    <string name="ocr_actions">OCR କାର୍ଯ୍ୟଗୁଡିକ</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">ସୀମା ବାକ୍ସ ଦେଖାନ୍ତୁ</string>
+    <string name="text_blocks">ଟେକ୍ସଟ୍ ବ୍ଲକ୍</string>
+    <string name="text_lines">ଟେକ୍ସଟ୍ ଲାଇନ୍</string>
+    <string name="words">ଶବ୍ଦଗୁଡିକ</string>
+    <string name="bounding_box_width">ସୀମା ବାକ୍ସ ଓସାର: %dpx</string>
+    <string name="show_text_overlay">ଟେକ୍ସଟ୍ ଓଭରଲେ ଦେଖାନ୍ତୁ</string>
+    <string name="text_background_opacity">ଟେକ୍ସଟ୍ ପୃଷ୍ଠଭୂମି ଅସ୍ପଷ୍ଟତା: %d%%</string>
+    <string name="enable_cache_storage">କ୍ୟାଶ୍ ଷ୍ଟୋରେଜ୍ ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="enable_cache_storage_hint">ଦ୍ରୁତ ଲୋଡିଂ ପାଇଁ OCR ଚିହ୍ନଟ ଫଳାଫଳ ସଂରକ୍ଷଣ କରନ୍ତୁ</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">ସ୍କାନର୍ ସେଟିଂସ୍</string>
+    <string name="detection_interval">ଚିହ୍ନଟ ବ୍ୟବଧାନ</string>
+    <string name="reading_time_per_word">ପ୍ରତି ଶବ୍ଦ ପାଇଁ ପଢିବା ସମୟ</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR ସ୍କ୍ରୀନ୍</string>
+    <string name="browse_gallery">ଗ୍ୟାଲେରୀ ବ୍ରାଉଜ୍ କରନ୍ତୁ</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">ଜୁମ୍ ଆଉଟ୍</string>
+    <string name="zoom_in">ଜୁମ୍ ଇନ୍</string>
+    <string name="rotate_90">90° ଘୂର୍ଣ୍ଣନ କରନ୍ତୁ</string>
+    <string name="reset_view">ଦୃଶ୍ୟ ରିସେଟ୍ କରନ୍ତୁ</string>
+    <string name="copied">କପି କରାଯାଇଛି</string>
+    <string name="select_language">ଭାଷା ବାଛନ୍ତୁ</string>
+    <string name="selected">ବାଛାଯାଇଛି</string>
+    <string name="back">ପଛକୁ</string>
+    <string name="captured_image">କ୍ୟାପଚର କରାଯାଇଥିବା ଚିତ୍ର</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">ଚିତ୍ର ବିବରଣୀ</string>
+    <string name="ocr_result">OCR ଫଳାଫଳ</string>
+    <string name="original">ମୂଳ</string>
+    <string name="transliterated">ଲିପ୍ୟନ୍ତରିତ</string>
+    <string name="display_options">ପ୍ରଦର୍ଶନ ବିକଳ୍ପଗୁଡିକ</string>
+    <string name="detection_options">ଚିହ୍ନଟ ବିକଳ୍ପଗୁଡିକ</string>
+    <string name="ocr_status">OCR ସ୍ଥିତି</string>
+    <string name="ocr_results">OCR ଫଳାଫଳଗୁଡିକ</string>
+    <string name="no_text_detected">ଚିତ୍ରରେ କୌଣସି ଟେକ୍ସଟ୍ ମିଳିଲା ନାହିଁ</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ଭାଷା ପରିବର୍ତ୍ତନ କରାଯାଇଛି। ପରିବର୍ତ୍ତନଗୁଡିକ ଦେଖିବା ପାଇଁ ଦୟାକରି ଆପ୍ ପୁନଃଆରମ୍ଭ କରନ୍ତୁ।</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ଓଭରଲେ ସେଟିଂସ୍</string>
+    <string name="enable_overlay">ଓଭରଲେ ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="overlay_enabled">ଓଭରଲେ ସକ୍ଷମ କରାଯାଇଛି</string>
+    <string name="overlay_disabled">ଓଭରଲେ ଅକ୍ଷମ କରାଯାଇଛି</string>
+    <string name="start_overlay">ଓଭରଲେ ଆରମ୍ଭ କରନ୍ତୁ</string>
+    <string name="stop_overlay">ଓଭରଲେ ବନ୍ଦ କରନ୍ତୁ</string>
+</resources>

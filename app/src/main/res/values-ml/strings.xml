@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">വര്‍ണമാല</string>
+
+    <string name="stop">നിർത്തുക</string>
+    <string name="start">ആരംഭിക്കുക</string>
+
+    <string name="dark_mode">ഡാർക്ക് മോഡ്</string>
+    <string name="language">ഭാഷ</string>
+    <string name="terms_of_service">സേവന നിബന്ധനകൾ</string>
+    <string name="privacy_policy">സ്വകാര്യതാ നയം</string>
+
+    <string name="grant_permission">അനുമതി നൽകുക</string>
+    <string name="open_settings">ക്രമീകരണങ്ങൾ തുറക്കുക</string>
+    <string name="camera_permission_required">ക്യാമറ അനുമതി ആവശ്യമാണ്</string>
+    <string name="camera_permission_description">തത്സമയം വാചകം കണ്ടെത്താൻ നിങ്ങളുടെ ക്യാമറയിലേക്ക് പ്രവേശനം ആവശ്യമാണ്.</string>
+    <string name="camera_permission_denied_description">ക്യാമറ അനുമതി ശാശ്വതമായി നിരസിച്ചു.</string>
+    <string name="camera_permission_allow_hint">തുടരാൻ ദയവായി ക്രമീകരണങ്ങളിൽ ഇത് പ്രവർത്തനക്ഷമമാക്കുക.</string>
+    <string name="media_permission_required">മീഡിയ അനുമതി ആവശ്യമാണ്</string>
+    <string name="media_permission_description">ഗാലറിയിൽ ചിത്രങ്ങൾ പ്രദർശിപ്പിക്കാൻ നിങ്ങളുടെ ചിത്രങ്ങളിലേക്ക് പ്രവേശനം ആവശ്യമാണ്.</string>
+    <string name="media_permission_denied_description">മീഡിയ അനുമതി ശാശ്വതമായി നിരസിച്ചു.</string>
+    <string name="media_permission_allow_hint">തുടരാൻ സിസ്റ്റം ക്രമീകരണങ്ങളിൽ അനുമതി പ്രവർത്തനക്ഷമമാക്കുക.</string>
+    <string name="overlay_permission_required">ആപ്പുകളുടെ മുകളിൽ പ്രദർശിപ്പിക്കാനുള്ള അനുമതി ആവശ്യമാണ്</string>
+    <string name="overlay_permission_description">മറ്റ് ആപ്പുകളുടെ മുകളിൽ ഓവർലേ വിൻഡോകൾ പ്രദർശിപ്പിക്കാൻ അനുമതി ആവശ്യമാണ്.</string>
+    <string name="overlay_permission_denied_description">ആപ്പുകളുടെ മുകളിൽ പ്രദർശിപ്പിക്കാനുള്ള അനുമതി നിരസിച്ചു.</string>
+    <string name="overlay_permission_allow_hint">ഈ സവിശേഷത ഉപയോഗിക്കാൻ ദയവായി ക്രമീകരണങ്ങളിൽ ഇത് പ്രവർത്തനക്ഷമമാക്കുക.</string>
+
+    <string name="clear_cache">കാഷെ മായ്ക്കുക</string>
+    <string name="gallery">ഗാലറി</string>
+    <string name="done">പൂർത്തിയായി</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">സ്ഥിരീകരിക്കുക</string>
+    <string name="cancel">റദ്ദാക്കുക</string>
+    <string name="close">അടയ്ക്കുക</string>
+    <string name="retry">വീണ്ടും ശ്രമിക്കുക</string>
+    <string name="copy">പകർത്തുക</string>
+    <string name="share">പങ്കിടുക</string>
+    <string name="refresh">പുതുക്കുക</string>
+    <string name="clear">മായ്ക്കുക</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR വാചകം</string>
+    <string name="clear_all_ocr_cache">എല്ലാ OCR കാഷെയും മായ്ക്കുക</string>
+    <string name="clear_cache_confirmation">ഇത് എല്ലാ ചിത്രങ്ങൾക്കുമുള്ള കാഷെ ചെയ്ത OCR നീക്കം ചെയ്യും. തുടരണോ?</string>
+    <string name="clear_cache_confirmation_settings">നിങ്ങൾ എല്ലാ കാഷെ ചെയ്ത OCR ഡാറ്റയും മായ്ക്കാൻ ആഗ്രഹിക്കുന്നുണ്ടോ? ഈ പ്രവർത്തനം പഴയപടിയാക്കാൻ കഴിയില്ല.</string>
+    <string name="detect_again">വീണ്ടും കണ്ടെത്തുക</string>
+    <string name="clear_all">എല്ലാം മായ്ക്കുക</string>
+    <string name="language_detection">ഭാഷ കണ്ടെത്തൽ</string>
+    <string name="ocr_actions">OCR പ്രവർത്തനങ്ങൾ</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">ബൗണ്ടിംഗ് ബോക്സുകൾ കാണിക്കുക</string>
+    <string name="text_blocks">വാചക ബ്ലോക്കുകൾ</string>
+    <string name="text_lines">വാചക വരികൾ</string>
+    <string name="words">വാക്കുകൾ</string>
+    <string name="bounding_box_width">ബൗണ്ടിംഗ് ബോക്സ് വീതി: %dpx</string>
+    <string name="show_text_overlay">വാചക ഓവർലേ കാണിക്കുക</string>
+    <string name="text_background_opacity">വാചക പശ്ചാത്തല അതാര്യത: %d%%</string>
+    <string name="enable_cache_storage">കാഷെ സംഭരണം പ്രവർത്തനക്ഷമമാക്കുക</string>
+    <string name="enable_cache_storage_hint">വേഗത്തിലുള്ള ലോഡിംഗിനായി OCR കണ്ടെത്തൽ ഫലങ്ങൾ സംഭരിക്കുക</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">സ്കാനർ ക്രമീകരണങ്ങൾ</string>
+    <string name="detection_interval">കണ്ടെത്തൽ ഇടവേള</string>
+    <string name="reading_time_per_word">ഓരോ വാക്കിനും വായിക്കാനുള്ള സമയം</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR സ്ക്രീൻ</string>
+    <string name="browse_gallery">ഗാലറി ബ്രൗസ് ചെയ്യുക</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">സൂം ഔട്ട്</string>
+    <string name="zoom_in">സൂം ഇൻ</string>
+    <string name="rotate_90">90° തിരിക്കുക</string>
+    <string name="reset_view">കാഴ്ച റീസെറ്റ് ചെയ്യുക</string>
+    <string name="copied">പകർത്തി</string>
+    <string name="select_language">ഭാഷ തിരഞ്ഞെടുക്കുക</string>
+    <string name="selected">തിരഞ്ഞെടുത്തു</string>
+    <string name="back">പിന്നോട്ട്</string>
+    <string name="captured_image">പകർത്തിയ ചിത്രം</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">ചിത്ര വിശദാംശങ്ങൾ</string>
+    <string name="ocr_result">OCR ഫലം</string>
+    <string name="original">യഥാർത്ഥം</string>
+    <string name="transliterated">ലിപ്യന്തരണം</string>
+    <string name="display_options">പ്രദർശന ഓപ്ഷനുകൾ</string>
+    <string name="detection_options">കണ്ടെത്തൽ ഓപ്ഷനുകൾ</string>
+    <string name="ocr_status">OCR നില</string>
+    <string name="ocr_results">OCR ഫലങ്ങൾ</string>
+    <string name="no_text_detected">ചിത്രത്തിൽ വാചകം കണ്ടെത്തിയില്ല</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ഭാഷ മാറ്റി. മാറ്റങ്ങൾ കാണാൻ ദയവായി ആപ്പ് പുനരാരംഭിക്കുക.</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ഓവർലേ ക്രമീകരണങ്ങൾ</string>
+    <string name="enable_overlay">ഓവർലേ പ്രവർത്തനക്ഷമമാക്കുക</string>
+    <string name="overlay_enabled">ഓവർലേ പ്രവർത്തനക്ഷമമാക്കി</string>
+    <string name="overlay_disabled">ഓവർലേ പ്രവർത്തനരഹിതമാക്കി</string>
+    <string name="start_overlay">ഓവർലേ ആരംഭിക്കുക</string>
+    <string name="stop_overlay">ഓവർലേ നിർത്തുക</string>
+</resources>

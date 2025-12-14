@@ -20,6 +20,10 @@
     <string name="media_permission_description">ਗੈਲਰੀ ਵਿੱਚ ਤਸਵੀਰਾਂ ਪ੍ਰਦਰਸ਼ਿਤ ਕਰਨ ਲਈ ਸਾਨੂੰ ਤੁਹਾਡੀਆਂ ਤਸਵੀਰਾਂ ਤੱਕ ਪਹੁੰਚ ਦੀ ਲੋੜ ਹੈ।</string>
     <string name="media_permission_denied_description">ਮੀਡੀਆ ਦੀ ਇਜਾਜ਼ਤ ਸਥਾਈ ਤੌਰ \'ਤੇ ਮਨ੍ਹਾ ਕਰ ਦਿੱਤੀ ਗਈ ਹੈ।</string>
     <string name="media_permission_allow_hint">ਜਾਰੀ ਰੱਖਣ ਲਈ ਸਿਸਟਮ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਜਾਜ਼ਤ ਨੂੰ ਸਮਰੱਥ ਬਣਾਓ।</string>
+    <string name="overlay_permission_required">ਐਪਾਂ ਉੱਤੇ ਪ੍ਰਦਰਸ਼ਨ ਇਜਾਜ਼ਤ ਚਾਹੀਦੀ ਹੈ</string>
+    <string name="overlay_permission_description">ਹੋਰ ਐਪਾਂ ਦੇ ਉੱਪਰ ਓਵਰਲੇ ਵਿੰਡੋ ਪ੍ਰਦਰਸ਼ਿਤ ਕਰਨ ਲਈ ਸਾਨੂੰ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੈ।</string>
+    <string name="overlay_permission_denied_description">ਐਪਾਂ ਉੱਤੇ ਪ੍ਰਦਰਸ਼ਨ ਇਜਾਜ਼ਤ ਮਨ੍ਹਾ ਕਰ ਦਿੱਤੀ ਗਈ ਹੈ।</string>
+    <string name="overlay_permission_allow_hint">ਇਸ ਵਿਸ਼ੇਸ਼ਤਾ ਦੀ ਵਰਤੋਂ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਇਸਨੂੰ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਸਮਰੱਥ ਬਣਾਓ।</string>
 
     <string name="clear_cache">ਕੈਸ਼ ਸਾਫ਼ ਕਰੋ</string>
     <string name="gallery">ਗੈਲਰੀ</string>
@@ -53,6 +57,8 @@
     <string name="bounding_box_width">ਬਾਉਂਡਿੰਗ ਬਾਕਸ ਚੌੜਾਈ: %dpx</string>
     <string name="show_text_overlay">ਟੈਕਸਟ ਓਵਰਲੇ ਦਿਖਾਓ</string>
     <string name="text_background_opacity">ਟੈਕਸਟ ਬੈਕਗਰਾਉਂਡ ਧੁੰਦਲਾਪਨ: %d%%</string>
+    <string name="enable_cache_storage">ਕੈਸ਼ ਸਟੋਰੇਜ ਨੂੰ ਸਮਰੱਥ ਬਣਾਓ</string>
+    <string name="enable_cache_storage_hint">ਤੇਜ਼ ਲੋਡਿੰਗ ਲਈ OCR ਖੋਜ ਨਤੀਜੇ ਸਟੋਰ ਕਰੋ</string>
     
     <!-- Camera screen -->
     <string name="scanner_settings">ਸਕੈਨਰ ਸੈਟਿੰਗਾਂ</string>
@@ -87,4 +93,12 @@
     
     <!-- Language change message -->
     <string name="language_changed_restart">ਭਾਸ਼ਾ ਬਦਲ ਗਈ। ਬਦਲਾਅ ਦੇਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਐਪ ਨੂੰ ਮੁੜ ਸ਼ੁਰੂ ਕਰੋ।</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ਓਵਰਲੇ ਸੈਟਿੰਗਾਂ</string>
+    <string name="enable_overlay">ਓਵਰਲੇ ਨੂੰ ਸਮਰੱਥ ਬਣਾਓ</string>
+    <string name="overlay_enabled">ਓਵਰਲੇ ਸਮਰੱਥ ਹੈ</string>
+    <string name="overlay_disabled">ਓਵਰਲੇ ਅਸਮਰੱਥ ਹੈ</string>
+    <string name="start_overlay">ਓਵਰਲੇ ਸ਼ੁਰੂ ਕਰੋ</string>
+    <string name="stop_overlay">ਓਵਰਲੇ ਰੋਕੋ</string>
 </resources>

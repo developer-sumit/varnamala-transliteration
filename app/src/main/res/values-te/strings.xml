@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">వర్ణమాల</string>
+
+    <string name="stop">ఆపండి</string>
+    <string name="start">ప్రారంభించండి</string>
+
+    <string name="dark_mode">డార్క్ మోడ్</string>
+    <string name="language">భాష</string>
+    <string name="terms_of_service">సేవా నిబంధనలు</string>
+    <string name="privacy_policy">గోప్యతా విధానం</string>
+
+    <string name="grant_permission">అనుమతి ఇవ్వండి</string>
+    <string name="open_settings">సెట్టింగ్‌లు తెరవండి</string>
+    <string name="camera_permission_required">కెమెరా అనుమతి అవసరం</string>
+    <string name="camera_permission_description">రియల్-టైమ్‌లో టెక్స్ట్‌ను గుర్తించడానికి మాకు మీ కెమెరాకు యాక్సెస్ అవసరం.</string>
+    <string name="camera_permission_denied_description">కెమెరా అనుమతి శాశ్వతంగా తిరస్కరించబడింది.</string>
+    <string name="camera_permission_allow_hint">కొనసాగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ప్రారంభించండి.</string>
+    <string name="media_permission_required">మీడియా అనుమతి అవసరం</string>
+    <string name="media_permission_description">గ్యాలరీలో చిత్రాలను ప్రదర్శించడానికి మాకు మీ చిత్రాలకు యాక్సెస్ అవసరం.</string>
+    <string name="media_permission_denied_description">మీడియా అనుమతి శాశ్వతంగా తిరస్కరించబడింది.</string>
+    <string name="media_permission_allow_hint">కొనసాగించడానికి సిస్టమ్ సెట్టింగ్‌లలో అనుమతిని ప్రారంభించండి.</string>
+    <string name="overlay_permission_required">యాప్‌లపై ప్రదర్శన అనుమతి అవసరం</string>
+    <string name="overlay_permission_description">ఇతర యాప్‌ల పైన ఓవర్‌లే విండోలను ప్రదర్శించడానికి మాకు అనుమతి అవసరం.</string>
+    <string name="overlay_permission_denied_description">యాప్‌లపై ప్రదర్శన అనుమతి తిరస్కరించబడింది.</string>
+    <string name="overlay_permission_allow_hint">ఈ ఫీచర్‌ను ఉపయోగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ప్రారంభించండి.</string>
+
+    <string name="clear_cache">కాష్‌ను క్లియర్ చేయండి</string>
+    <string name="gallery">గ్యాలరీ</string>
+    <string name="done">పూర్తయింది</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">నిర్ధారించండి</string>
+    <string name="cancel">రద్దు చేయండి</string>
+    <string name="close">మూసివేయండి</string>
+    <string name="retry">మళ్లీ ప్రయత్నించండి</string>
+    <string name="copy">కాపీ చేయండి</string>
+    <string name="share">షేర్ చేయండి</string>
+    <string name="refresh">రిఫ్రెష్ చేయండి</string>
+    <string name="clear">క్లియర్ చేయండి</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR టెక్స్ట్</string>
+    <string name="clear_all_ocr_cache">అన్ని OCR కాష్‌ను క్లియర్ చేయండి</string>
+    <string name="clear_cache_confirmation">ఇది అన్ని చిత్రాల కోసం కాష్ చేసిన OCR ను తొలగిస్తుంది. కొనసాగించాలా?</string>
+    <string name="clear_cache_confirmation_settings">మీరు ఖచ్చితంగా అన్ని కాష్ చేసిన OCR డేటాను క్లియర్ చేయాలనుకుంటున్నారా? ఈ చర్యను రద్దు చేయలేము.</string>
+    <string name="detect_again">మళ్లీ గుర్తించండి</string>
+    <string name="clear_all">అన్నీ క్లియర్ చేయండి</string>
+    <string name="language_detection">భాష గుర్తింపు</string>
+    <string name="ocr_actions">OCR చర్యలు</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">సరిహద్దు పెట్టెలు చూపించు</string>
+    <string name="text_blocks">టెక్స్ట్ బ్లాక్‌లు</string>
+    <string name="text_lines">టెక్స్ట్ లైన్లు</string>
+    <string name="words">పదాలు</string>
+    <string name="bounding_box_width">సరిహద్దు పెట్టె వెడల్పు: %dpx</string>
+    <string name="show_text_overlay">టెక్స్ట్ ఓవర్‌లే చూపించు</string>
+    <string name="text_background_opacity">టెక్స్ట్ నేపథ్య అస్పష్టత: %d%%</string>
+    <string name="enable_cache_storage">కాష్ స్టోరేజ్‌ను ప్రారంభించండి</string>
+    <string name="enable_cache_storage_hint">వేగవంతమైన లోడింగ్ కోసం OCR గుర్తింపు ఫలితాలను నిల్వ చేయండి</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">స్కానర్ సెట్టింగ్‌లు</string>
+    <string name="detection_interval">గుర్తింపు విరామం</string>
+    <string name="reading_time_per_word">ఒక పదానికి చదివే సమయం</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR స్క్రీన్</string>
+    <string name="browse_gallery">గ్యాలరీని బ్రౌజ్ చేయండి</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">జూమ్ అవుట్</string>
+    <string name="zoom_in">జూమ్ ఇన్</string>
+    <string name="rotate_90">90° తిప్పండి</string>
+    <string name="reset_view">వీక్షణను రీసెట్ చేయండి</string>
+    <string name="copied">కాపీ చేయబడింది</string>
+    <string name="select_language">భాషను ఎంచుకోండి</string>
+    <string name="selected">ఎంచుకోబడింది</string>
+    <string name="back">వెనుకకు</string>
+    <string name="captured_image">క్యాప్చర్ చేసిన చిత్రం</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">చిత్ర వివరాలు</string>
+    <string name="ocr_result">OCR ఫలితం</string>
+    <string name="original">అసలు</string>
+    <string name="transliterated">లిప్యంతరీకరణ</string>
+    <string name="display_options">ప్రదర్శన ఎంపికలు</string>
+    <string name="detection_options">గుర్తింపు ఎంపికలు</string>
+    <string name="ocr_status">OCR స్థితి</string>
+    <string name="ocr_results">OCR ఫలితాలు</string>
+    <string name="no_text_detected">చిత్రంలో టెక్స్ట్ కనుగొనబడలేదు</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">భాష మార్చబడింది. మార్పులను చూడటానికి దయచేసి యాప్‌ను పునఃప్రారంభించండి.</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ఓవర్‌లే సెట్టింగ్‌లు</string>
+    <string name="enable_overlay">ఓవర్‌లే ప్రారంభించండి</string>
+    <string name="overlay_enabled">ఓవర్‌లే ప్రారంభించబడింది</string>
+    <string name="overlay_disabled">ఓవర్‌లే నిలిపివేయబడింది</string>
+    <string name="start_overlay">ఓవర్‌లే ప్రారంభించండి</string>
+    <string name="stop_overlay">ఓవర్‌లే ఆపండి</string>
+</resources>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">વર્ણમાળા</string>
+
+    <string name="stop">રોકો</string>
+    <string name="start">શરૂ કરો</string>
+
+    <string name="dark_mode">ડાર્ક મોડ</string>
+    <string name="language">ભાષા</string>
+    <string name="terms_of_service">સેવાની શરતો</string>
+    <string name="privacy_policy">ગોપનીયતા નીતિ</string>
+
+    <string name="grant_permission">પરવાનગી આપો</string>
+    <string name="open_settings">સેટિંગ્સ ખોલો</string>
+    <string name="camera_permission_required">કૅમેરા પરવાનગી જરૂરી છે</string>
+    <string name="camera_permission_description">રિયલ-ટાઇમમાં ટેક્સ્ટ શોધવા માટે અમને તમારા કૅમેરાની ઍક્સેસ જરૂરી છે.</string>
+    <string name="camera_permission_denied_description">કૅમેરા પરવાનગી કાયમી ધોરણે નકારી દેવામાં આવી છે.</string>
+    <string name="camera_permission_allow_hint">ચાલુ રાખવા માટે કૃપા કરીને સેટિંગ્સમાં તેને સક્ષમ કરો.</string>
+    <string name="media_permission_required">મીડિયા પરવાનગી જરૂરી છે</string>
+    <string name="media_permission_description">ગૅલેરીમાં છબીઓ પ્રદર્શિત કરવા માટે અમને તમારી છબીઓની ઍક્સેસ જરૂરી છે.</string>
+    <string name="media_permission_denied_description">મીડિયા પરવાનગી કાયમી ધોરણે નકારી દેવામાં આવી છે.</string>
+    <string name="media_permission_allow_hint">ચાલુ રાખવા માટે સિસ્ટમ સેટિંગ્સમાં પરવાનગી સક્ષમ કરો.</string>
+    <string name="overlay_permission_required">એપ્લિકેશનો પર પ્રદર્શન પરવાનગી જરૂરી છે</string>
+    <string name="overlay_permission_description">અન્ય એપ્લિકેશનોની ઉપર ઓવરલે વિન્ડો પ્રદર્શિત કરવા માટે અમને પરવાનગી જરૂરી છે.</string>
+    <string name="overlay_permission_denied_description">એપ્લિકેશનો પર પ્રદર્શન પરવાનગી નકારી દેવામાં આવી છે.</string>
+    <string name="overlay_permission_allow_hint">આ સુવિધાનો ઉપયોગ કરવા માટે કૃપા કરીને સેટિંગ્સમાં તેને સક્ષમ કરો.</string>
+
+    <string name="clear_cache">કૅશ સાફ કરો</string>
+    <string name="gallery">ગૅલેરી</string>
+    <string name="done">થઈ ગયું</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">પુષ્ટિ કરો</string>
+    <string name="cancel">રદ કરો</string>
+    <string name="close">બંધ કરો</string>
+    <string name="retry">ફરીથી પ્રયાસ કરો</string>
+    <string name="copy">કૉપિ કરો</string>
+    <string name="share">શેર કરો</string>
+    <string name="refresh">રિફ્રેશ કરો</string>
+    <string name="clear">સાફ કરો</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR ટેક્સ્ટ</string>
+    <string name="clear_all_ocr_cache">બધો OCR કૅશ સાફ કરો</string>
+    <string name="clear_cache_confirmation">આ બધી છબીઓ માટે કૅશ થયેલ OCR દૂર કરશે. ચાલુ રાખો?</string>
+    <string name="clear_cache_confirmation_settings">શું તમે ખરેખર બધો કૅશ થયેલ OCR ડેટા સાફ કરવા માંગો છો? આ ક્રિયા પૂર્વવત્ કરી શકાશે નહીં.</string>
+    <string name="detect_again">ફરી શોધો</string>
+    <string name="clear_all">બધું સાફ કરો</string>
+    <string name="language_detection">ભાષા શોધ</string>
+    <string name="ocr_actions">OCR ક્રિયાઓ</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">બાઉન્ડિંગ બૉક્સ બતાવો</string>
+    <string name="text_blocks">ટેક્સ્ટ બ્લૉક્સ</string>
+    <string name="text_lines">ટેક્સ્ટ લાઇનો</string>
+    <string name="words">શબ્દો</string>
+    <string name="bounding_box_width">બાઉન્ડિંગ બૉક્સ પહોળાઈ: %dpx</string>
+    <string name="show_text_overlay">ટેક્સ્ટ ઓવરલે બતાવો</string>
+    <string name="text_background_opacity">ટેક્સ્ટ પૃષ્ઠભૂમિ અપારદર્શકતા: %d%%</string>
+    <string name="enable_cache_storage">કૅશ સ્ટોરેજ સક્ષમ કરો</string>
+    <string name="enable_cache_storage_hint">ઝડપી લોડિંગ માટે OCR શોધ પરિણામો સ્ટોર કરો</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">સ્કૅનર સેટિંગ્સ</string>
+    <string name="detection_interval">શોધ અંતરાલ</string>
+    <string name="reading_time_per_word">શબ્દ દીઠ વાંચન સમય</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR સ્ક્રીન</string>
+    <string name="browse_gallery">ગૅલેરી બ્રાઉઝ કરો</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">ઝૂમ આઉટ</string>
+    <string name="zoom_in">ઝૂમ ઇન</string>
+    <string name="rotate_90">90° ફેરવો</string>
+    <string name="reset_view">દૃશ્ય રીસેટ કરો</string>
+    <string name="copied">કૉપિ થયું</string>
+    <string name="select_language">ભાષા પસંદ કરો</string>
+    <string name="selected">પસંદ કર્યું</string>
+    <string name="back">પાછળ</string>
+    <string name="captured_image">કૅપ્ચર કરેલી છબી</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">છબી વિગતો</string>
+    <string name="ocr_result">OCR પરિણામ</string>
+    <string name="original">મૂળ</string>
+    <string name="transliterated">લિપ્યંતરિત</string>
+    <string name="display_options">પ્રદર્શન વિકલ્પો</string>
+    <string name="detection_options">શોધ વિકલ્પો</string>
+    <string name="ocr_status">OCR સ્થિતિ</string>
+    <string name="ocr_results">OCR પરિણામો</string>
+    <string name="no_text_detected">છબીમાં કોઈ ટેક્સ્ટ મળ્યું નથી</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ભાષા બદલાઈ ગઈ. બદલાવ જોવા માટે કૃપા કરીને એપ પુનઃપ્રારંભ કરો.</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ઓવરલે સેટિંગ્સ</string>
+    <string name="enable_overlay">ઓવરલે સક્ષમ કરો</string>
+    <string name="overlay_enabled">ઓવરલે સક્ષમ છે</string>
+    <string name="overlay_disabled">ઓવરલે અક્ષમ છે</string>
+    <string name="start_overlay">ઓવરલે શરૂ કરો</string>
+    <string name="stop_overlay">ઓવરલે રોકો</string>
+</resources>

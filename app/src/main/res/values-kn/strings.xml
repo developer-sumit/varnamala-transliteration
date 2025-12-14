@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ವರ್ಣಮಾಲೆ</string>
+
+    <string name="stop">ನಿಲ್ಲಿಸಿ</string>
+    <string name="start">ಪ್ರಾರಂಭಿಸಿ</string>
+
+    <string name="dark_mode">ಡಾರ್ಕ್ ಮೋಡ್</string>
+    <string name="language">ಭಾಷೆ</string>
+    <string name="terms_of_service">ಸೇವಾ ನಿಯಮಗಳು</string>
+    <string name="privacy_policy">ಗೋಪ್ಯತಾ ನೀತಿ</string>
+
+    <string name="grant_permission">ಅನುಮತಿ ನೀಡಿ</string>
+    <string name="open_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ</string>
+    <string name="camera_permission_required">ಕ್ಯಾಮೆರಾ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
+    <string name="camera_permission_description">ನೈಜ ಸಮಯದಲ್ಲಿ ಪಠ್ಯವನ್ನು ಪತ್ತೆಹಚ್ಚಲು ನಿಮ್ಮ ಕ್ಯಾಮೆರಾಕ್ಕೆ ಪ್ರವೇಶ ಅಗತ್ಯವಿದೆ.</string>
+    <string name="camera_permission_denied_description">ಕ್ಯಾಮೆರಾ ಅನುಮತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
+    <string name="camera_permission_allow_hint">ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
+    <string name="media_permission_required">ಮಾಧ್ಯಮ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
+    <string name="media_permission_description">ಗ್ಯಾಲರಿಯಲ್ಲಿ ಚಿತ್ರಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಿಮ್ಮ ಚಿತ್ರಗಳಿಗೆ ಪ್ರವೇಶ ಅಗತ್ಯವಿದೆ.</string>
+    <string name="media_permission_denied_description">ಮಾಧ್ಯಮ ಅನುಮತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
+    <string name="media_permission_allow_hint">ಮುಂದುವರಿಸಲು ಸಿಸ್ಟಂ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಅನುಮತಿಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
+    <string name="overlay_permission_required">ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಪ್ರದರ್ಶನ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
+    <string name="overlay_permission_description">ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಓವರ್‌ಲೇ ವಿಂಡೋಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಮಗೆ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ.</string>
+    <string name="overlay_permission_denied_description">ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಪ್ರದರ್ಶನ ಅನುಮತಿಯನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
+    <string name="overlay_permission_allow_hint">ಈ ವೈಶಿಷ್ಟ್ಯವನ್ನು ಬಳಸಲು ದಯವಿಟ್ಟು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
+
+    <string name="clear_cache">ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ</string>
+    <string name="gallery">ಗ್ಯಾಲರಿ</string>
+    <string name="done">ಮುಗಿದಿದೆ</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">ದೃಢೀಕರಿಸಿ</string>
+    <string name="cancel">ರದ್ದುಮಾಡಿ</string>
+    <string name="close">ಮುಚ್ಚಿ</string>
+    <string name="retry">ಮರುಪ್ರಯತ್ನಿಸಿ</string>
+    <string name="copy">ನಕಲಿಸಿ</string>
+    <string name="share">ಹಂಚಿಕೊಳ್ಳಿ</string>
+    <string name="refresh">ರಿಫ್ರೆಶ್ ಮಾಡಿ</string>
+    <string name="clear">ತೆರವುಗೊಳಿಸಿ</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR ಪಠ್ಯ</string>
+    <string name="clear_all_ocr_cache">ಎಲ್ಲಾ OCR ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ</string>
+    <string name="clear_cache_confirmation">ಇದು ಎಲ್ಲಾ ಚಿತ್ರಗಳಿಗೆ ಕ್ಯಾಶ್ ಮಾಡಿದ OCR ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ. ಮುಂದುವರಿಸುವುದೇ?</string>
+    <string name="clear_cache_confirmation_settings">ನೀವು ಖಚಿತವಾಗಿ ಎಲ್ಲಾ ಕ್ಯಾಶ್ ಮಾಡಿದ OCR ಡೇಟಾವನ್ನು ತೆರವುಗೊಳಿಸಲು ಬಯಸುವಿರಾ? ಈ ಕ್ರಿಯೆಯನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುವುದಿಲ್ಲ.</string>
+    <string name="detect_again">ಮತ್ತೆ ಪತ್ತೆಹಚ್ಚಿ</string>
+    <string name="clear_all">ಎಲ್ಲವನ್ನೂ ತೆರವುಗೊಳಿಸಿ</string>
+    <string name="language_detection">ಭಾಷೆ ಪತ್ತೆ</string>
+    <string name="ocr_actions">OCR ಕ್ರಿಯೆಗಳು</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">ಗಡಿ ಪೆಟ್ಟಿಗೆಗಳನ್ನು ತೋರಿಸಿ</string>
+    <string name="text_blocks">ಪಠ್ಯ ಬ್ಲಾಕ್‌ಗಳು</string>
+    <string name="text_lines">ಪಠ್ಯ ಸಾಲುಗಳು</string>
+    <string name="words">ಪದಗಳು</string>
+    <string name="bounding_box_width">ಗಡಿ ಪೆಟ್ಟಿಗೆ ಅಗಲ: %dpx</string>
+    <string name="show_text_overlay">ಪಠ್ಯ ಓವರ್‌ಲೇ ತೋರಿಸಿ</string>
+    <string name="text_background_opacity">ಪಠ್ಯ ಹಿನ್ನೆಲೆ ಅಪಾರದರ್ಶಕತೆ: %d%%</string>
+    <string name="enable_cache_storage">ಕ್ಯಾಶ್ ಸಂಗ್ರಹಣೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
+    <string name="enable_cache_storage_hint">ವೇಗದ ಲೋಡಿಂಗ್‌ಗಾಗಿ OCR ಪತ್ತೆ ಫಲಿತಾಂಶಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">ಸ್ಕ್ಯಾನರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="detection_interval">ಪತ್ತೆ ಮಧ್ಯಂತರ</string>
+    <string name="reading_time_per_word">ಪ್ರತಿ ಪದಕ್ಕೆ ಓದುವ ಸಮಯ</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR ಪರದೆ</string>
+    <string name="browse_gallery">ಗ್ಯಾಲರಿ ಬ್ರೌಸ್ ಮಾಡಿ</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">ಜೂಮ್ ಔಟ್</string>
+    <string name="zoom_in">ಜೂಮ್ ಇನ್</string>
+    <string name="rotate_90">90° ತಿರುಗಿಸಿ</string>
+    <string name="reset_view">ವೀಕ್ಷಣೆ ಮರುಹೊಂದಿಸಿ</string>
+    <string name="copied">ನಕಲಿಸಲಾಗಿದೆ</string>
+    <string name="select_language">ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="selected">ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ</string>
+    <string name="back">ಹಿಂದೆ</string>
+    <string name="captured_image">ಸೆರೆಹಿಡಿದ ಚಿತ್ರ</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">ಚಿತ್ರ ವಿವರಗಳು</string>
+    <string name="ocr_result">OCR ಫಲಿತಾಂಶ</string>
+    <string name="original">ಮೂಲ</string>
+    <string name="transliterated">ಲಿಪ್ಯಂತರಿತ</string>
+    <string name="display_options">ಪ್ರದರ್ಶನ ಆಯ್ಕೆಗಳು</string>
+    <string name="detection_options">ಪತ್ತೆ ಆಯ್ಕೆಗಳು</string>
+    <string name="ocr_status">OCR ಸ್ಥಿತಿ</string>
+    <string name="ocr_results">OCR ಫಲಿತಾಂಶಗಳು</string>
+    <string name="no_text_detected">ಚಿತ್ರದಲ್ಲಿ ಯಾವುದೇ ಪಠ್ಯ ಕಂಡುಬಂದಿಲ್ಲ</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ಭಾಷೆ ಬದಲಾಯಿಸಲಾಗಿದೆ. ಬದಲಾವಣೆಗಳನ್ನು ನೋಡಲು ದಯವಿಟ್ಟು ಅಪ್ಲಿಕೇಶನ್ ಮರುಪ್ರಾರಂಭಿಸಿ.</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ಓವರ್‌ಲೇ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="enable_overlay">ಓವರ್‌ಲೇ ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
+    <string name="overlay_enabled">ಓವರ್‌ಲೇ ಸಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ</string>
+    <string name="overlay_disabled">ಓವರ್‌ಲೇ ನಿಷ್ಕ್ರಿಯಗೊಳಿಸಲಾಗಿದೆ</string>
+    <string name="start_overlay">ಓವರ್‌ಲೇ ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="stop_overlay">ಓವರ್‌ಲೇ ನಿಲ್ಲಿಸಿ</string>
+</resources>

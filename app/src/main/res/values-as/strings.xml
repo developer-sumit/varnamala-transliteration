@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">বর্ণমালা</string>
+
+    <string name="stop">বন্ধ কৰক</string>
+    <string name="start">আৰম্ভ কৰক</string>
+
+    <string name="dark_mode">ডাৰ্ক মোড</string>
+    <string name="language">ভাষা</string>
+    <string name="terms_of_service">সেৱাৰ চৰ্তাৱলী</string>
+    <string name="privacy_policy">গোপনীয়তা নীতি</string>
+
+    <string name="grant_permission">অনুমতি দিয়ক</string>
+    <string name="open_settings">ছেটিংছ খোলক</string>
+    <string name="camera_permission_required">কেমেৰা অনুমতি প্ৰয়োজন</string>
+    <string name="camera_permission_description">ৰিয়েল-টাইমত পাঠ চিনাক্ত কৰিবলৈ আমাক আপোনাৰ কেমেৰাৰ প্ৰৱেশৰ প্ৰয়োজন।</string>
+    <string name="camera_permission_denied_description">কেমেৰা অনুমতি স্থায়ীভাৱে নাকচ কৰা হৈছে।</string>
+    <string name="camera_permission_allow_hint">অব্যাহত ৰাখিবলৈ অনুগ্ৰহ কৰি ছেটিংছত ইয়াক সক্ষম কৰক।</string>
+    <string name="media_permission_required">মিডিয়া অনুমতি প্ৰয়োজন</string>
+    <string name="media_permission_description">গেলাৰীত ছবি প্ৰদৰ্শন কৰিবলৈ আমাক আপোনাৰ ছবিসমূহৰ প্ৰৱেশৰ প্ৰয়োজন।</string>
+    <string name="media_permission_denied_description">মিডিয়া অনুমতি স্থায়ীভাৱে নাকচ কৰা হৈছে।</string>
+    <string name="media_permission_allow_hint">অব্যাহত ৰাখিবলৈ চিষ্টেম ছেটিংছত অনুমতি সক্ষম কৰক।</string>
+    <string name="overlay_permission_required">এপসমূহৰ ওপৰত প্ৰদৰ্শন অনুমতি প্ৰয়োজন</string>
+    <string name="overlay_permission_description">অন্য এপসমূহৰ ওপৰত অভাৰলে উইণ্ডো প্ৰদৰ্শন কৰিবলৈ আমাক অনুমতি প্ৰয়োজন।</string>
+    <string name="overlay_permission_denied_description">এপসমূহৰ ওপৰত প্ৰদৰ্শন অনুমতি নাকচ কৰা হৈছে।</string>
+    <string name="overlay_permission_allow_hint">এই বৈশিষ্ট্য ব্যৱহাৰ কৰিবলৈ অনুগ্ৰহ কৰি ছেটিংছত ইয়াক সক্ষম কৰক।</string>
+
+    <string name="clear_cache">কেশ্ব পৰিষ্কাৰ কৰক</string>
+    <string name="gallery">গেলাৰী</string>
+    <string name="done">সম্পন্ন</string>
+    
+    <!-- Common UI actions -->
+    <string name="confirm">নিশ্চিত কৰক</string>
+    <string name="cancel">বাতিল কৰক</string>
+    <string name="close">বন্ধ কৰক</string>
+    <string name="retry">পুনৰ চেষ্টা কৰক</string>
+    <string name="copy">কপি কৰক</string>
+    <string name="share">শ্বেয়াৰ কৰক</string>
+    <string name="refresh">ৰিফ্ৰেশ্ব কৰক</string>
+    <string name="clear">পৰিষ্কাৰ কৰক</string>
+    
+    <!-- OCR related -->
+    <string name="ocr_text">OCR পাঠ</string>
+    <string name="clear_all_ocr_cache">সকলো OCR কেশ্ব পৰিষ্কাৰ কৰক</string>
+    <string name="clear_cache_confirmation">এইটোৱে সকলো ছবিৰ বাবে কেশ্ব কৰা OCR আঁতৰাব। অব্যাহত ৰাখিবনে?</string>
+    <string name="clear_cache_confirmation_settings">আপুনি নিশ্চিতভাৱে সকলো কেশ্ব কৰা OCR ডাটা পৰিষ্কাৰ কৰিব বিচাৰে নেকি? এই কাৰ্য্য পূৰ্ববত কৰিব নোৱাৰি।</string>
+    <string name="detect_again">পুনৰ চিনাক্ত কৰক</string>
+    <string name="clear_all">সকলো পৰিষ্কাৰ কৰক</string>
+    <string name="language_detection">ভাষা চিনাক্তকৰণ</string>
+    <string name="ocr_actions">OCR কাৰ্য্য</string>
+    
+    <!-- Display options -->
+    <string name="show_bounding_boxes">সীমা বাকচ দেখুৱাওক</string>
+    <string name="text_blocks">পাঠ ব্লক</string>
+    <string name="text_lines">পাঠ শাৰী</string>
+    <string name="words">শব্দ</string>
+    <string name="bounding_box_width">সীমা বাকচৰ প্ৰস্থ: %dpx</string>
+    <string name="show_text_overlay">পাঠ অভাৰলে দেখুৱাওক</string>
+    <string name="text_background_opacity">পাঠ পৃষ্ঠভূমি স্বচ্ছতা: %d%%</string>
+    <string name="enable_cache_storage">কেশ্ব ষ্টোৰেজ সক্ষম কৰক</string>
+    <string name="enable_cache_storage_hint">দ্ৰুত লোডিংৰ বাবে OCR চিনাক্তকৰণ ফলাফল সংৰক্ষণ কৰক</string>
+    
+    <!-- Camera screen -->
+    <string name="scanner_settings">স্কেনাৰ ছেটিংছ</string>
+    <string name="detection_interval">চিনাক্তকৰণ ব্যৱধান</string>
+    <string name="reading_time_per_word">প্ৰতি শব্দৰ পঢ়া সময়</string>
+    
+    <!-- Other screens -->
+    <string name="ocr_screen">OCR স্ক্ৰীণ</string>
+    <string name="browse_gallery">গেলাৰী ব্ৰাউজ কৰক</string>
+    
+    <!-- Content descriptions -->
+    <string name="zoom_out">জুম আউট</string>
+    <string name="zoom_in">জুম ইন</string>
+    <string name="rotate_90">90° ঘূৰাওক</string>
+    <string name="reset_view">দৃশ্য ৰিছেট কৰক</string>
+    <string name="copied">কপি কৰা হৈছে</string>
+    <string name="select_language">ভাষা নিৰ্বাচন কৰক</string>
+    <string name="selected">নিৰ্বাচিত</string>
+    <string name="back">পিছলৈ</string>
+    <string name="captured_image">বন্দী কৰা ছবি</string>
+    
+    <!-- Additional UI labels -->
+    <string name="image_details">ছবিৰ বিৱৰণ</string>
+    <string name="ocr_result">OCR ফলাফল</string>
+    <string name="original">মূল</string>
+    <string name="transliterated">লিপ্যন্তৰিত</string>
+    <string name="display_options">প্ৰদৰ্শন বিকল্প</string>
+    <string name="detection_options">চিনাক্তকৰণ বিকল্প</string>
+    <string name="ocr_status">OCR স্থিতি</string>
+    <string name="ocr_results">OCR ফলাফল</string>
+    <string name="no_text_detected">ছবিত কোনো পাঠ পোৱা নগ\'ল</string>
+    
+    <!-- Language change message -->
+    <string name="language_changed_restart">ভাষা সলনি কৰা হৈছে। পৰিৱৰ্তন চাবলৈ অনুগ্ৰহ কৰি এপ পুনৰ আৰম্ভ কৰক।</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">অভাৰলে ছেটিংছ</string>
+    <string name="enable_overlay">অভাৰলে সক্ষম কৰক</string>
+    <string name="overlay_enabled">অভাৰলে সক্ষম কৰা হৈছে</string>
+    <string name="overlay_disabled">অভাৰলে নিষ্ক্ৰিয় কৰা হৈছে</string>
+    <string name="start_overlay">অভাৰলে আৰম্ভ কৰক</string>
+    <string name="stop_overlay">অভাৰলে বন্ধ কৰক</string>
+</resources>

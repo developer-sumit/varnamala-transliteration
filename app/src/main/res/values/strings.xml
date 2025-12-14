@@ -19,6 +19,10 @@
     <string name="media_permission_description">We need access to your images to display them in the gallery.</string>
     <string name="media_permission_denied_description">Media permission has been permanently denied.</string>
     <string name="media_permission_allow_hint">Enable the permission in system settings to continue.</string>
+    <string name="overlay_permission_required">Display Over Apps Permission Required</string>
+    <string name="overlay_permission_description">We need permission to display overlay windows on top of other apps.</string>
+    <string name="overlay_permission_denied_description">Display over apps permission has been denied.</string>
+    <string name="overlay_permission_allow_hint">Please enable it in settings to use this feature.</string>
 
     <string name="clear_cache">Clear Cache</string>
     <string name="gallery">Gallery</string>
@@ -52,6 +56,8 @@
     <string name="bounding_box_width">Bounding Box Width: %dpx</string>
     <string name="show_text_overlay">Show Text Overlay</string>
     <string name="text_background_opacity">Text Background Opacity: %d%%</string>
+    <string name="enable_cache_storage">Enable Cache Storage</string>
+    <string name="enable_cache_storage_hint">Store OCR detection results for faster loading</string>
     
     <!-- Camera screen -->
     <string name="scanner_settings">Scanner Settings</string>
@@ -86,4 +92,12 @@
     
     <!-- Language change message -->
     <string name="language_changed_restart">Language changed. Please restart the app to see the changes.</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">Overlay Settings</string>
+    <string name="enable_overlay">Enable Overlay</string>
+    <string name="overlay_enabled">Overlay is enabled</string>
+    <string name="overlay_disabled">Overlay is disabled</string>
+    <string name="start_overlay">Start Overlay</string>
+    <string name="stop_overlay">Stop Overlay</string>
 </resources>

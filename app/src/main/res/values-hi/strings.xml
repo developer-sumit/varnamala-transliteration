@@ -20,6 +20,10 @@
     <string name="media_permission_description">गैलरी में चित्र प्रदर्शित करने के लिए हमें आपकी छवियों तक पहुंच की आवश्यकता है।</string>
     <string name="media_permission_denied_description">मीडिया अनुमति स्थायी रूप से अस्वीकार कर दी गई है।</string>
     <string name="media_permission_allow_hint">जारी रखने के लिए सिस्टम सेटिंग्स में अनुमति सक्षम करें।</string>
+    <string name="overlay_permission_required">ऐप्स पर प्रदर्शन अनुमति आवश्यक</string>
+    <string name="overlay_permission_description">अन्य ऐप्स के ऊपर ओवरले विंडो प्रदर्शित करने के लिए हमें अनुमति चाहिए।</string>
+    <string name="overlay_permission_denied_description">ऐप्स पर प्रदर्शन अनुमति अस्वीकार कर दी गई है।</string>
+    <string name="overlay_permission_allow_hint">इस सुविधा का उपयोग करने के लिए कृपया इसे सेटिंग्स में सक्षम करें।</string>
 
     <string name="clear_cache">कैश साफ़ करें</string>
     <string name="gallery">गैलरी</string>
@@ -53,6 +57,8 @@
     <string name="bounding_box_width">बाउंडिंग बॉक्स चौड़ाई: %dpx</string>
     <string name="show_text_overlay">टेक्स्ट ओवरले दिखाएं</string>
     <string name="text_background_opacity">टेक्स्ट बैकग्राउंड अपारदर्शिता: %d%%</string>
+    <string name="enable_cache_storage">कैश स्टोरेज सक्षम करें</string>
+    <string name="enable_cache_storage_hint">तेज़ लोडिंग के लिए OCR पहचान परिणाम संग्रहीत करें</string>
     
     <!-- Camera screen -->
     <string name="scanner_settings">स्कैनर सेटिंग्स</string>
@@ -87,4 +93,12 @@
     
     <!-- Language change message -->
     <string name="language_changed_restart">भाषा बदल गई। बदलाव देखने के लिए कृपया ऐप को पुनः शुरू करें।</string>
+    
+    <!-- Overlay settings -->
+    <string name="overlay_settings">ओवरले सेटिंग्स</string>
+    <string name="enable_overlay">ओवरले सक्षम करें</string>
+    <string name="overlay_enabled">ओवरले सक्षम है</string>
+    <string name="overlay_disabled">ओवरले अक्षम है</string>
+    <string name="start_overlay">ओवरले शुरू करें</string>
+    <string name="stop_overlay">ओवरले बंद करें</string>
 </resources>

@@ -98,10 +98,10 @@ fun LanguageScreen(navController: NavController) {
                 items(availableLanguages) { language ->
                     LanguageItem(
                         language = language,
-                        isSelected = currentLanguage == language.code,
+                        isSelected = currentLanguage == language.localeCode,
                         onLanguageSelected = {
                             scope.launch {
-                                languageRepository.setAppLanguage(language.code)
+                                languageRepository.setAppLanguage(language.localeCode)
                                 navController.popBackStack()
                             }
                         }
