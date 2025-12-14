@@ -406,10 +406,8 @@ private fun processImageProxy(
             onManualLanguageRequired()
             val emptyResult = OCRResult(
                 text = "",
-                confidence = 0f,
                 language = "Unknown",
                 boundingBoxes = emptyList(),
-                processingTimeMs = System.currentTimeMillis() - startTime,
                 imageWidth = image.width,
                 imageHeight = image.height,
                 imageRotation = imageProxy.imageInfo.rotationDegrees
@@ -484,17 +482,14 @@ private fun convertToOCRResult(
     val textBlocks = mlkitResult.textBlocks.map { block ->
         TextBlock(
             text = block.text,
-            confidence = 0f,
             boundingBox = block.boundingBox ?: Rect(),
             lines = block.lines.map { line ->
                 TextLine(
                     text = line.text,
-                    confidence = line.confidence,
                     boundingBox = line.boundingBox ?: Rect(),
                     elements = line.elements.map { element ->
                         TextElement(
                             text = element.text,
-                            confidence = element.confidence,
                             boundingBox = element.boundingBox ?: Rect()
                         )
                     }
@@ -505,11 +500,8 @@ private fun convertToOCRResult(
 
     return OCRResult(
         text = mlkitResult.text,
-        confidence = textBlocks.flatMap { it.lines }.flatMap { it.elements }
-            .maxOfOrNull { it.confidence } ?: 0f,
         language = language,
         boundingBoxes = textBlocks,
-        processingTimeMs = processingTime,
         imageWidth = imageWidth,
         imageHeight = imageHeight,
         imageRotation = imageRotation
@@ -535,10 +527,8 @@ private fun processCapturedImage(
         fun handleNoText() {
             val emptyResult = OCRResult(
                 text = "",
-                confidence = 0f,
                 language = "Unknown",
                 boundingBoxes = emptyList(),
-                processingTimeMs = System.currentTimeMillis() - startTime,
                 imageWidth = image.width,
                 imageHeight = image.height,
                 imageRotation = 0

@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,7 +21,6 @@ class OCRSettingsRepository(private val context: Context) {
         val SHOW_BLOCK_BOUNDING_BOXES = booleanPreferencesKey("show_block_bounding_boxes")
         val TEXT_BACKGROUND_OPACITY = floatPreferencesKey("text_background_opacity")
         val BOUNDING_BOX_STROKE_WIDTH = floatPreferencesKey("bounding_box_stroke_width")
-        val ML_KIT_LANGUAGE = stringPreferencesKey("ml_kit_language")
         val ENABLE_CACHE_STORAGE = booleanPreferencesKey("enable_cache_storage")
     }
 
@@ -59,11 +57,6 @@ class OCRSettingsRepository(private val context: Context) {
     val boundingBoxStrokeWidth: Flow<Float> = context.ocrSettingsDataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.BOUNDING_BOX_STROKE_WIDTH] ?: 2f
-        }
-
-    val mlKitLanguage: Flow<String> = context.ocrSettingsDataStore.data
-        .map { preferences ->
-            preferences[PreferencesKeys.ML_KIT_LANGUAGE] ?: "auto"
         }
 
     val enableCacheStorage: Flow<Boolean> = context.ocrSettingsDataStore.data
@@ -110,12 +103,6 @@ class OCRSettingsRepository(private val context: Context) {
     suspend fun setBoundingBoxStrokeWidth(value: Float) {
         context.ocrSettingsDataStore.edit { preferences ->
             preferences[PreferencesKeys.BOUNDING_BOX_STROKE_WIDTH] = value
-        }
-    }
-
-    suspend fun setMlKitLanguage(value: String) {
-        context.ocrSettingsDataStore.edit { preferences ->
-            preferences[PreferencesKeys.ML_KIT_LANGUAGE] = value
         }
     }
 

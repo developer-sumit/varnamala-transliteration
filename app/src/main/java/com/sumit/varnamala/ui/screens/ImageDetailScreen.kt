@@ -53,7 +53,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.content.ContentResolver
 import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
@@ -99,15 +98,17 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var showDisplayOptionsDialog by remember { mutableStateOf(false) }
     var showDetectionOptionsDialog by remember { mutableStateOf(false) }
     var showImageDetailsDialog by remember { mutableStateOf(false) }
-    
+
     // Language selection state
     var showSourceLanguageDialog by remember { mutableStateOf(false) }
     var showTargetLanguageDialog by remember { mutableStateOf(false) }
     var showEngineSelectionDialog by remember { mutableStateOf(false) }
     var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
-    var selectedTargetLanguage by remember { mutableStateOf<Language?>(
-        AppLanguageRepository.getLanguageByCode("en")
-    ) }
+    var selectedTargetLanguage by remember {
+        mutableStateOf<Language?>(
+            AppLanguageRepository.getLanguageByCode("en")
+        )
+    }
 
     // Settings from repository
     val showBoundingBoxes by settingsRepository.showBoundingBoxes.collectAsState(initial = true)
@@ -117,7 +118,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val showBlockBoundingBoxes by settingsRepository.showBlockBoundingBoxes.collectAsState(initial = true)
     val textBackgroundOpacity by settingsRepository.textBackgroundOpacity.collectAsState(initial = 0.8f)
     val boundingBoxStrokeWidth by settingsRepository.boundingBoxStrokeWidth.collectAsState(initial = 2f)
-    val savedMlKitLanguage by settingsRepository.mlKitLanguage.collectAsState(initial = "auto")
 
     // Image display state
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
@@ -127,10 +127,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
 
     var selectedEngine by remember { mutableStateOf(OcrEngine.ML_KIT) }
     var mlKitLanguage by remember { mutableStateOf("auto") }
-
-    LaunchedEffect(savedMlKitLanguage) {
-        mlKitLanguage = savedMlKitLanguage
-    }
 
     val ocrState by ocrViewModel.ocrState.collectAsState()
     val ocrResult by ocrViewModel.ocrResult.collectAsState()
@@ -156,11 +152,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             setLoading = { ocrLoading = it },
             setError = { ocrError = it },
             setText = { rawOcrText = it },
-            setLang = { newLang ->
-                detectedLanguage = newLang
-                languageConfidence =
-                    LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang] ?: 0f
-            },
+            setLang = { newLang -> detectedLanguage = newLang },
             setResult = { lastResult = it })
     }
 
@@ -292,7 +284,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                             )
                         } else rawOcrText
                     } ?: rawOcrText
-                    
+
                     OCRInfoCard(
                         ocrLoading = ocrLoading,
                         ocrError = ocrError,
@@ -382,22 +374,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-
-                // Reset
-//                IconButton(
-//                    onClick = {
-//                        scale = 1f
-//                        offset = Offset.Zero
-//                        rotation = 0f
-//                    },
-//                    enabled = scale != 1f || offset != Offset.Zero || rotation != 0f
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Refresh,
-//                        contentDescription = stringResource(R.string.reset_view),
-//                        tint = MaterialTheme.colorScheme.onSurface
-//                    )
-//                }
             }
         }
     }
@@ -471,7 +447,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             onDismiss = { showDetectionOptionsDialog = false },
             onLanguageSelected = { code ->
                 mlKitLanguage = code
-                coroutineScope.launch { settingsRepository.setMlKitLanguage(code) }
                 coroutineScope.launch {
                     runOCRWithCache(
                         repository = cacheRepository,
@@ -483,12 +458,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         setLoading = { ocrLoading = it },
                         setError = { ocrError = it },
                         setText = { rawOcrText = it },
-                        setLang = { newLang ->
-                            detectedLanguage = newLang
-                            languageConfidence =
-                                LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang]
-                                    ?: 0f
-                        },
+                        setLang = { newLang -> detectedLanguage = newLang },
                         setResult = { lastResult = it }
                     )
                 }
@@ -506,12 +476,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         setLoading = { ocrLoading = it },
                         setError = { ocrError = it },
                         setText = { rawOcrText = it },
-                        setLang = { newLang ->
-                            detectedLanguage = newLang
-                            languageConfidence =
-                                LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang]
-                                    ?: 0f
-                        },
+                        setLang = { newLang -> detectedLanguage = newLang },
                         setResult = { lastResult = it }
                     )
                 }
@@ -585,10 +550,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         setLoading = { ocrLoading = it },
                         setError = { ocrError = it },
                         setText = { rawOcrText = it },
-                        setLang = { newLang ->
-                            detectedLanguage = newLang
-                            languageConfidence = LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang] ?: 0f
-                        },
+                        setLang = { newLang -> detectedLanguage = newLang },
                         setResult = { lastResult = it }
                     )
                 }
@@ -627,10 +589,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         setLoading = { ocrLoading = it },
                         setError = { ocrError = it },
                         setText = { rawOcrText = it },
-                        setLang = { newLang ->
-                            detectedLanguage = newLang
-                            languageConfidence = LanguageDetector.getDetectionConfidenceMap(rawOcrText)[newLang] ?: 0f
-                        },
+                        setLang = { newLang -> detectedLanguage = newLang },
                         setResult = { lastResult = it }
                     )
                 }
@@ -730,7 +689,6 @@ private suspend fun runOCRWithCache(
                 val elements = group.elements.map { cachedElement ->
                     TextElement(
                         text = cachedElement.text,
-                        confidence = cachedElement.confidence,
                         boundingBox = cachedElement.boundingBox
                     )
                 }
@@ -758,7 +716,6 @@ private suspend fun runOCRWithCache(
 
                     TextLine(
                         text = lineText,
-                        confidence = sortedElements.map { it.confidence }.average().toFloat(),
                         boundingBox = lineBounds,
                         elements = sortedElements
                     )
@@ -779,7 +736,6 @@ private suspend fun runOCRWithCache(
                     textBlocks.add(
                         TextBlock(
                             text = blockText,
-                            confidence = group.confidence,
                             boundingBox = blockBounds,
                             lines = lines
                         )
@@ -796,9 +752,7 @@ private suspend fun runOCRWithCache(
             setResult(
                 OCRResult(
                     text = cached.text,
-                    confidence = cached.confidence,
                     language = cached.detectedLanguage,
-                    processingTimeMs = cached.processingTimeMs,
                     boundingBoxes = textBlocks,
                     imageWidth = imageMeta?.width ?: 1920, // fallback dimensions
                     imageHeight = imageMeta?.height ?: 1080
@@ -828,13 +782,9 @@ private suspend fun runOCRWithCache(
             }
         }
         val cachedGroups = groupsMap.map { (languageCode, elements) ->
-            val combinedText = elements.joinToString(" ") { it.text }
-            val conf = LanguageDetector.getDetectionConfidenceMap(combinedText)[languageCode] ?: 0f
             CachedLanguageGroup(
-                language = languageCode, confidence = conf, elements = elements.map { e ->
-                    CachedTextElement(
-                        text = e.text, confidence = e.confidence, boundingBox = e.boundingBox
-                    )
+                language = languageCode, elements = elements.map { e ->
+                    CachedTextElement(text = e.text, boundingBox = e.boundingBox)
                 })
         }
         // Only cache if cache storage is enabled
@@ -843,10 +793,8 @@ private suspend fun runOCRWithCache(
                 CachedOCRResult(
                     imageId = imageId,
                     text = enriched.text,
-                    confidence = enriched.confidence,
                     detectedLanguage = enriched.language ?: lang,
                     languageGroups = cachedGroups,
-                    processingTimeMs = enriched.processingTimeMs,
                     timestamp = System.currentTimeMillis()
                 )
             )
@@ -912,12 +860,15 @@ private fun ImageDetailsDialog(
                     InfoRow("Width", m.width?.let { "$it px" } ?: "-")
                     InfoRow("Height", m.height?.let { "$it px" } ?: "-")
                     InfoRow("Size (KB)", m.size?.let { (it / 1024).toString() } ?: "-")
-                    InfoRow("Date Added", m.dateAdded?.let { 
-                        java.text.SimpleDateFormat("dd MMM yyyy, hh:mm a", java.util.Locale.getDefault())
-                            .format(java.util.Date(it * 1000)) 
+                    InfoRow("Date Added", m.dateAdded?.let {
+                        java.text.SimpleDateFormat(
+                            "dd MMM yyyy, hh:mm a",
+                            java.util.Locale.getDefault()
+                        )
+                            .format(java.util.Date(it * 1000))
                     } ?: "-")
-                    InfoRow("Orientation", m.orientation?.let { 
-                        when(it) {
+                    InfoRow("Orientation", m.orientation?.let {
+                        when (it) {
                             0 -> "Normal (0°)"
                             90 -> "Rotate 90°"
                             180 -> "Rotate 180°"

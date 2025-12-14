@@ -47,7 +47,6 @@ class OCRCacheRepository(private val context: Context) {
                             elements.add(
                                 CachedTextElement(
                                     text = elementJson.optString("text", ""),
-                                    confidence = elementJson.optDouble("confidence", 0.0).toFloat(),
                                     boundingBox = rect
                                 )
                             )
@@ -56,7 +55,6 @@ class OCRCacheRepository(private val context: Context) {
                     languageGroups.add(
                         CachedLanguageGroup(
                             language = groupJson.optString("language", "unknown"),
-                            confidence = groupJson.optDouble("confidence", 0.0).toFloat(),
                             elements = elements
                         )
                     )
@@ -66,10 +64,8 @@ class OCRCacheRepository(private val context: Context) {
             CachedOCRResult(
                 imageId = json.getLong("imageId"),
                 text = json.optString("text", ""),
-                confidence = json.optDouble("confidence", 0.0).toFloat(),
                 detectedLanguage = json.optString("detectedLanguage", "unknown"),
                 languageGroups = languageGroups,
-                processingTimeMs = json.optLong("processingTimeMs", 0L),
                 timestamp = json.optLong("timestamp", System.currentTimeMillis())
             )
         } catch (e: Exception) {
@@ -82,21 +78,17 @@ class OCRCacheRepository(private val context: Context) {
             val json = JSONObject().apply {
                 put("imageId", result.imageId)
                 put("text", result.text)
-                put("confidence", result.confidence.toDouble())
                 put("detectedLanguage", result.detectedLanguage)
-                put("processingTimeMs", result.processingTimeMs)
                 put("timestamp", result.timestamp)
 
                 val groupsArray = JSONArray()
                 result.languageGroups.forEach { group ->
                     val groupJson = JSONObject().apply {
                         put("language", group.language)
-                        put("confidence", group.confidence.toDouble())
                         val elementsArray = JSONArray()
                         group.elements.forEach { element ->
                             val elementJson = JSONObject().apply {
                                 put("text", element.text)
-                                put("confidence", element.confidence.toDouble())
                                 val bbox = JSONObject().apply {
                                     put("left", element.boundingBox.left)
                                     put("top", element.boundingBox.top)

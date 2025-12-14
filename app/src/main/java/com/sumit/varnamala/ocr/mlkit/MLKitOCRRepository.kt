@@ -99,9 +99,7 @@ class MLKitOCRRepository(private val context: Context) {
                 // Return empty result if no recognizer produced text
                 OCRResult(
                     text = "",
-                    confidence = 0f,
                     language = "unknown",
-                    processingTimeMs = 0L,
                     boundingBoxes = emptyList(),
                     imageWidth = bitmap.width,
                     imageHeight = bitmap.height
@@ -120,7 +118,6 @@ class MLKitOCRRepository(private val context: Context) {
 
         // Calculate overall confidence (this is estimated as ML Kit doesn't provide confidence)
         var totalElements = 0
-        var estimatedConfidence = 0.85f // Default high confidence for ML Kit
 
         val fullText = StringBuilder()
 
@@ -142,7 +139,6 @@ class MLKitOCRRepository(private val context: Context) {
                     mlkitElement.boundingBox?.let { elementBounds ->
                         TextElement(
                             text = mlkitElement.text,
-                            confidence = estimatedConfidence,
                             boundingBox = elementBounds
                         )
                     }
@@ -153,7 +149,6 @@ class MLKitOCRRepository(private val context: Context) {
                     listOf(
                         TextElement(
                             text = lineText,
-                            confidence = estimatedConfidence,
                             boundingBox = lineBounds
                         )
                     )
@@ -164,7 +159,6 @@ class MLKitOCRRepository(private val context: Context) {
                 lines.add(
                     TextLine(
                         text = lineText,
-                        confidence = estimatedConfidence,
                         boundingBox = lineBounds,
                         elements = finalElements
                     )
@@ -177,7 +171,6 @@ class MLKitOCRRepository(private val context: Context) {
             blocks.add(
                 TextBlock(
                     text = blockText,
-                    confidence = estimatedConfidence,
                     boundingBox = blockBounds,
                     lines = lines
                 )
@@ -193,7 +186,6 @@ class MLKitOCRRepository(private val context: Context) {
 
         return OCRResult(
             text = mlKitResult.text,
-            confidence = estimatedConfidence,
             language = language,
             boundingBoxes = blocks,
             imageWidth = imageWidth,
