@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ਓਵਰਲੇ ਸੈਟਿੰਗਾਂ</string>
-    <string name="enable_overlay">ਓਵਰਲੇ ਨੂੰ ਸਮਰੱਥ ਬਣਾਓ</string>
-    <string name="overlay_enabled">ਓਵਰਲੇ ਸਮਰੱਥ ਹੈ</string>
-    <string name="overlay_disabled">ਓਵਰਲੇ ਅਸਮਰੱਥ ਹੈ</string>
+    <string name="enable_overlay">ਸਕ੍ਰੀਨ ਓਵਰਲੇ OCR</string>
+    <string name="overlay_enabled">ਫਲੋਟਿੰਗ ਬਟਨ ਕਿਰਿਆਸ਼ੀਲ</string>
+    <string name="overlay_disabled">ਫਲੋਟਿੰਗ ਬਟਨ ਸਮਰੱਥ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ</string>
+    <string name="overlay_feature_description">ਇਹ ਵਿਸ਼ੇਸ਼ਤਾ ਇੱਕ ਫਲੋਟਿੰਗ ਬਟਨ ਜੋੜਦੀ ਹੈ ਜੋ ਤੁਹਾਡੀ ਸਕ੍ਰੀਨ ਕੈਪਚਰ ਕਰਦਾ ਹੈ ਅਤੇ OCR ਟੈਕਸਟ ਅਤੇ ਬਾਊਂਡਿੰਗ ਬਾਕਸਾਂ ਨੂੰ ਓਵਰਲੇ ਵਜੋਂ ਦਿਖਾਉਂਦਾ ਹੈ।</string>
+    <string name="overlay_permission_hint">ਤੁਹਾਨੂੰ ਸਕ੍ਰੀਨ ਕੈਪਚਰ ਅਤੇ ਓਵਰਲੇ ਅਨੁਮਤੀਆਂ ਦੇਣੀਆਂ ਪੈਣਗੀਆਂ।</string>
+    <string name="overlay_permission_denied">ਸਕ੍ਰੀਨ ਕੈਪਚਰ ਅਨੁਮਤੀ ਰੱਦ ਕੀਤੀ ਗਈ</string>
+    <string name="enable">ਸਮਰੱਥ ਕਰੋ</string>
     <string name="start_overlay">ਓਵਰਲੇ ਸ਼ੁਰੂ ਕਰੋ</string>
-    <string name="stop_overlay">ਓਵਰਲੇ ਰੋਕੋ</string>
+    <string name="stop_overlay">ਓਵਰਲੇ ਬੰਦ ਕਰੋ</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">ਦਿੱਖ</string>
+    <string name="ocr_features">OCR ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ</string>
+    <string name="data_storage">ਡੇਟਾ ਅਤੇ ਸਟੋਰੇਜ</string>
+    <string name="legal">ਕਾਨੂੰਨੀ</string>
 </resources>

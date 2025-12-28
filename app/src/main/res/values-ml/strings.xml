@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ഓവർലേ ക്രമീകരണങ്ങൾ</string>
-    <string name="enable_overlay">ഓവർലേ പ്രവർത്തനക്ഷമമാക്കുക</string>
-    <string name="overlay_enabled">ഓവർലേ പ്രവർത്തനക്ഷമമാക്കി</string>
-    <string name="overlay_disabled">ഓവർലേ പ്രവർത്തനരഹിതമാക്കി</string>
+    <string name="enable_overlay">സ്ക്രീൻ ഓവർലേ OCR</string>
+    <string name="overlay_enabled">ഫ്ലോട്ടിംഗ് ബട്ടൺ സജീവം</string>
+    <string name="overlay_disabled">ഫ്ലോട്ടിംഗ് ബട്ടൺ പ്രവർത്തനക്ഷമമാക്കാൻ ടാപ്പ് ചെയ്യുക</string>
+    <string name="overlay_feature_description">ഈ ഫീച്ചർ നിങ്ങളുടെ സ്ക്രീൻ ക്യാപ്ചർ ചെയ്യുകയും OCR ടെക്സ്റ്റും ബൗണ്ടിംഗ് ബോക്സുകളും ഓവർലേ ആയി കാണിക്കുകയും ചെയ്യുന്ന ഒരു ഫ്ലോട്ടിംഗ് ബട്ടൺ ചേർക്കുന്നു.</string>
+    <string name="overlay_permission_hint">നിങ്ങൾ സ്ക്രീൻ ക്യാപ്ചറും ഓവർലേ അനുമതികളും നൽകേണ്ടതുണ്ട്.</string>
+    <string name="overlay_permission_denied">സ്ക്രീൻ ക്യാപ്ചർ അനുമതി നിരസിച്ചു</string>
+    <string name="enable">പ്രവർത്തനക്ഷമമാക്കുക</string>
     <string name="start_overlay">ഓവർലേ ആരംഭിക്കുക</string>
     <string name="stop_overlay">ഓവർലേ നിർത്തുക</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">രൂപം</string>
+    <string name="ocr_features">OCR ഫീച്ചറുകൾ</string>
+    <string name="data_storage">ഡാറ്റയും സംഭരണവും</string>
+    <string name="legal">നിയമപരം</string>
 </resources>

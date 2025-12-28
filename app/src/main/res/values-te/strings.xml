@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ఓవర్‌లే సెట్టింగ్‌లు</string>
-    <string name="enable_overlay">ఓవర్‌లే ప్రారంభించండి</string>
-    <string name="overlay_enabled">ఓవర్‌లే ప్రారంభించబడింది</string>
-    <string name="overlay_disabled">ఓవర్‌లే నిలిపివేయబడింది</string>
-    <string name="start_overlay">ఓవర్‌లే ప్రారంభించండి</string>
-    <string name="stop_overlay">ఓవర్‌లే ఆపండి</string>
+    <string name="enable_overlay">స్క్రీన్ ఓవర్‌లే OCR</string>
+    <string name="overlay_enabled">తేలియాడే బటన్ సక్రియం</string>
+    <string name="overlay_disabled">తేలియాడే బటన్‌ను ప్రారంభించడానికి నొక్కండి</string>
+    <string name="overlay_feature_description">ఈ ఫీచర్ మీ స్క్రీన్‌ను క్యాప్చర్ చేసి OCR టెక్స్ట్ మరియు బౌండింగ్ బాక్స్‌లను ఓవర్‌లేగా చూపించే తేలియాడే బటన్‌ను జోడిస్తుంది.</string>
+    <string name="overlay_permission_hint">మీరు స్క్రీన్ క్యాప్చర్ మరియు ఓవర్‌లే అనుమతులను ఇవ్వాలి.</string>
+    <string name="overlay_permission_denied">స్క్రీన్ క్యాప్చర్ అనుమతి తిరస్కరించబడింది</string>
+    <string name="enable">ప్రారంభించు</string>
+    <string name="start_overlay">ఓవర్‌లేను ప్రారంభించు</string>
+    <string name="stop_overlay">ఓవర్‌లేను ఆపు</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">స్వరూపం</string>
+    <string name="ocr_features">OCR ఫీచర్లు</string>
+    <string name="data_storage">డేటా మరియు నిల్వ</string>
+    <string name="legal">చట్టపరమైనది</string>
 </resources>

@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ઓવરલે સેટિંગ્સ</string>
-    <string name="enable_overlay">ઓવરલે સક્ષમ કરો</string>
-    <string name="overlay_enabled">ઓવરલે સક્ષમ છે</string>
-    <string name="overlay_disabled">ઓવરલે અક્ષમ છે</string>
+    <string name="enable_overlay">સ્ક્રીન ઓવરલે OCR</string>
+    <string name="overlay_enabled">ફ્લોટિંગ બટન સક્રિય</string>
+    <string name="overlay_disabled">ફ્લોટિંગ બટન સક્ષમ કરવા માટે ટેપ કરો</string>
+    <string name="overlay_feature_description">આ સુવિધા એક ફ્લોટિંગ બટન ઉમેરે છે જે તમારી સ્ક્રીન કેપ્ચર કરે છે અને OCR ટેક્સ્ટ અને બાઉન્ડિંગ બોક્સને ઓવરલે તરીકે બતાવે છે।</string>
+    <string name="overlay_permission_hint">તમારે સ્ક્રીન કેપ્ચર અને ઓવરલે પરવાનગીઓ આપવી પડશે।</string>
+    <string name="overlay_permission_denied">સ્ક્રીન કેપ્ચર પરવાનગી નકારી</string>
+    <string name="enable">સક્ષમ કરો</string>
     <string name="start_overlay">ઓવરલે શરૂ કરો</string>
-    <string name="stop_overlay">ઓવરલે રોકો</string>
+    <string name="stop_overlay">ઓવરલે બંધ કરો</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">દેખાવ</string>
+    <string name="ocr_features">OCR સુવિધાઓ</string>
+    <string name="data_storage">ડેટા અને સ્ટોરેજ</string>
+    <string name="legal">કાનૂની</string>
 </resources>

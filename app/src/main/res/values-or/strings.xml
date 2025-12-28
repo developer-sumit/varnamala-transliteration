@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ଓଭରଲେ ସେଟିଂସ୍</string>
-    <string name="enable_overlay">ଓଭରଲେ ସକ୍ଷମ କରନ୍ତୁ</string>
-    <string name="overlay_enabled">ଓଭରଲେ ସକ୍ଷମ କରାଯାଇଛି</string>
-    <string name="overlay_disabled">ଓଭରଲେ ଅକ୍ଷମ କରାଯାଇଛି</string>
+    <string name="enable_overlay">ସ୍କ୍ରିନ୍ ଓଭରଲେ OCR</string>
+    <string name="overlay_enabled">ଫ୍ଲୋଟିଂ ବଟନ୍ ସକ୍ରିୟ</string>
+    <string name="overlay_disabled">ଫ୍ଲୋଟିଂ ବଟନ୍ ସକ୍ଷମ କରିବାକୁ ଟ୍ୟାପ୍ କରନ୍ତୁ</string>
+    <string name="overlay_feature_description">ଏହି ବୈଶିଷ୍ଟ୍ୟ ଏକ ଫ୍ଲୋଟିଂ ବଟନ୍ ଯୋଡିଥାଏ ଯାହା ଆପଣଙ୍କ ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ କରେ ଏବଂ OCR ଟେକ୍ସଟ୍ ଏବଂ ବାଉଣ୍ଡିଂ ବକ୍ସକୁ ଓଭରଲେ ଭାବରେ ଦେଖାଏ।</string>
+    <string name="overlay_permission_hint">ଆପଣଙ୍କୁ ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ ଏବଂ ଓଭରଲେ ଅନୁମତି ଦେବାକୁ ପଡିବ।</string>
+    <string name="overlay_permission_denied">ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି</string>
+    <string name="enable">ସକ୍ଷମ କରନ୍ତୁ</string>
     <string name="start_overlay">ଓଭରଲେ ଆରମ୍ଭ କରନ୍ତୁ</string>
     <string name="stop_overlay">ଓଭରଲେ ବନ୍ଦ କରନ୍ତୁ</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">ଦେଖା</string>
+    <string name="ocr_features">OCR ବୈଶିଷ୍ଟ୍ୟଗୁଡିକ</string>
+    <string name="data_storage">ଡାଟା ଏବଂ ଷ୍ଟୋରେଜ୍</string>
+    <string name="legal">ଆଇନଗତ</string>
 </resources>

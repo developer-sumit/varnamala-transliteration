@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ओव्हरले सेटिंग्ज</string>
-    <string name="enable_overlay">ओव्हरले सक्षम करा</string>
-    <string name="overlay_enabled">ओव्हरले सक्षम आहे</string>
-    <string name="overlay_disabled">ओव्हरले अक्षम आहे</string>
+    <string name="enable_overlay">स्क्रीन ओव्हरले OCR</string>
+    <string name="overlay_enabled">फ्लोटिंग बटण सक्रिय</string>
+    <string name="overlay_disabled">फ्लोटिंग बटण सक्षम करण्यासाठी टॅप करा</string>
+    <string name="overlay_feature_description">हे वैशिष्ट्य एक फ्लोटिंग बटण जोडते जे तुमची स्क्रीन कॅप्चर करते आणि OCR मजकूर आणि बाउंडिंग बॉक्स ओव्हरले म्हणून दाखवते.</string>
+    <string name="overlay_permission_hint">तुम्हाला स्क्रीन कॅप्चर आणि ओव्हरले परवानग्या द्याव्या लागतील.</string>
+    <string name="overlay_permission_denied">स्क्रीन कॅप्चर परवानगी नाकारली</string>
+    <string name="enable">सक्षम करा</string>
     <string name="start_overlay">ओव्हरले सुरू करा</string>
     <string name="stop_overlay">ओव्हरले थांबवा</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">दिसणे</string>
+    <string name="ocr_features">OCR वैशिष्ट्ये</string>
+    <string name="data_storage">डेटा आणि स्टोरेज</string>
+    <string name="legal">कायदेशीर</string>
 </resources>

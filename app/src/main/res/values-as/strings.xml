@@ -95,10 +95,20 @@
     <string name="language_changed_restart">ভাষা সলনি কৰা হৈছে। পৰিৱৰ্তন চাবলৈ অনুগ্ৰহ কৰি এপ পুনৰ আৰম্ভ কৰক।</string>
     
     <!-- Overlay settings -->
-    <string name="overlay_settings">অভাৰলে ছেটিংছ</string>
-    <string name="enable_overlay">অভাৰলে সক্ষম কৰক</string>
-    <string name="overlay_enabled">অভাৰলে সক্ষম কৰা হৈছে</string>
-    <string name="overlay_disabled">অভাৰলে নিষ্ক্ৰিয় কৰা হৈছে</string>
-    <string name="start_overlay">অভাৰলে আৰম্ভ কৰক</string>
-    <string name="stop_overlay">অভাৰলে বন্ধ কৰক</string>
+    <string name="overlay_settings">অ\'ভাৰলে\' ছেটিংছ</string>
+    <string name="enable_overlay">স্ক্ৰীণ অ\'ভাৰলে\' OCR</string>
+    <string name="overlay_enabled">ফ্ল\'টিং বুটাম সক্ৰিয়</string>
+    <string name="overlay_disabled">ফ্ল\'টিং বুটাম সক্ষম কৰিবলৈ টেপ কৰক</string>
+    <string name="overlay_feature_description">এই বৈশিষ্ট্যই এটা ফ্ল\'টিং বুটাম যোগ কৰে যি আপোনাৰ স্ক্ৰীণ কেপচাৰ কৰে আৰু OCR পাঠ্য আৰু বাউণ্ডিং বক্স অ\'ভাৰলে\' হিচাপে দেখুৱায়।</string>
+    <string name="overlay_permission_hint">আপুনি স্ক্ৰীণ কেপচাৰ আৰু অ\'ভাৰলে\' অনুমতি প্ৰদান কৰিব লাগিব।</string>
+    <string name="overlay_permission_denied">স্ক্ৰীণ কেপচাৰ অনুমতি নাকচ কৰা হৈছে</string>
+    <string name="enable">সক্ষম কৰক</string>
+    <string name="start_overlay">অ\'ভাৰলে\' আৰম্ভ কৰক</string>
+    <string name="stop_overlay">অ\'ভাৰলে\' বন্ধ কৰক</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">ৰূপ</string>
+    <string name="ocr_features">OCR বৈশিষ্ট্যসমূহ</string>
+    <string name="data_storage">ডাটা আৰু সংৰক্ষণ</string>
+    <string name="legal">আইনী</string>
 </resources>

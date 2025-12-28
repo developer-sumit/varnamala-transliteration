@@ -95,10 +95,20 @@
     <string name="language_changed_restart">மொழி மாற்றப்பட்டது. மாற்றங்களைப் பார்க்க பயன்பாட்டை மீண்டும் தொடங்கவும்.</string>
     
     <!-- Overlay settings -->
-    <string name="overlay_settings">மேலடுக்கு அமைப்புகள்</string>
-    <string name="enable_overlay">மேலடுக்கை இயக்கு</string>
-    <string name="overlay_enabled">மேலடுக்கு இயக்கப்பட்டது</string>
-    <string name="overlay_disabled">மேலடுக்கு முடக்கப்பட்டது</string>
-    <string name="start_overlay">மேலடுக்கை தொடங்கு</string>
-    <string name="stop_overlay">மேலடுக்கை நிறுத்து</string>
+    <string name="overlay_settings">மேலோட்ட அமைப்புகள்</string>
+    <string name="enable_overlay">திரை மேலோட்டம் OCR</string>
+    <string name="overlay_enabled">மிதக்கும் பொத்தான் செயலில்</string>
+    <string name="overlay_disabled">மிதக்கும் பொத்தானை இயக்க தட்டவும்</string>
+    <string name="overlay_feature_description">இந்த அம்சம் உங்கள் திரையைப் பிடிக்கும் மற்றும் OCR உரை மற்றும் எல்லைப் பெட்டிகளை மேலோட்டமாகக் காட்டும் மிதக்கும் பொத்தானைச் சேர்க்கிறது.</string>
+    <string name="overlay_permission_hint">நீங்கள் திரைப் பிடிப்பு மற்றும் மேலோட்ட அனுமதிகளை வழங்க வேண்டும்.</string>
+    <string name="overlay_permission_denied">திரைப் பிடிப்பு அனுமதி மறுக்கப்பட்டது</string>
+    <string name="enable">இயக்கு</string>
+    <string name="start_overlay">மேலோட்டத்தைத் தொடங்கு</string>
+    <string name="stop_overlay">மேலோட்டத்தை நிறுத்து</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">தோற்றம்</string>
+    <string name="ocr_features">OCR அம்சங்கள்</string>
+    <string name="data_storage">தரவு மற்றும் சேமிப்பு</string>
+    <string name="legal">சட்டபூர்வமானது</string>
 </resources>

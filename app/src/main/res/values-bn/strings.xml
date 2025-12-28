@@ -96,9 +96,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ওভারলে সেটিংস</string>
-    <string name="enable_overlay">ওভারলে সক্ষম করুন</string>
-    <string name="overlay_enabled">ওভারলে সক্ষম আছে</string>
-    <string name="overlay_disabled">ওভারলে নিষ্ক্রিয় আছে</string>
+    <string name="enable_overlay">স্ক্রিন ওভারলে OCR</string>
+    <string name="overlay_enabled">ফ্লোটিং বোতাম সক্রিয়</string>
+    <string name="overlay_disabled">ফ্লোটিং বোতাম সক্ষম করতে ট্যাপ করুন</string>
+    <string name="overlay_feature_description">এই বৈশিষ্ট্যটি একটি ফ্লোটিং বোতাম যোগ করে যা আপনার স্ক্রিন ক্যাপচার করে এবং OCR টেক্সট এবং বাউন্ডিং বক্স ওভারলে হিসাবে দেখায়।</string>
+    <string name="overlay_permission_hint">আপনাকে স্ক্রিন ক্যাপচার এবং ওভারলে অনুমতি দিতে হবে।</string>
+    <string name="overlay_permission_denied">স্ক্রিন ক্যাপচার অনুমতি প্রত্যাখ্যাত</string>
+    <string name="enable">সক্ষম করুন</string>
     <string name="start_overlay">ওভারলে শুরু করুন</string>
-    <string name="stop_overlay">ওভারলে থামুন</string>
+    <string name="stop_overlay">ওভারলে বন্ধ করুন</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">চেহারা</string>
+    <string name="ocr_features">OCR বৈশিষ্ট্য</string>
+    <string name="data_storage">ডেটা এবং স্টোরেজ</string>
+    <string name="legal">আইনি</string>
 </resources>
