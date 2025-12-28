@@ -9,9 +9,13 @@ import com.sumit.varnamala.ui.screens.LanguageScreen
 import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
 import com.sumit.varnamala.ui.theme.VarnamalaTheme
+import com.sumit.varnamala.service.OverlayManager
+import com.sumit.varnamala.utils.ScreenCaptureHelper
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -39,6 +43,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -182,6 +187,29 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        
+        if (requestCode == ScreenCaptureHelper.REQUEST_MEDIA_PROJECTION) {
+            if (resultCode == RESULT_OK && data != null) {
+                // Screen capture permission granted, start overlay service
+                OverlayManager.startOverlay(this, resultCode, data)
+                Toast.makeText(
+                    this,
+                    getString(R.string.overlay_enabled),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    getString(R.string.overlay_permission_denied),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }

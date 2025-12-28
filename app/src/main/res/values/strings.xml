@@ -95,9 +95,19 @@
     
     <!-- Overlay settings -->
     <string name="overlay_settings">Overlay Settings</string>
-    <string name="enable_overlay">Enable Overlay</string>
-    <string name="overlay_enabled">Overlay is enabled</string>
-    <string name="overlay_disabled">Overlay is disabled</string>
+    <string name="enable_overlay">Screen Overlay OCR</string>
+    <string name="overlay_enabled">Floating button active</string>
+    <string name="overlay_disabled">Tap to enable floating button</string>
+    <string name="overlay_feature_description">This feature adds a floating button that captures your screen and shows OCR text and bounding boxes as an overlay.</string>
+    <string name="overlay_permission_hint">You\'ll need to grant screen capture and overlay permissions.</string>
+    <string name="overlay_permission_denied">Screen capture permission denied</string>
+    <string name="enable">Enable</string>
     <string name="start_overlay">Start Overlay</string>
     <string name="stop_overlay">Stop Overlay</string>
+    
+    <!-- Settings categories -->
+    <string name="appearance">Appearance</string>
+    <string name="ocr_features">OCR Features</string>
+    <string name="data_storage">Data &amp; Storage</string>
+    <string name="legal">Legal</string>
 </resources>
