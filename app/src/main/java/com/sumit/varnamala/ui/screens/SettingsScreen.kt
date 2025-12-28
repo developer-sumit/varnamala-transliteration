@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -118,7 +117,6 @@ fun SettingsScreen(
                     icon = if (isDarkTheme) painterResource(id = R.drawable.ic_moon_outline) else painterResource(
                         id = R.drawable.ic_sun_outline
                     ),
-                    isFirstItem = true,
                     isLastItem = false,
                     showDivider = true,
                     trailingContent = {
@@ -133,7 +131,6 @@ fun SettingsScreen(
                     title = stringResource(R.string.language),
                     subtitle = currentLanguageDisplayName,
                     icon = painterResource(id = R.drawable.ic_language),
-                    isFirstItem = false,
                     isLastItem = true,
                     showDivider = false,
                     onClick = { navController.navigate(Screen.Language.route) },
@@ -203,7 +200,6 @@ fun SettingsScreen(
                         R.string.overlay_disabled
                     ),
                     icon = painterResource(id = R.drawable.ic_image_outline),
-                    isFirstItem = true,
                     isLastItem = true,
                     showDivider = false,
                     onClick = { },
@@ -265,7 +261,6 @@ fun SettingsScreen(
                     title = stringResource(R.string.enable_cache_storage),
                     subtitle = stringResource(R.string.enable_cache_storage_hint),
                     icon = painterResource(id = R.drawable.ic_database),
-                    isFirstItem = true,
                     isLastItem = false,
                     showDivider = true,
                     trailingContent = {
@@ -280,7 +275,6 @@ fun SettingsScreen(
                     title = stringResource(R.string.clear_cache),
                     icon = painterResource(id = R.drawable.ic_delete_outline),
                     textColor = MaterialTheme.colorScheme.error,
-                    isFirstItem = false,
                     isLastItem = true,
                     showDivider = false,
                     onClick = { showClearCacheDialog = true })
@@ -292,7 +286,6 @@ fun SettingsScreen(
                 SettingItem(
                     title = stringResource(R.string.terms_of_service),
                     icon = painterResource(id = R.drawable.ic_shield_outline),
-                    isFirstItem = true,
                     isLastItem = false,
                     showDivider = true,
                     onClick = { },
@@ -308,7 +301,6 @@ fun SettingsScreen(
                 SettingItem(
                     title = stringResource(R.string.privacy_policy),
                     icon = painterResource(id = R.drawable.ic_shield_outline),
-                    isFirstItem = false,
                     isLastItem = true,
                     showDivider = false,
                     onClick = { },
@@ -395,12 +387,10 @@ fun SettingsCategory(
 fun SettingItem(
     title: String,
     icon: Painter,
-    bgColor: Color? = null,
     textColor: Color? = null,
     onClick: (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
     subtitle: String? = null,
-    isFirstItem: Boolean = false,
     isLastItem: Boolean = false,
     showDivider: Boolean = false
 ) {
@@ -467,65 +457,3 @@ fun SettingItem(
         }
     }
 }
-
-@Composable
-fun SettingItem(
-    title: String,
-    icon: Painter,
-    bgColor: Color? = null,
-    textColor: Color? = null,
-    onClick: (() -> Unit)? = null,
-    trailingContent: @Composable (() -> Unit)? = null,
-    subtitle: String? = null
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(24.dp))
-            .background(bgColor ?: MaterialTheme.colorScheme.surface)
-            .clickable(enabled = onClick != null) {
-                onClick?.invoke()
-            }
-            .heightIn(min = 80.dp)
-            .padding(16.dp, 10.dp)) {
-        Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(15.dp)
-        ) {
-            Icon(
-                painter = icon,
-                contentDescription = null,
-                tint = textColor ?: MaterialTheme.colorScheme.onSurface
-            )
-            Column {
-                Text(
-                    text = title,
-                    color = textColor ?: MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold)
-                )
-                if (subtitle != null) {
-                    Text(
-                        text = subtitle,
-                        color = (textColor
-                            ?: MaterialTheme.colorScheme.onSurface).copy(alpha = 0.7f),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
-        }
-
-        if (trailingContent != null) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .defaultMinSize(minHeight = 52.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                trailingContent()
-            }
-        }
-    }
-}
-

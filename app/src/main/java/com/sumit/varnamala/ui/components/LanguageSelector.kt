@@ -143,7 +143,7 @@ fun LanguageSelectionDialog(
                     modifier = Modifier.padding(20.dp)
                 )
 
-                Divider()
+                HorizontalDivider()
 
                 // Language List
                 LazyColumn(
@@ -264,7 +264,7 @@ fun OCREngineSelectionDialog(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                Divider(modifier = Modifier.padding(bottom = 16.dp))
+                HorizontalDivider(modifier = Modifier.padding(bottom = 16.dp))
 
                 // ML Kit Option
                 OCREngineOption(

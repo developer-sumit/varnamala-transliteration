@@ -819,46 +819,4 @@ object TransliterationMappingRepository {
         
         return computedMappings
     }
-
-    /**
-     * Find mapping by English Roman transliteration
-     */
-    fun getMappingByEnglish(englishRoman: String): MappingEntry? {
-        return getAllMappings().find { it.englishRoman.equals(englishRoman, ignoreCase = true) }
-    }
-
-    /**
-     * Find mapping by Hindi Devanagari script
-     */
-    fun getMappingByHindi(hindiDevanagari: String): MappingEntry? {
-        return getAllMappings().find { it.hindiDevanagari == hindiDevanagari }
-    }
-
-    /**
-     * Find mapping by Telugu script
-     */
-    fun getMappingByTelugu(teluguScript: String): MappingEntry? {
-        return getAllMappings().find { it.teluguScript == teluguScript }
-    }
-
-    /**
-     * Get all Hindi characters available in mappings
-     */
-    fun getAllHindiCharacters(): List<String> {
-        return getAllMappings().map { it.hindiDevanagari }.distinct()
-    }
-
-    /**
-     * Get all Telugu characters available in mappings
-     */
-    fun getAllTeluguCharacters(): List<String> {
-        return getAllMappings().map { it.teluguScript }.distinct()
-    }
-
-    /**
-     * Get all English Roman transliterations available in mappings
-     */
-    fun getAllEnglishTransliterations(): List<String> {
-        return getAllMappings().map { it.englishRoman }.distinct()
-    }
 }

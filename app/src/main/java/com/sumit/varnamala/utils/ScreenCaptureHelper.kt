@@ -1,6 +1,5 @@
 package com.sumit.varnamala.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -21,57 +20,47 @@ import java.nio.ByteBuffer
  * Helper class to capture screen using MediaProjection API
  */
 class ScreenCaptureHelper(private val context: Context) {
-    
+
     private var mediaProjection: MediaProjection? = null
     private var virtualDisplay: VirtualDisplay? = null
     private var imageReader: ImageReader? = null
-    
+
     private val displayMetrics: DisplayMetrics by lazy {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         DisplayMetrics().apply {
             windowManager.defaultDisplay.getMetrics(this)
         }
     }
-    
+
     companion object {
         const val REQUEST_MEDIA_PROJECTION = 1001
     }
-    
-    /**
-     * Create intent to request screen capture permission
-     */
-    fun createScreenCaptureIntent(): Intent {
-        val mediaProjectionManager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-        return mediaProjectionManager.createScreenCaptureIntent()
-    }
-    
+
     /**
      * Initialize MediaProjection with result from permission request
      */
     fun initMediaProjection(resultCode: Int, data: Intent?) {
-        val mediaProjectionManager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+        val mediaProjectionManager =
+            context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
         mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data!!)
     }
-    
+
     /**
      * Capture screen and return as Bitmap
      */
     fun captureScreen(onCapture: (Bitmap?) -> Unit) {
         if (mediaProjection == null) {
-            android.util.Log.e("ScreenCaptureHelper", "MediaProjection is null")
             onCapture(null)
             return
         }
-        
+
         val width = displayMetrics.widthPixels
         val height = displayMetrics.heightPixels
         val density = displayMetrics.densityDpi
-        
-        android.util.Log.d("ScreenCaptureHelper", "Creating capture: ${width}x${height} @ ${density}dpi")
-        
+
         // Create ImageReader
         imageReader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)
-        
+
         // Create VirtualDisplay
         virtualDisplay = mediaProjection?.createVirtualDisplay(
             "ScreenCapture",
@@ -83,24 +72,19 @@ class ScreenCaptureHelper(private val context: Context) {
             null,
             null
         )
-        
-        android.util.Log.d("ScreenCaptureHelper", "VirtualDisplay created, waiting for frame...")
-        
+
         // Wait longer for the virtual display to be ready and render frames
         Handler(Looper.getMainLooper()).postDelayed({
             try {
                 val image = imageReader?.acquireLatestImage()
                 if (image != null) {
-                    android.util.Log.d("ScreenCaptureHelper", "Image acquired: ${image.width}x${image.height}")
                     val bitmap = imageToBitmap(image)
                     image.close()
                     onCapture(bitmap)
                 } else {
-                    android.util.Log.e("ScreenCaptureHelper", "Failed to acquire image - image is null")
                     onCapture(null)
                 }
             } catch (e: Exception) {
-                android.util.Log.e("ScreenCaptureHelper", "Exception during capture", e)
                 e.printStackTrace()
                 onCapture(null)
             } finally {
@@ -112,7 +96,7 @@ class ScreenCaptureHelper(private val context: Context) {
             }
         }, 300) // Increased delay to allow virtual display to render frames
     }
-    
+
     /**
      * Convert Image to Bitmap
      */
@@ -122,14 +106,14 @@ class ScreenCaptureHelper(private val context: Context) {
         val pixelStride = planes[0].pixelStride
         val rowStride = planes[0].rowStride
         val rowPadding = rowStride - pixelStride * image.width
-        
+
         val bitmap = Bitmap.createBitmap(
             image.width + rowPadding / pixelStride,
             image.height,
             Bitmap.Config.ARGB_8888
         )
         bitmap.copyPixelsFromBuffer(buffer)
-        
+
         return if (rowPadding == 0) {
             bitmap
         } else {
@@ -137,7 +121,7 @@ class ScreenCaptureHelper(private val context: Context) {
             Bitmap.createBitmap(bitmap, 0, 0, image.width, image.height)
         }
     }
-    
+
     /**
      * Release resources
      */
@@ -145,12 +129,12 @@ class ScreenCaptureHelper(private val context: Context) {
         virtualDisplay?.release()
         imageReader?.close()
         mediaProjection?.stop()
-        
+
         virtualDisplay = null
         imageReader = null
         mediaProjection = null
     }
-    
+
     /**
      * Check if MediaProjection is active
      */

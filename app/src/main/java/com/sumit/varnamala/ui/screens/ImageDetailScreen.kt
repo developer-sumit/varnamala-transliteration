@@ -24,15 +24,12 @@ import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCROverlayCanvas
 import com.sumit.varnamala.data.ocr.OcrEngine
 import com.sumit.varnamala.ocr.mlkit.MLKitOCRRepository
-import com.sumit.varnamala.ui.viewmodels.OCRViewModel
-import com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import kotlinx.coroutines.flow.first
 import android.content.ContentUris
 import android.provider.MediaStore
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,8 +39,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.border
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +55,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.collectAsState
 import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.rememberScrollState
@@ -73,7 +70,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.Surface
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun ImageDetailScreen(navController: NavController, imageId: Long) {
@@ -83,8 +79,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val coroutineScope = rememberCoroutineScope()
     val cacheRepository = remember { OCRCacheRepository(context) }
     val settingsRepository = remember { OCRSettingsRepository(context) }
-
-    val ocrViewModel: OCRViewModel = viewModel(factory = OCRViewModelFactory(context))
 
     // OCR state variables
     var ocrLoading by remember { mutableStateOf(false) }
@@ -104,9 +98,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var showEngineSelectionDialog by remember { mutableStateOf(false) }
     var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
     var selectedTargetLanguage by remember {
-        mutableStateOf<Language?>(
-            AppLanguageRepository.getLanguageByCode("en")
-        )
+        mutableStateOf(AppLanguageRepository.getLanguageByCode("en"))
     }
 
     // Settings from repository
@@ -122,24 +114,9 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
-    var rotation by remember { mutableStateOf(0f) }
 
     var selectedEngine by remember { mutableStateOf(OcrEngine.ML_KIT) }
     var mlKitLanguage by remember { mutableStateOf("auto") }
-
-    val ocrState by ocrViewModel.ocrState.collectAsState()
-    val ocrResult by ocrViewModel.ocrResult.collectAsState()
-    val currentEngine by ocrViewModel.currentEngine.collectAsState()
-    val currentLanguage by ocrViewModel.currentLanguage.collectAsState()
-
-    LaunchedEffect(Unit) {
-        try {
-            ocrViewModel.initialize()
-        } catch (e: Exception) {
-            // Failure will be handled during OCR if needed
-        }
-    }
-
 
     LaunchedEffect(imageId) {
         meta = loadImageMeta(context.contentResolver, imageId)
@@ -168,9 +145,11 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     offset += offsetChange
                 }
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(aspectRatio)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(aspectRatio)
+            ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context).data(targetUri).crossfade(true)
                         .build(),
@@ -183,7 +162,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                             scaleY = scale,
                             translationX = offset.x,
                             translationY = offset.y,
-                            rotationZ = rotation
                         )
                         .transformable(state = transformableState)
                         .onGloballyPositioned { coordinates ->
@@ -211,7 +189,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                             scaleY = scale,
                             translationX = offset.x,
                             translationY = offset.y,
-                            rotationZ = rotation
                         )
                 )
             }
@@ -684,9 +661,8 @@ private suspend fun runOCRWithCache(
         result.boundingBoxes.forEach { block ->
             block.lines.forEach { line ->
                 val lineLang = LanguageDetector.detectLanguage(line.text)
-                val key = lineLang
                 line.elements.forEach { el ->
-                    groupsMap.getOrPut(key) { mutableListOf() }.add(el)
+                    groupsMap.getOrPut(lineLang) { mutableListOf() }.add(el)
                 }
             }
         }
@@ -715,6 +691,7 @@ private suspend fun runOCRWithCache(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 private suspend fun runSingleImageOcr(
     context: Context, uri: Uri, preferredLanguage: String? = null
 ): OCRResult = withContext(Dispatchers.IO) {

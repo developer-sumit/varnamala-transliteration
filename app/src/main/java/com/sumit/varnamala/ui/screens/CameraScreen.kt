@@ -10,8 +10,6 @@ import com.sumit.varnamala.ui.components.CameraCaptureButton
 import com.sumit.varnamala.ui.components.LanguageSelectionDialog
 import com.sumit.varnamala.ui.components.LanguageSelectionRow
 import com.sumit.varnamala.data.ocr.OCRResult
-import com.sumit.varnamala.ui.viewmodels.OCRViewModel
-import com.sumit.varnamala.ui.viewmodels.OCRViewModelFactory
 import com.sumit.varnamala.utils.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
@@ -40,14 +38,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
-import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun CameraScreen(navController: NavController) {
     val context = LocalContext.current
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
-
-    val ocrViewModel: OCRViewModel = viewModel(factory = OCRViewModelFactory(context))
 
     // State variables
     var flashEnabled by remember { mutableStateOf(false) }
@@ -71,14 +66,6 @@ fun CameraScreen(navController: NavController) {
     val availableLanguages = remember { AppLanguageRepository.getSupportedLanguages() }
     var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
     var selectedTargetLanguage by remember { mutableStateOf(availableLanguages.firstOrNull { it.code == "hi" }) }
-
-    LaunchedEffect(Unit) {
-        try {
-            ocrViewModel.initialize()
-        } catch (e: Exception) {
-            // Failure will be handled during OCR if needed
-        }
-    }
 
     Box(
         modifier = Modifier

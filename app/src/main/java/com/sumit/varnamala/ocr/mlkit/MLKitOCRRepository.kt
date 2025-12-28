@@ -93,10 +93,8 @@ class MLKitOCRRepository(private val context: Context) {
                 textScore + blockScore + varietyScore
             }
 
-            return@withContext if (bestResult != null) {
-                bestResult.first
-            } else {
-                // Return empty result if no recognizer produced text
+            return@withContext bestResult?.first
+                ?: // Return empty result if no recognizer produced text
                 OCRResult(
                     text = "",
                     language = "unknown",
@@ -104,7 +102,6 @@ class MLKitOCRRepository(private val context: Context) {
                     imageWidth = bitmap.width,
                     imageHeight = bitmap.height
                 )
-            }
         }
     }
 
@@ -145,15 +142,13 @@ class MLKitOCRRepository(private val context: Context) {
                 }
 
                 // If no elements available, create a single element from the line
-                val finalElements = if (elements.isEmpty()) {
+                val finalElements = elements.ifEmpty {
                     listOf(
                         TextElement(
                             text = lineText,
                             boundingBox = lineBounds
                         )
                     )
-                } else {
-                    elements
                 }
 
                 lines.add(

@@ -247,7 +247,7 @@ private fun setupCameraOnce(
         try {
             val cameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build()
-                .also { it.setSurfaceProvider(previewView.surfaceProvider) }
+                .also { it.surfaceProvider = previewView.surfaceProvider }
             
             val imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
@@ -508,93 +508,6 @@ private fun convertToOCRResult(
     )
 }
 
-/**
- * Process a captured image for OCR
- */
-private fun processCapturedImage(
-    context: Context,
-    uri: android.net.Uri,
-    preferredLanguage: String?,
-    latinRecognizer: TextRecognizer,
-    devanagariRecognizer: TextRecognizer,
-    onOCRResult: (OCRResult) -> Unit,
-    onError: (String) -> Unit
-) {
-    try {
-        val startTime = System.currentTimeMillis()
-        val image = InputImage.fromFilePath(context, uri)
-
-        fun handleNoText() {
-            val emptyResult = OCRResult(
-                text = "",
-                language = "Unknown",
-                boundingBoxes = emptyList(),
-                imageWidth = image.width,
-                imageHeight = image.height,
-                imageRotation = 0
-            )
-            onOCRResult(emptyResult)
-        }
-
-        val tryLatin: () -> Unit = {
-            latinRecognizer.process(image)
-                .addOnSuccessListener { latinResult ->
-                    val finalProcessingTime = System.currentTimeMillis() - startTime
-                    if (latinResult.text.isNotEmpty()) {
-                        onOCRResult(
-                            convertToOCRResult(
-                                latinResult,
-                                "English",
-                                finalProcessingTime,
-                                image.width,
-                                image.height,
-                                0
-                            )
-                        )
-                    } else {
-                        handleNoText()
-                    }
-                }
-                .addOnFailureListener { _ -> handleNoText() }
-        }
-
-        val tryDevanagari: () -> Unit = {
-            devanagariRecognizer.process(image)
-                .addOnSuccessListener { devanagariResult ->
-                    val processingTime = System.currentTimeMillis() - startTime
-                    if (devanagariResult.text.isNotEmpty()) {
-                        onOCRResult(
-                            convertToOCRResult(
-                                devanagariResult,
-                                "Devanagari",
-                                processingTime,
-                                image.width,
-                                image.height,
-                                0
-                            )
-                        )
-                    } else {
-                        tryLatin()
-                    }
-                }
-                .addOnFailureListener { _ -> tryLatin() }
-        }
-
-        when (preferredLanguage?.lowercase()) {
-            null -> tryDevanagari()
-            "english", "en", "latin" -> tryLatin()
-            "devanagari", "hi", "hindi" -> tryDevanagari()
-            else -> tryDevanagari()
-        }
-
-    } catch (exc: Exception) {
-        onError("Image processing failed: ${exc.message}")
-    }
-}
-
-/**
- * Convert ImageProxy to Bitmap for display
- */
 private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap {
     val buffer = imageProxy.planes[0].buffer
     val bytes = ByteArray(buffer.remaining())

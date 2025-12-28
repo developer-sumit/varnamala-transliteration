@@ -12,16 +12,6 @@ object Transliterator {
         const val TAMIL = "ta"
 
         val ALL = listOf(ENGLISH, HINDI, TELUGU, PUNJABI, MALAYALAM, TAMIL)
-
-        fun getDisplayName(code: String): String = when (code) {
-            ENGLISH -> "English"
-            HINDI -> "Hindi"
-            TELUGU -> "Telugu"
-            PUNJABI -> "Punjabi"
-            MALAYALAM -> "Malayalam"
-            TAMIL -> "Tamil"
-            else -> code.uppercase()
-        }
     }
 
     // Cache mappings to avoid re-generating them on every call
@@ -154,7 +144,7 @@ object Transliterator {
 
                         var nextIsConsonant = false
                         // Check what the next token would be
-                        var nextI = i + match.length
+                        val nextI = i + match.length
                         if (nextI < lowerText.length) {
                             // Find what the next match would be
                             for (len in 5 downTo 1) {
@@ -308,19 +298,5 @@ object Transliterator {
         }
 
         return transliterateToScript(lowerText, englishToTamilMap)
-    }
-
-    fun getSupportedTargetLanguages(sourceLanguage: String?): List<String> {
-        if (sourceLanguage == null) return emptyList()
-
-        // We support conversion from any language to English, Hindi, Telugu, Punjabi, Malayalam, and Tamil
-        return listOf(
-            Languages.ENGLISH,
-            Languages.HINDI,
-            Languages.TELUGU,
-            Languages.PUNJABI,
-            Languages.MALAYALAM,
-            Languages.TAMIL
-        )
     }
 }
