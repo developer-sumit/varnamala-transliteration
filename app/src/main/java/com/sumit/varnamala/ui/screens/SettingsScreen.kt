@@ -239,15 +239,21 @@ fun SettingsScreen(
                                 }
                             }
                         ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_image_outline),
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .background(
+                                        if (overlayServiceRunning) MaterialTheme.colorScheme.error else Color(
+                                            0xFF00BCD4
+                                        ),
+                                        shape = RoundedCornerShape(50)
+                                    )
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 if (overlayServiceRunning) stringResource(R.string.stop_overlay)
-                                else stringResource(R.string.start_overlay)
+                                else stringResource(R.string.start_overlay),
+                                color = if (overlayServiceRunning) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

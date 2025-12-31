@@ -35,6 +35,9 @@
     <string name="close">ಮುಚ್ಚಿ</string>
     <string name="retry">ಮರುಪ್ರಯತ್ನಿಸಿ</string>
     <string name="copy">ನಕಲಿಸಿ</string>
+    <string name="hide">ಮರೆಮಾಡಿ</string>
+    <string name="show">ತೋರಿಸಿ</string>
+    <string name="both_text_panels_hidden">ಎರಡೂ ಪಠ್ಯ ಫಲಕಗಳನ್ನು ಮರೆಮಾಡಲಾಗಿದೆ</string>
     <string name="share">ಹಂಚಿಕೊಳ್ಳಿ</string>
     <string name="refresh">ರಿಫ್ರೆಶ್ ಮಾಡಿ</string>
     <string name="clear">ತೆರವುಗೊಳಿಸಿ</string>

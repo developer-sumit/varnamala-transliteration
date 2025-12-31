@@ -35,6 +35,9 @@
     <string name="close">ବନ୍ଦ କରନ୍ତୁ</string>
     <string name="retry">ପୁନଃ ଚେଷ୍ଟା କରନ୍ତୁ</string>
     <string name="copy">କପି କରନ୍ତୁ</string>
+    <string name="hide">ଲୁଚାନ୍ତୁ</string>
+    <string name="show">ଦେଖାନ୍ତୁ</string>
+    <string name="both_text_panels_hidden">ଦୁଇଟି ଟେକ୍ସଟ୍ ପ୍ୟାନେଲ୍ ଲୁଚାଇ ରହିଛି</string>
     <string name="share">ସେୟାର କରନ୍ତୁ</string>
     <string name="refresh">ରିଫ୍ରେସ୍ କରନ୍ତୁ</string>
     <string name="clear">ସଫା କରନ୍ତୁ</string>

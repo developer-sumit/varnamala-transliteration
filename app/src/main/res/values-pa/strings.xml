@@ -35,6 +35,9 @@
     <string name="close">ਬੰਦ ਕਰੋ</string>
     <string name="retry">ਮੁੜ ਕੋਸ਼ਿਸ਼ ਕਰੋ</string>
     <string name="copy">ਕਾਪੀ ਕਰੋ</string>
+    <string name="hide">ਲੁਕਾਓ</string>
+    <string name="show">ਵੇਖਾਓ</string>
+    <string name="both_text_panels_hidden">ਦੋਵੇਂ ਟੈਕਸਟ ਪੈਨਲ ਲੁਕੇ ਹੋਏ ਹਨ</string>
     <string name="share">ਸਾਂਝਾ ਕਰੋ</string>
     <string name="refresh">ਤਾਜ਼ਾ ਕਰੋ</string>
     <string name="clear">ਸਾਫ਼ ਕਰੋ</string>

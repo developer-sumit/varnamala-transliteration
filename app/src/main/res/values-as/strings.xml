@@ -35,6 +35,9 @@
     <string name="close">বন্ধ কৰক</string>
     <string name="retry">পুনৰ চেষ্টা কৰক</string>
     <string name="copy">কপি কৰক</string>
+    <string name="hide">লুকুৱাওক</string>
+    <string name="show">দেখুৱাওক</string>
+    <string name="both_text_panels_hidden">দুয়োটা পাঠ পেনেল লুকুৱাই থোৱা হৈছে</string>
     <string name="share">শ্বেয়াৰ কৰক</string>
     <string name="refresh">ৰিফ্ৰেশ্ব কৰক</string>
     <string name="clear">পৰিষ্কাৰ কৰক</string>

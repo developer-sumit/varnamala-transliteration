@@ -35,6 +35,9 @@
     <string name="close">બંધ કરો</string>
     <string name="retry">ફરીથી પ્રયાસ કરો</string>
     <string name="copy">કૉપિ કરો</string>
+    <string name="hide">છુપાવો</string>
+    <string name="show">બતાવો</string>
+    <string name="both_text_panels_hidden">બંને ટેક્સ્ટ પેનલ છુપાવ્યા છે</string>
     <string name="share">શેર કરો</string>
     <string name="refresh">રિફ્રેશ કરો</string>
     <string name="clear">સાફ કરો</string>

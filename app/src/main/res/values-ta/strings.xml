@@ -35,6 +35,9 @@
     <string name="close">மூடு</string>
     <string name="retry">மீண்டும் முயற்சி செய்</string>
     <string name="copy">நகலெடு</string>
+    <string name="hide">மறை</string>
+    <string name="show">காட்டு</string>
+    <string name="both_text_panels_hidden">இரண்டு உரை பலகைகளும் மறைக்கப்பட்டுள்ளன</string>
     <string name="share">பகிர்</string>
     <string name="refresh">புதுப்பி</string>
     <string name="clear">அழி</string>

@@ -35,6 +35,9 @@
     <string name="close">మూసివేయండి</string>
     <string name="retry">మళ్లీ ప్రయత్నించండి</string>
     <string name="copy">కాపీ చేయండి</string>
+    <string name="hide">దాచండి</string>
+    <string name="show">చూపించండి</string>
+    <string name="both_text_panels_hidden">రెండు టెక్స్ట్ ప్యానెల్లు దాచబడ్డాయి</string>
     <string name="share">షేర్ చేయండి</string>
     <string name="refresh">రిఫ్రెష్ చేయండి</string>
     <string name="clear">క్లియర్ చేయండి</string>

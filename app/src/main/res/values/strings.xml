@@ -88,6 +88,9 @@
     <string name="detection_options">Detection Options</string>
     <string name="ocr_status">OCR Status</string>
     <string name="ocr_results">OCR Results</string>
+    <string name="hide">Hide</string>
+    <string name="show">Show</string>
+    <string name="both_text_panels_hidden">Both text panels hidden</string>
     <string name="no_text_detected">No text detected in the image</string>
     
     <!-- Language change message -->

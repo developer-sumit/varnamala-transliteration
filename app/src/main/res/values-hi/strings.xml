@@ -35,6 +35,9 @@
     <string name="close">बंद करें</string>
     <string name="retry">पुनः प्रयास</string>
     <string name="copy">कॉपी करें</string>
+    <string name="hide">छिपाएँ</string>
+    <string name="show">दिखाएँ</string>
+    <string name="both_text_panels_hidden">दोनों टेक्स्ट पैनल छिपे हैं</string>
     <string name="share">साझा करें</string>
     <string name="refresh">नवीनीकरण</string>
     <string name="clear">साफ़ करें</string>

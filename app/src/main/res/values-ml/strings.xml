@@ -35,6 +35,9 @@
     <string name="close">അടയ്ക്കുക</string>
     <string name="retry">വീണ്ടും ശ്രമിക്കുക</string>
     <string name="copy">പകർത്തുക</string>
+    <string name="hide">മറയ്ക്കുക</string>
+    <string name="show">കാണിക്കുക</string>
+    <string name="both_text_panels_hidden">രണ്ടും ടെക്സ്റ്റ് പാനലുകൾ മറച്ചിരിക്കുന്നു</string>
     <string name="share">പങ്കിടുക</string>
     <string name="refresh">പുതുക്കുക</string>
     <string name="clear">മായ്ക്കുക</string>
