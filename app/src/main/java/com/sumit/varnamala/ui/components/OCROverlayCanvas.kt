@@ -42,6 +42,7 @@ import kotlin.math.min
 @Composable
 fun OCROverlayCanvas(
     result: OCRResult?,
+    textOverride: Map<android.graphics.Rect, String>? = null,
     containerSize: IntSize,
     modifier: Modifier = Modifier,
     // Display settings
@@ -92,6 +93,7 @@ fun OCROverlayCanvas(
         if (showTextOverlay) {
             EnhancedOCRTextOverlay(
                 result = result,
+                textOverride = textOverride,
                 containerSize = containerSize,
                 textColor = textColor,
                 backgroundColor = textBackgroundColor.copy(alpha = textBackgroundOpacity),
@@ -214,6 +216,7 @@ private fun drawOCRBoundingBoxes(
 @Composable
 private fun EnhancedOCRTextOverlay(
     result: OCRResult,
+    textOverride: Map<android.graphics.Rect, String>?,
     containerSize: IntSize,
     textColor: Color,
     backgroundColor: Color,
@@ -233,7 +236,8 @@ private fun EnhancedOCRTextOverlay(
         result.boundingBoxes.forEach { block ->
             block.lines.forEach { line ->
                 line.elements.forEach { element ->
-                    if (element.text.isNotBlank()) {
+                    val displayText = textOverride?.get(element.boundingBox) ?: element.text
+                    if (displayText.isNotBlank()) {
                         val scaledRect = android.graphics.RectF(
                             element.boundingBox.left * scaleX,
                             element.boundingBox.top * scaleY,
@@ -241,21 +245,71 @@ private fun EnhancedOCRTextOverlay(
                             element.boundingBox.bottom * scaleY
                         )
                         
-                        // Calculate appropriate font size to fit each word's bounding box precisely
-                        val boundingHeight = scaledRect.height()
-                        val boundingWidth = scaledRect.width()
-                        
-                        // Calculate optimal font size that maximally fills the bounding box like Google Lens
-                        // Use 95% of the height to ensure the text fits well within the box
-                        val optimalFontSize = with(density) {
-                            val heightBasedSize = boundingHeight * 0.95f
-                            
-                            // Ensure minimum readable size and reasonable maximum size
-                            // But prioritize filling the bounding box over arbitrary limits
-                            val minSize = 10f
-                            val maxSize = 32f
-                            max(minSize, min(heightBasedSize, maxSize)).toDp().toPx()
+                        val boundingHeightPx = max(1f, scaledRect.height())
+                        val boundingWidthPx = max(1f, scaledRect.width())
+
+                        // Fit text to both width and height. Allow up to 2 lines.
+                        val paddingPx = 2f
+                        val targetWidthPx = max(1f, boundingWidthPx - paddingPx * 2)
+                        val targetHeightPx = max(1f, boundingHeightPx - paddingPx * 2)
+
+                        val minTextPx = 8f
+                        val maxTextPx = max(12f, targetHeightPx * 0.9f)
+                        val maxLines = 2
+
+                        fun fits(textSizePx: Float): Pair<Boolean, Int> {
+                            val paint = android.graphics.Paint().apply {
+                                isAntiAlias = true
+                                textSize = textSizePx
+                                typeface = android.graphics.Typeface.DEFAULT_BOLD
+                            }
+
+                            // Approx line height. Paint.FontMetrics gives better but this is stable.
+                            val fm = paint.fontMetrics
+                            val lineHeight = (fm.descent - fm.ascent) * 1.05f
+
+                            val words = displayText.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+                            if (words.isEmpty()) return false to 1
+
+                            var lines = 1
+                            var current = words.first()
+                            for (w in words.drop(1)) {
+                                val candidate = "$current $w"
+                                if (paint.measureText(candidate) <= targetWidthPx) {
+                                    current = candidate
+                                } else {
+                                    lines++
+                                    current = w
+                                    if (lines > maxLines) break
+                                }
+                            }
+
+                            val totalHeight = lineHeight * lines
+                            val ok = lines <= maxLines && totalHeight <= targetHeightPx
+
+                            // Also ensure single long word doesn't exceed width massively
+                            val longestWordWidth = words.maxOf { paint.measureText(it) }
+                            return (ok && longestWordWidth <= targetWidthPx) to lines
                         }
+
+                        // Binary search largest text size that fits.
+                        var lo = minTextPx
+                        var hi = maxTextPx
+                        var best = minTextPx
+                        var bestLines = 1
+                        repeat(16) {
+                            val mid = (lo + hi) / 2f
+                            val (ok, usedLines) = fits(mid)
+                            if (ok) {
+                                best = mid
+                                bestLines = usedLines
+                                lo = mid
+                            } else {
+                                hi = mid
+                            }
+                        }
+                        val optimalFontSizePx = best
+                        val optimalMaxLines = bestLines
                         
                         // Convert pixels to dp for proper positioning
                         val leftDp = with(density) { scaledRect.left.toDp() }
@@ -277,12 +331,12 @@ private fun EnhancedOCRTextOverlay(
                         Box(
                             modifier = Modifier
                                 .offset(x = leftDp, y = topDp)
-                                .wrapContentSize()
+                                .size(width = widthDp, height = heightDp)
                                 .then(
                                     if (enableTextCopy) {
                                         Modifier.clickable {
                                             selectedElement = element
-                                            copyTextToClipboard(context, element.text)
+                                            copyTextToClipboard(context, displayText)
                                         }
                                     } else Modifier
                                 )
@@ -290,13 +344,13 @@ private fun EnhancedOCRTextOverlay(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = element.text,
+                                text = displayText,
                                 color = textColor,
-                                fontSize = with(density) { optimalFontSize.toSp() },
+                                fontSize = with(density) { optimalFontSizePx.toSp() },
                                 fontWeight = FontWeight.SemiBold,
                                 textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Visible,
+                                maxLines = optimalMaxLines,
+                                overflow = TextOverflow.Ellipsis,
                                 style = TextStyle(
                                     shadow = Shadow(
                                         color = Color.Black.copy(alpha = 0.8f),
@@ -305,8 +359,8 @@ private fun EnhancedOCRTextOverlay(
                                     )
                                 ),
                                 modifier = Modifier
-                                    .wrapContentSize()
-                                    .padding(2.dp) // Small padding for clickable area
+                                    .fillMaxSize()
+                                    .padding(1.dp)
                             )
                         }
                     }

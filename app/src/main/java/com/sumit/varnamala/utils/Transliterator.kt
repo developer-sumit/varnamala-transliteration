@@ -1,9 +1,12 @@
 package com.sumit.varnamala.utils
 
+import android.util.Log
 import com.sumit.varnamala.transliteration.IndianSignboardDictionary
 import com.sumit.varnamala.transliteration.TransliterationRules
 
 object Transliterator {
+    private const val TAG = "Transliterator"
+
     object Languages {
         const val ENGLISH = "en"
         const val HINDI = "hi"
@@ -33,10 +36,15 @@ object Transliterator {
             return text
         }
 
+        val normalizedTarget = normalizeLanguageCode(targetLanguage)
+        Log.d(TAG, "transliterate: src=$sourceLanguage target=$targetLanguage normalizedTarget=$normalizedTarget")
+
         // For now, we primarily support Indian script to English
         // and English to Indian scripts
-        if (sourceLanguage == "en" || sourceLanguage == "english") {
-            return englishToIndianScript(text, targetLanguage)
+        val source = sourceLanguage.lowercase()
+        val isEnglishLike = source == "en" || source == "english" || source == "unknown" || source.startsWith("mixed_")
+        if (isEnglishLike) {
+            return englishToIndianScript(text, normalizedTarget)
         }
 
         // Indian script to English (reverse transliteration)
@@ -60,6 +68,11 @@ object Transliterator {
                 token.isBlank() || isPunctuation(token) -> {
                     result.append(token)
                 }
+                // If token already contains non-Latin script letters, leave it as-is.
+                // This fixes mixed-language input like: "मैं going home".
+                token.any { it.code > 127 && it.isLetter() } -> {
+                    result.append(token)
+                }
                 // Dictionary lookup first (for common signboard words)
                 IndianSignboardDictionary.hasWord(token) -> {
                     val translation = IndianSignboardDictionary.getTransliteration(token, normalizedLang)
@@ -79,6 +92,10 @@ object Transliterator {
      * Apply rule-based transliteration with proper matra handling
      */
     private fun applyTransliterationRules(word: String, targetLang: String): String {
+        // Only transliterate roman tokens. If the token contains non-ASCII letters,
+        // keep it unchanged to support mixed-language text.
+        if (word.any { it.code > 127 && it.isLetter() }) return word
+
         val lowerWord = word.lowercase()
         
         return when (targetLang) {
@@ -93,6 +110,83 @@ object Transliterator {
             "or" -> transliterateToOdia(lowerWord)
             else -> word
         }
+    }
+
+    private data class ScriptRules(
+        val vowels: Map<String, String>,
+        val matras: Map<String, String>,
+        val consonants: Map<String, String>,
+        val pureConsonants: Map<String, String>,
+        val halant: String
+    )
+
+    private fun transliterateWithRules(text: String, rules: ScriptRules, maxLen: Int): String {
+        val result = StringBuilder()
+        var i = 0
+
+        while (i < text.length) {
+            var matched = false
+
+            for (len in maxLen downTo 1) {
+                if (i + len > text.length) continue
+                val substr = text.substring(i, i + len)
+
+                // Prefer explicit consonant clusters first.
+                rules.consonants[substr]?.let {
+                    result.append(it)
+                    i += len
+                    matched = true
+                }
+                if (matched) break
+
+                // Consonant + vowel => consonant + matra
+                for (consLen in (len - 1) downTo 1) {
+                    val consKey = substr.substring(0, consLen)
+                    val vowelKey = substr.substring(consLen)
+                    val consonant = rules.pureConsonants[consKey]
+                    val matra = rules.matras[vowelKey]
+                    if (consonant != null && matra != null) {
+                        result.append(consonant).append(matra)
+                        i += len
+                        matched = true
+                        break
+                    }
+                }
+                if (matched) break
+
+                // Pure consonant at end/before non-vowel
+                rules.pureConsonants[substr]?.let { consonant ->
+                    val nextIndex = i + len
+                    val nextChar = if (nextIndex < text.length) text[nextIndex] else null
+                    val nextIsVowelStart = when (nextChar) {
+                        null -> false
+                        'a', 'e', 'i', 'o', 'u' -> true
+                        else -> false
+                    }
+                    if (!nextIsVowelStart) {
+                        result.append(consonant).append(rules.halant)
+                        i += len
+                        matched = true
+                    }
+                }
+                if (matched) break
+
+                // Independent vowel
+                rules.vowels[substr]?.let {
+                    result.append(it)
+                    i += len
+                    matched = true
+                }
+                if (matched) break
+            }
+
+            if (!matched) {
+                result.append(text[i])
+                i++
+            }
+        }
+
+        return result.toString()
     }
 
     /**
@@ -365,12 +459,65 @@ object Transliterator {
         return result.toString()
     }
 
-    // Simplified versions for remaining languages (can be expanded similarly)
-    private fun transliterateToGujarati(text: String): String = transliterateToDevanagari(text) // Similar to Devanagari
-    private fun transliterateToKannada(text: String): String = transliterateToTelugu(text) // Similar structure
-    private fun transliterateToMalayalam(text: String): String = transliterateToTelugu(text) // Similar structure
-    private fun transliterateToPunjabi(text: String): String = transliterateToDevanagari(text) // Similar to Devanagari
-    private fun transliterateToOdia(text: String): String = transliterateToBengali(text) // Similar to Bengali
+    private fun transliterateToGujarati(text: String): String = transliterateWithRules(
+        text,
+        ScriptRules(
+            vowels = TransliterationRules.Gujarati.vowels,
+            matras = TransliterationRules.Gujarati.matras,
+            consonants = TransliterationRules.Gujarati.consonants,
+            pureConsonants = TransliterationRules.Gujarati.pureConsonants,
+            halant = TransliterationRules.Gujarati.halant
+        ),
+        maxLen = 5
+    )
+
+    private fun transliterateToKannada(text: String): String = transliterateWithRules(
+        text,
+        ScriptRules(
+            vowels = TransliterationRules.Kannada.vowels,
+            matras = TransliterationRules.Kannada.matras,
+            consonants = TransliterationRules.Kannada.consonants,
+            pureConsonants = TransliterationRules.Kannada.pureConsonants,
+            halant = TransliterationRules.Kannada.halant
+        ),
+        maxLen = 4
+    )
+
+    private fun transliterateToMalayalam(text: String): String = transliterateWithRules(
+        text,
+        ScriptRules(
+            vowels = TransliterationRules.Malayalam.vowels,
+            matras = TransliterationRules.Malayalam.matras,
+            consonants = TransliterationRules.Malayalam.consonants,
+            pureConsonants = TransliterationRules.Malayalam.pureConsonants,
+            halant = TransliterationRules.Malayalam.halant
+        ),
+        maxLen = 4
+    )
+
+    private fun transliterateToPunjabi(text: String): String = transliterateWithRules(
+        text,
+        ScriptRules(
+            vowels = TransliterationRules.Punjabi.vowels,
+            matras = TransliterationRules.Punjabi.matras,
+            consonants = TransliterationRules.Punjabi.consonants,
+            pureConsonants = TransliterationRules.Punjabi.pureConsonants,
+            halant = TransliterationRules.Punjabi.halant
+        ),
+        maxLen = 4
+    )
+
+    private fun transliterateToOdia(text: String): String = transliterateWithRules(
+        text,
+        ScriptRules(
+            vowels = TransliterationRules.Odia.vowels,
+            matras = TransliterationRules.Odia.matras,
+            consonants = TransliterationRules.Odia.consonants,
+            pureConsonants = TransliterationRules.Odia.pureConsonants,
+            halant = TransliterationRules.Odia.halant
+        ),
+        maxLen = 4
+    )
 
     /**
      * Indian script to English (reverse transliteration)
@@ -389,18 +536,37 @@ object Transliterator {
     private fun tokenize(text: String): List<String> {
         val tokens = mutableListOf<String>()
         val currentToken = StringBuilder()
+        val MODE_LETTERS = 1
+        val MODE_DIGITS = 2
+        val MODE_OTHER = 3
+        var mode: Int? = null
 
         for (char in text) {
-            when {
-                char.isLetterOrDigit() -> currentToken.append(char)
-                else -> {
-                    if (currentToken.isNotEmpty()) {
-                        tokens.add(currentToken.toString())
-                        currentToken.clear()
-                    }
-                    tokens.add(char.toString())
+            val nextMode = when {
+                char.isLetter() -> MODE_LETTERS
+                char.isDigit() -> MODE_DIGITS
+                else -> MODE_OTHER
+            }
+
+            if (nextMode == MODE_OTHER) {
+                if (currentToken.isNotEmpty()) {
+                    tokens.add(currentToken.toString())
+                    currentToken.clear()
+                    mode = null
+                }
+                tokens.add(char.toString())
+                continue
+            }
+
+            if (mode != null && mode != nextMode) {
+                if (currentToken.isNotEmpty()) {
+                    tokens.add(currentToken.toString())
+                    currentToken.clear()
                 }
             }
+
+            mode = nextMode
+            currentToken.append(char)
         }
 
         if (currentToken.isNotEmpty()) {
@@ -416,18 +582,26 @@ object Transliterator {
 
     private fun normalizeLanguageCode(code: String): String {
         return when (code.lowercase()) {
+            // Devanagari
             "hindi", "hi", "devanagari" -> "hi"
-            "bengali", "bn" -> "bn"
-            "tamil", "ta" -> "ta"
-            "telugu", "te" -> "te"
-            "marathi", "mr" -> "mr"
-            "gujarati", "gu" -> "gu"
-            "kannada", "kn" -> "kn"
-            "malayalam", "ml" -> "ml"
-            "punjabi", "pa", "gurmukhi" -> "pa"
-            "odia", "or", "oriya" -> "or"
-            "assamese", "as" -> "as"
-            else -> code
+            "marathi", "mr", "mar" -> "mr"
+
+            // Bengali-Assamese
+            "bengali", "bn", "ben" -> "bn"
+            "assamese", "as", "asm" -> "as"
+
+            // Dravidian
+            "tamil", "ta", "tam" -> "ta"
+            "telugu", "te", "tel" -> "te"
+            "kannada", "kn", "kan" -> "kn"
+            "malayalam", "ml", "mal" -> "ml"
+
+            // Others
+            "gujarati", "gu", "guj" -> "gu"
+            "punjabi", "pa", "pan", "gurmukhi" -> "pa"
+            "odia", "or", "ori", "oriya" -> "or"
+
+            else -> code.lowercase()
         }
     }
 }

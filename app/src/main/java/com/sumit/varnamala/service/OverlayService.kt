@@ -862,7 +862,7 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                                         Transliterator.transliterate(
                                             text = rawOcrText.value,
                                             sourceLanguage = detectedLanguage.value,
-                                            targetLanguage = targetLang.code
+                                            targetLanguage = targetLang.localeCode
                                         )
                                     } else rawOcrText.value
                                 } ?: rawOcrText.value
@@ -900,7 +900,7 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                                         Transliterator.transliterate(
                                             text = rawOcrText.value,
                                             sourceLanguage = detectedLanguage.value,
-                                            targetLanguage = targetLang.code
+                                            targetLanguage = targetLang.localeCode
                                         )
                                     } else rawOcrText.value
                                 } ?: rawOcrText.value

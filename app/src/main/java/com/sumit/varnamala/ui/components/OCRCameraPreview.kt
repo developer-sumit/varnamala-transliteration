@@ -55,6 +55,7 @@ fun OCRCameraPreview(
     textBackgroundOpacity: Float = 0.8f,
     boundingBoxStrokeWidth: Float = 2f,
     // Single capture functionality
+    textOverride: Map<Rect, String>? = null,
     captureImage: Boolean = false,
     onCaptureComplete: () -> Unit = {},
     onImageCaptured: (android.graphics.Bitmap) -> Unit = {},
@@ -114,6 +115,7 @@ fun OCRCameraPreview(
 
         OCROverlayCanvas(
             result = lastOCRResult,
+            textOverride = textOverride,
             containerSize = previewSize,
             showBoundingBoxes = showBoundingBoxes,
             showTextOverlay = showTextOverlay,

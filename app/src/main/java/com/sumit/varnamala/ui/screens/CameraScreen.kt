@@ -19,6 +19,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Rect
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
@@ -95,6 +96,18 @@ fun CameraScreen(navController: NavController) {
                         showWordBoundingBoxes = false,
                         showLineBoundingBoxes = false,
                         showBlockBoundingBoxes = false,
+                        textOverride = selectedTargetLanguage?.let { targetLang ->
+                            lastOCRResult?.boundingBoxes
+                                ?.flatMap { it.lines }
+                                ?.flatMap { it.elements }
+                                ?.associate { element ->
+                                    element.boundingBox to Transliterator.transliterate(
+                                        text = element.text,
+                                        sourceLanguage = detectedLanguage,
+                                        targetLanguage = targetLang.localeCode
+                                    )
+                                }
+                        },
                         // Single capture functionality
                         captureImage = captureImage,
                         onCaptureComplete = {
@@ -190,7 +203,7 @@ fun CameraScreen(navController: NavController) {
                     Transliterator.transliterate(
                         text = rawOcrText,
                         sourceLanguage = detectedLanguage,
-                        targetLanguage = targetLang.code
+                        targetLanguage = targetLang.localeCode
                     )
                 } else rawOcrText
 
@@ -342,7 +355,7 @@ fun CameraScreen(navController: NavController) {
                                 Transliterator.transliterate(
                                     text = rawOcrText,
                                     sourceLanguage = detectedLanguage,
-                                    targetLanguage = targetLang.code
+                                    targetLanguage = targetLang.localeCode
                                 )
                             } else rawOcrText
                         } ?: rawOcrText

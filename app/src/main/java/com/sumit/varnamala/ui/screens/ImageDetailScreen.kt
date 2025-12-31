@@ -170,8 +170,27 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     contentScale = ContentScale.Fit
                 )
 
+                val overlayTextOverrides = remember(lastResult, selectedTargetLanguage, detectedLanguage) {
+                    val targetLang = selectedTargetLanguage
+                    if (targetLang == null || lastResult == null) {
+                        null
+                    } else {
+                        lastResult!!.boundingBoxes
+                            .flatMap { it.lines }
+                            .flatMap { it.elements }
+                            .associate { element ->
+                                element.boundingBox to Transliterator.transliterate(
+                                    text = element.text,
+                                    sourceLanguage = detectedLanguage,
+                                    targetLanguage = targetLang.localeCode
+                                )
+                            }
+                    }
+                }
+
                 OCROverlayCanvas(
                     result = lastResult,
+                    textOverride = overlayTextOverrides,
                     containerSize = imageSize,
                     showBoundingBoxes = showBoundingBoxes,
                     showTextOverlay = showTextOverlay,
@@ -235,7 +254,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         Transliterator.transliterate(
                             text = rawOcrText,
                             sourceLanguage = detectedLanguage,
-                            targetLanguage = targetLang.code
+                            targetLanguage = targetLang.localeCode
                         )
                     } else rawOcrText
                 } ?: rawOcrText
