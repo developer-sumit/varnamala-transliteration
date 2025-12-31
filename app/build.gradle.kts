@@ -5,9 +5,29 @@ plugins {
     id("kotlin-parcelize")
 }
 
+import java.util.Properties
+
 android {
     namespace = "com.sumit.varnamala"
     compileSdk = 36
+
+    val keystorePropertiesFile = rootProject.file("key.properties")
+    val keystoreProperties = Properties()
+    val hasKeystoreProperties = keystorePropertiesFile.exists()
+    if (hasKeystoreProperties) {
+        keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
+    }
+
+    signingConfigs {
+        if (hasKeystoreProperties) {
+            create("release") {
+                storeFile = file(keystoreProperties["storeFile"]?.toString() ?: "")
+                storePassword = keystoreProperties["storePassword"]?.toString()
+                keyAlias = keystoreProperties["keyAlias"]?.toString()
+                keyPassword = keystoreProperties["keyPassword"]?.toString()
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = "com.sumit.varnamala"
@@ -23,6 +43,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            if (hasKeystoreProperties) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

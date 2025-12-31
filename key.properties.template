@@ -1,0 +1,9 @@
+# Copy this file to key.properties (do NOT commit key.properties)
+#
+# storeFile can be relative to the project root, e.g.: keystore/release.jks
+# Or an absolute path on your machine.
+
+storeFile=keystore/release.jks
+storePassword=YOUR_STORE_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+keyPassword=YOUR_KEY_PASSWORD
