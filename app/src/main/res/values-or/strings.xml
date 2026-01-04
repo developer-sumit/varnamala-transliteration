@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR ବୈଶିଷ୍ଟ୍ୟଗୁଡିକ</string>
     <string name="data_storage">ଡାଟା ଏବଂ ଷ୍ଟୋରେଜ୍</string>
     <string name="legal">ଆଇନଗତ</string>
+
+    <string name="unable_to_open_link">ଲିଙ୍କ ଖୋଲିବାରେ ଅସମର୍ଥ।</string>
 </resources>

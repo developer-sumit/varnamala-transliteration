@@ -62,6 +62,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import android.content.Intent
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.net.Uri
+import android.widget.Toast
+import androidx.core.net.toUri
 
 @Composable
 fun SettingsScreen(
@@ -89,6 +95,40 @@ fun SettingsScreen(
 
     val appName = stringResource(R.string.app_name)
     val appVersion = packageInfo?.versionName ?: "Unknown"
+
+    val privacyPolicyUrl = "https://sumitrathore.web.app/privacy/varnamala"
+
+    fun openExternalUrl(url: String) {
+        val normalizedUrl = when {
+            url.startsWith("https://", ignoreCase = true) -> url
+            url.startsWith("http://", ignoreCase = true) -> url
+            else -> "https://$url"
+        }
+
+        val uri = normalizedUrl.toUri()
+        val viewIntent = Intent(Intent.ACTION_VIEW, uri).addCategory(Intent.CATEGORY_BROWSABLE)
+        val isActivityContext = context is Activity
+
+        if (!isActivityContext) {
+            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        val chooserIntent = Intent.createChooser(viewIntent, null).apply {
+            if (!isActivityContext) {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        }
+
+        try {
+            context.startActivity(chooserIntent)
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.unable_to_open_link),
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -145,7 +185,6 @@ fun SettingsScreen(
 
             // OCR Features Section
             var overlayServiceRunning by remember { mutableStateOf(OverlayManager.isOverlayRunning()) }
-            // Initialize overlayFeatureEnabled based on current permission status
             var overlayFeatureEnabled by remember {
                 mutableStateOf(OverlayManager.canDrawOverlays(context))
             }
@@ -288,28 +327,13 @@ fun SettingsScreen(
 
             // Legal Section
             SettingsCategory(title = stringResource(R.string.legal)) {
-                // Terms of Service
-                SettingItem(
-                    title = stringResource(R.string.terms_of_service),
-                    icon = painterResource(id = R.drawable.ic_shield_outline),
-                    isLastItem = false,
-                    showDivider = true,
-                    onClick = { },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_chevron_right),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    })
-
                 // Privacy Policy
                 SettingItem(
                     title = stringResource(R.string.privacy_policy),
                     icon = painterResource(id = R.drawable.ic_shield_outline),
                     isLastItem = true,
                     showDivider = false,
-                    onClick = { },
+                    onClick = { openExternalUrl(privacyPolicyUrl) },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.ic_chevron_right),

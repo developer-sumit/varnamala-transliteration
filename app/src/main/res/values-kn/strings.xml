@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR ವೈಶಿಷ್ಟ್ಯಗಳು</string>
     <string name="data_storage">ಡೇಟಾ ಮತ್ತು ಸಂಗ್ರಹಣೆ</string>
     <string name="legal">ಕಾನೂನು</string>
+
+    <string name="unable_to_open_link">ಲಿಂಕ್ ತೆರೆಯಲಾಗಲಿಲ್ಲ.</string>
 </resources>

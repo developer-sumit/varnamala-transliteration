@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR સુવિધાઓ</string>
     <string name="data_storage">ડેટા અને સ્ટોરેજ</string>
     <string name="legal">કાનૂની</string>
+
+    <string name="unable_to_open_link">લિંક ખોલી શકાયું નથી.</string>
 </resources>

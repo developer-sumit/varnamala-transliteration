@@ -19,3 +19,4 @@ local.properties
 key.properties
 *.jks
 *.keystore
+*/release

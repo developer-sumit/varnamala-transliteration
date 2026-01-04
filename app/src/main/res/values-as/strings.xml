@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR বৈশিষ্ট্যসমূহ</string>
     <string name="data_storage">ডাটা আৰু সংৰক্ষণ</string>
     <string name="legal">আইনী</string>
+
+    <string name="unable_to_open_link">লিংক খুলিব পৰা নগ'ল।</string>
 </resources>

@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR ഫീച്ചറുകൾ</string>
     <string name="data_storage">ഡാറ്റയും സംഭരണവും</string>
     <string name="legal">നിയമപരം</string>
+
+    <string name="unable_to_open_link">ലിങ്ക് തുറക്കാനായില്ല.</string>
 </resources>

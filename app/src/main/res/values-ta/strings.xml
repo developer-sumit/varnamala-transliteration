@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR அம்சங்கள்</string>
     <string name="data_storage">தரவு மற்றும் சேமிப்பு</string>
     <string name="legal">சட்டபூர்வமானது</string>
+
+    <string name="unable_to_open_link">இணைப்பை திறக்க முடியவில்லை.</string>
 </resources>

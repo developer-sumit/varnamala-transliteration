@@ -113,4 +113,6 @@
     <string name="ocr_features">OCR Features</string>
     <string name="data_storage">Data &amp; Storage</string>
     <string name="legal">Legal</string>
+
+    <string name="unable_to_open_link">Unable to open link.</string>
 </resources>

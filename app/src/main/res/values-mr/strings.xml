@@ -114,4 +114,6 @@
     <string name="ocr_features">OCR वैशिष्ट्ये</string>
     <string name="data_storage">डेटा आणि स्टोरेज</string>
     <string name="legal">कायदेशीर</string>
+
+    <string name="unable_to_open_link">लिंक उघडता आला नाही.</string>
 </resources>
