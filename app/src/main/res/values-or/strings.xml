@@ -115,5 +115,14 @@
     <string name="data_storage">ଡାଟା ଏବଂ ଷ୍ଟୋରେଜ୍</string>
     <string name="legal">ଆଇନଗତ</string>
 
+    <string name="rate_app">ଆପ୍‌କୁ ରେଟ୍ କରନ୍ତୁ</string>
+    <string name="camera_ocr_settings">କ୍ୟାମେରା OCR ସେଟିଂସ୍</string>
+    <string name="camera_ocr_detection_interval">ସନ୍ଧାନ ଅନ୍ତରାଳ</string>
+    <string name="camera_ocr_reading_ms_per_word">ପ୍ରତି ଶବ୍ଦ ପଢିବା ସମୟ</string>
+    <string name="camera_ocr_max_extra_delay_ms">ସର୍ବାଧିକ ଅତିରିକ୍ତ ବିଳମ୍ବ</string>
+    <string name="camera_ocr_skip_frames">ଫ୍ରେମ୍ ଛାଡନ୍ତୁ</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ଫ୍ରେମ୍</string>
+
     <string name="unable_to_open_link">ଲିଙ୍କ ଖୋଲିବାରେ ଅସମର୍ଥ।</string>
 </resources>

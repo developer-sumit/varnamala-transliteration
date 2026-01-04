@@ -34,6 +34,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -65,8 +66,8 @@ import kotlinx.coroutines.launch
 import android.content.Intent
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.net.Uri
 import android.widget.Toast
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.core.net.toUri
 
 @Composable
@@ -88,10 +89,23 @@ fun SettingsScreen(
 
     val isDarkTheme by themeRepository.isDarkTheme.collectAsState(initial = true)
     val enableCacheStorage by ocrSettingsRepository.enableCacheStorage.collectAsState(initial = true)
+    val cameraDetectionIntervalMs by ocrSettingsRepository.cameraDetectionIntervalMs.collectAsState(
+        initial = 1000L
+    )
+    val cameraReadingMsPerWord by ocrSettingsRepository.cameraReadingMsPerWord.collectAsState(
+        initial = 300
+    )
+    val cameraMaxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
+    val cameraSkipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
     val currentAppLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
     val currentLanguageDisplayName =
         AppLanguageRepository.getLanguageDisplayName(currentAppLanguage)
     var showClearCacheDialog by remember { mutableStateOf(false) }
+
+    var showDetectionIntervalDialog by remember { mutableStateOf(false) }
+    var showReadingMsPerWordDialog by remember { mutableStateOf(false) }
+    var showMaxExtraDelayDialog by remember { mutableStateOf(false) }
+    var showSkipFramesDialog by remember { mutableStateOf(false) }
 
     val appName = stringResource(R.string.app_name)
     val appVersion = packageInfo?.versionName ?: "Unknown"
@@ -99,10 +113,11 @@ fun SettingsScreen(
     val privacyPolicyUrl = "https://sumitrathore.web.app/privacy/varnamala"
 
     fun openExternalUrl(url: String) {
-        val normalizedUrl = when {
-            url.startsWith("https://", ignoreCase = true) -> url
-            url.startsWith("http://", ignoreCase = true) -> url
-            else -> "https://$url"
+        val initialUri = url.toUri()
+        val normalizedUrl = if (initialUri.scheme.isNullOrBlank()) {
+            "https://$url"
+        } else {
+            url
         }
 
         val uri = normalizedUrl.toUri()
@@ -127,6 +142,24 @@ fun SettingsScreen(
                 context.getString(R.string.unable_to_open_link),
                 Toast.LENGTH_LONG
             ).show()
+        }
+    }
+
+    fun openPlayStoreListing() {
+        val packageId = context.packageName
+        val marketUri = "market://details?id=$packageId".toUri()
+        val viewIntent =
+            Intent(Intent.ACTION_VIEW, marketUri).addCategory(Intent.CATEGORY_BROWSABLE)
+        val isActivityContext = context is Activity
+
+        if (!isActivityContext) {
+            viewIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
+        try {
+            context.startActivity(viewIntent)
+        } catch (_: ActivityNotFoundException) {
+            openExternalUrl("https://play.google.com/store/apps/details?id=$packageId")
         }
     }
 
@@ -231,6 +264,72 @@ fun SettingsScreen(
                 }
             }
 
+            SettingsCategory(title = stringResource(R.string.camera_ocr_settings)) {
+                SettingItem(
+                    title = stringResource(R.string.camera_ocr_detection_interval),
+                    subtitle = stringResource(R.string.ms_value, cameraDetectionIntervalMs.toInt()),
+                    icon = painterResource(id = R.drawable.ic_time),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { showDetectionIntervalDialog = true },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                SettingItem(
+                    title = stringResource(R.string.camera_ocr_reading_ms_per_word),
+                    subtitle = stringResource(R.string.ms_value, cameraReadingMsPerWord),
+                    icon = painterResource(id = R.drawable.ic_time),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { showReadingMsPerWordDialog = true },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                SettingItem(
+                    title = stringResource(R.string.camera_ocr_max_extra_delay_ms),
+                    subtitle = stringResource(R.string.ms_value, cameraMaxExtraDelayMs),
+                    icon = painterResource(id = R.drawable.ic_time),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { showMaxExtraDelayDialog = true },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                SettingItem(
+                    title = stringResource(R.string.camera_ocr_skip_frames),
+                    subtitle = stringResource(R.string.frames_value, cameraSkipFrames),
+                    icon = painterResource(id = R.drawable.ic_settings_outline),
+                    isLastItem = true,
+                    showDivider = false,
+                    onClick = { showSkipFramesDialog = true },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+            }
+
             SettingsCategory(title = stringResource(R.string.ocr_features)) {
                 // Overlay Toggle
                 SettingItem(
@@ -245,7 +344,7 @@ fun SettingsScreen(
                     trailingContent = {
                         Switch(
                             checked = overlayFeatureEnabled,
-                            onCheckedChange = { newValue ->
+                            onCheckedChange = { _ ->
                                 OverlayPermissionHelper.requestOverlayPermission(
                                     context
                                 )
@@ -265,7 +364,7 @@ fun SettingsScreen(
                         TextButton(
                             onClick = {
                                 if (!overlayServiceRunning) {
-                                    val activity = context as? android.app.Activity
+                                    val activity = context as? Activity
                                     if (activity != null) {
                                         OverlayManager.requestScreenCapturePermission(
                                             activity,
@@ -331,8 +430,8 @@ fun SettingsScreen(
                 SettingItem(
                     title = stringResource(R.string.privacy_policy),
                     icon = painterResource(id = R.drawable.ic_shield_outline),
-                    isLastItem = true,
-                    showDivider = false,
+                    isLastItem = false,
+                    showDivider = true,
                     onClick = { openExternalUrl(privacyPolicyUrl) },
                     trailingContent = {
                         Icon(
@@ -341,6 +440,22 @@ fun SettingsScreen(
                             tint = MaterialTheme.colorScheme.onSurface
                         )
                     })
+
+                // Rate App
+                SettingItem(
+                    title = stringResource(R.string.rate_app),
+                    icon = painterResource(id = R.drawable.ic_info),
+                    isLastItem = true,
+                    showDivider = false,
+                    onClick = { openPlayStoreListing() },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
             }
 
             // App Version
@@ -380,6 +495,150 @@ fun SettingsScreen(
                     Text(stringResource(R.string.cancel))
                 }
             })
+    }
+
+    if (showDetectionIntervalDialog) {
+        var pending by remember { mutableFloatStateOf(cameraDetectionIntervalMs.toFloat()) }
+        AlertDialog(
+            onDismissRequest = { showDetectionIntervalDialog = false },
+            title = { Text(stringResource(R.string.camera_ocr_detection_interval)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.ms_value, pending.toInt()))
+                    Slider(
+                        value = pending,
+                        onValueChange = { pending = it },
+                        valueRange = 250f..3000f,
+                        steps = 11
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            ocrSettingsRepository.setCameraDetectionIntervalMs(pending.toLong())
+                        }
+                        showDetectionIntervalDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDetectionIntervalDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showReadingMsPerWordDialog) {
+        var pending by remember { mutableFloatStateOf(cameraReadingMsPerWord.toFloat()) }
+        AlertDialog(
+            onDismissRequest = { showReadingMsPerWordDialog = false },
+            title = { Text(stringResource(R.string.camera_ocr_reading_ms_per_word)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.ms_value, pending.toInt()))
+                    Slider(
+                        value = pending,
+                        onValueChange = { pending = it },
+                        valueRange = 100f..800f,
+                        steps = 13
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            ocrSettingsRepository.setCameraReadingMsPerWord(pending.toInt())
+                        }
+                        showReadingMsPerWordDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showReadingMsPerWordDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showMaxExtraDelayDialog) {
+        var pending by remember { mutableFloatStateOf(cameraMaxExtraDelayMs.toFloat()) }
+        AlertDialog(
+            onDismissRequest = { showMaxExtraDelayDialog = false },
+            title = { Text(stringResource(R.string.camera_ocr_max_extra_delay_ms)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.ms_value, pending.toInt()))
+                    Slider(
+                        value = pending,
+                        onValueChange = { pending = it },
+                        valueRange = 1000f..15000f,
+                        steps = 14
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            ocrSettingsRepository.setCameraMaxExtraDelayMs(pending.toInt())
+                        }
+                        showMaxExtraDelayDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showMaxExtraDelayDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    if (showSkipFramesDialog) {
+        var pending by remember { mutableFloatStateOf(cameraSkipFrames.toFloat()) }
+        AlertDialog(
+            onDismissRequest = { showSkipFramesDialog = false },
+            title = { Text(stringResource(R.string.camera_ocr_skip_frames)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(stringResource(R.string.frames_value, pending.toInt()))
+                    Slider(
+                        value = pending,
+                        onValueChange = { pending = it },
+                        valueRange = 5f..15f,
+                        steps = 9
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            ocrSettingsRepository.setCameraSkipFrames(pending.toInt())
+                        }
+                        showSkipFramesDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showSkipFramesDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
 

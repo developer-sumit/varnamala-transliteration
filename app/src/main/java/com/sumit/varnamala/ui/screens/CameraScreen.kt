@@ -14,6 +14,7 @@ import com.sumit.varnamala.utils.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.AppLanguageRepository
+import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -44,6 +45,12 @@ import androidx.compose.ui.layout.ContentScale
 fun CameraScreen(navController: NavController) {
     val context = LocalContext.current
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
+
+    val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
+    val detectionIntervalMs by ocrSettingsRepository.cameraDetectionIntervalMs.collectAsState(initial = 1000L)
+    val readingMsPerWord by ocrSettingsRepository.cameraReadingMsPerWord.collectAsState(initial = 300)
+    val maxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
+    val skipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
 
     // State variables
     var flashEnabled by remember { mutableStateOf(false) }
@@ -87,10 +94,10 @@ fun CameraScreen(navController: NavController) {
                         isDetectionRunning = detectionRunning,
                         flashEnabled = flashEnabled,
                         preferredLanguage = null,
-                        detectionIntervalMs = 1000L,
-                        readingMsPerWord = 300,
-                        maxExtraDelayMs = 5000,
-                        skipFrames = 5,
+                        detectionIntervalMs = detectionIntervalMs,
+                        readingMsPerWord = readingMsPerWord,
+                        maxExtraDelayMs = maxExtraDelayMs,
+                        skipFrames = skipFrames,
                         showBoundingBoxes = false,
                         showTextOverlay = false,
                         showWordBoundingBoxes = false,

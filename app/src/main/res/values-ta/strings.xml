@@ -115,5 +115,14 @@
     <string name="data_storage">தரவு மற்றும் சேமிப்பு</string>
     <string name="legal">சட்டபூர்வமானது</string>
 
+    <string name="rate_app">இந்த ஆப்பை மதிப்பிடுங்கள்</string>
+    <string name="camera_ocr_settings">கேமரா OCR அமைப்புகள்</string>
+    <string name="camera_ocr_detection_interval">கண்டறிதல் இடைவேளை</string>
+    <string name="camera_ocr_reading_ms_per_word">ஒவ்வொரு வார்த்தைக்கும் வாசிக்கும் நேரம்</string>
+    <string name="camera_ocr_max_extra_delay_ms">அதிகபட்ச கூடுதல் தாமதம்</string>
+    <string name="camera_ocr_skip_frames">பிரேம்களை தவிர்க்கவும்</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d பிரேம்கள்</string>
+
     <string name="unable_to_open_link">இணைப்பை திறக்க முடியவில்லை.</string>
 </resources>

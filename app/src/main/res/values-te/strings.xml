@@ -115,5 +115,14 @@
     <string name="data_storage">డేటా మరియు నిల్వ</string>
     <string name="legal">చట్టపరమైనది</string>
 
+    <string name="rate_app">యాప్‌ను రేట్ చేయండి</string>
+    <string name="camera_ocr_settings">కెమెరా OCR సెట్టింగ్‌లు</string>
+    <string name="camera_ocr_detection_interval">గుర్తింపు వ్యవధి</string>
+    <string name="camera_ocr_reading_ms_per_word">ప్రతి పదం చదివే సమయం</string>
+    <string name="camera_ocr_max_extra_delay_ms">గరిష్ఠ అదనపు ఆలస్యం</string>
+    <string name="camera_ocr_skip_frames">ఫ్రేమ్‌లను దాటవేయండి</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ఫ్రేమ్‌లు</string>
+
     <string name="unable_to_open_link">లింక్‌ను తెరవలేకపోయాం.</string>
 </resources>

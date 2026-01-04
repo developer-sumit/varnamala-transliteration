@@ -115,5 +115,14 @@
     <string name="data_storage">डेटा और स्टोरेज</string>
     <string name="legal">कानूनी</string>
 
+    <string name="rate_app">ऐप को रेट करें</string>
+    <string name="camera_ocr_settings">कैमरा OCR सेटिंग्स</string>
+    <string name="camera_ocr_detection_interval">डिटेक्शन अंतराल</string>
+    <string name="camera_ocr_reading_ms_per_word">प्रति शब्द पढ़ने का समय</string>
+    <string name="camera_ocr_max_extra_delay_ms">अधिकतम अतिरिक्त देरी</string>
+    <string name="camera_ocr_skip_frames">फ्रेम छोड़ें</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d फ्रेम</string>
+
     <string name="unable_to_open_link">लिंक नहीं खुल सका।</string>
 </resources>

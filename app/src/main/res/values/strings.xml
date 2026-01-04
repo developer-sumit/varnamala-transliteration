@@ -8,6 +8,7 @@
     <string name="language">Language</string>
     <string name="terms_of_service">Terms of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
+    <string name="rate_app">Rate this app</string>
 
     <string name="grant_permission">Grant Permission</string>
     <string name="open_settings">Open Settings</string>
@@ -63,6 +64,14 @@
     <string name="scanner_settings">Scanner Settings</string>
     <string name="detection_interval">Detection Interval</string>
     <string name="reading_time_per_word">Reading Time per Word</string>
+
+    <string name="camera_ocr_settings">Camera OCR Settings</string>
+    <string name="camera_ocr_detection_interval">Detection interval</string>
+    <string name="camera_ocr_reading_ms_per_word">Reading time per word</string>
+    <string name="camera_ocr_max_extra_delay_ms">Max extra delay</string>
+    <string name="camera_ocr_skip_frames">Skip frames</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d frames</string>
     
     <!-- Other screens -->
     <string name="ocr_screen">OCR Screen</string>

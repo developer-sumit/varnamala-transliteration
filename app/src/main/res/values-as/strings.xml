@@ -115,5 +115,14 @@
     <string name="data_storage">ডাটা আৰু সংৰক্ষণ</string>
     <string name="legal">আইনী</string>
 
-    <string name="unable_to_open_link">লিংক খুলিব পৰা নগ'ল।</string>
+    <string name="rate_app">এপটো ৰেট কৰক</string>
+    <string name="camera_ocr_settings">কেমেৰা OCR ছেটিংছ</string>
+    <string name="camera_ocr_detection_interval">চিনাক্তকৰণ অন্তৰাল</string>
+    <string name="camera_ocr_reading_ms_per_word">প্ৰতি শব্দ পঢ়াৰ সময়</string>
+    <string name="camera_ocr_max_extra_delay_ms">সৰ্বাধিক অতিৰিক্ত বিলম্ব</string>
+    <string name="camera_ocr_skip_frames">ফ্ৰেম স্কিপ কৰক</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ফ্ৰেম</string>
+
+    <string name="unable_to_open_link">লিংক খুলিব পৰা নগ\'ল।</string>
 </resources>
