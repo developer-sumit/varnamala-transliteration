@@ -1,7 +1,12 @@
 package com.sumit.varnamala.ui.components
 
+import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.AppLanguageRepository
+import com.sumit.varnamala.models.ModelRegistry
+import com.sumit.varnamala.models.TesseractModelStore
+import com.sumit.varnamala.models.modeldownload.ModelDownloadManager
+import com.sumit.varnamala.models.modeldownload.ModelDownloadWorker
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,19 +15,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 
 @Composable
 fun LanguageSelectionRow(
@@ -52,7 +58,7 @@ fun LanguageSelectionRow(
 
         // Arrow Icon
         Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "To",
             modifier = Modifier
                 .padding(horizontal = 8.dp)
@@ -122,6 +128,8 @@ fun LanguageSelectionDialog(
     onDismiss: () -> Unit
 ) {
     val languages = remember { AppLanguageRepository.getSupportedLanguages() }
+    val context = LocalContext.current
+    val workManager = remember { WorkManager.getInstance(context) }
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -153,10 +161,40 @@ fun LanguageSelectionDialog(
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
                     items(languages) { language ->
+                        val model = remember(language.code) { ModelRegistry.forLanguage(language) }
+                        val isModelDownloaded = model?.let {
+                            TesseractModelStore.isModelDownloaded(context, it.tesseractLanguageCode)
+                        } ?: true
+
+                        val tessCode = model?.tesseractLanguageCode
+                        val tag = tessCode?.let { ModelDownloadManager.tagForLanguage(it) }
+                        val workInfos by remember(tag) {
+                            if (tag == null) {
+                                null
+                            } else {
+                                workManager.getWorkInfosByTagFlow(tag)
+                            }
+                        }?.collectAsState(initial = emptyList()) ?: remember { mutableStateOf(emptyList()) }
+
+                        val activeWork = workInfos.firstOrNull { it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED }
+                        val progressPercent = activeWork?.progress?.getInt(ModelDownloadWorker.KEY_PROGRESS, 0)
+                        val isDownloading = activeWork != null
+
                         LanguageItem(
                             language = language,
                             isSelected = language.code == currentLanguage?.code,
+                            showDownload = (model != null && !isModelDownloaded && !isDownloading),
+                            downloadPercent = if (isDownloading) progressPercent else null,
+                            onDownloadClick = {
+                                val tessCode = model?.tesseractLanguageCode ?: return@LanguageItem
+                                ModelDownloadManager.enqueueDownload(context, tessCode)
+                            },
                             onClick = {
+                                // If model isn't available yet, tapping the row should also start the download.
+                                if (model != null && !isModelDownloaded && !isDownloading) {
+                                    val tessCode = model.tesseractLanguageCode
+                                    ModelDownloadManager.enqueueDownload(context, tessCode)
+                                }
                                 onLanguageSelected(language)
                                 onDismiss()
                             }
@@ -182,6 +220,9 @@ fun LanguageSelectionDialog(
 private fun LanguageItem(
     language: Language,
     isSelected: Boolean,
+    showDownload: Boolean,
+    downloadPercent: Int?,
+    onDownloadClick: () -> Unit,
     onClick: () -> Unit
 ) {
     Surface(
@@ -226,11 +267,33 @@ private fun LanguageItem(
 
             if (isSelected) {
                 Icon(
-                    imageVector = Icons.Default.Check,
+                    painter = painterResource(R.drawable.ic_check),
                     contentDescription = "Selected",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
+            } else if (downloadPercent != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        progress = { (downloadPercent / 100f).coerceIn(0f, 1f) },
+                        modifier = Modifier.size(22.dp),
+                        strokeWidth = 3.dp
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "${downloadPercent}%",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            } else if (showDownload) {
+                IconButton(onClick = onDownloadClick) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_download),
+                        contentDescription = "Download",
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
             }
         }
     }
@@ -355,7 +418,7 @@ private fun OCREngineOption(
 
             if (isSelected) {
                 Icon(
-                    imageVector = Icons.Default.Check,
+                    painter = painterResource(R.drawable.ic_check),
                     contentDescription = "Selected",
                     tint = MaterialTheme.colorScheme.primary
                 )

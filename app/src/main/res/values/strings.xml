@@ -124,4 +124,16 @@
     <string name="legal">Legal</string>
 
     <string name="unable_to_open_link">Unable to open link.</string>
+
+    <!-- Model downloads -->
+    <string name="models">Language models</string>
+    <string name="manage_models">Manage downloaded OCR models</string>
+    <string name="download_models_hint">Download offline Tesseract language models on demand</string>
+    <string name="model_download">Download model</string>
+    <string name="model_downloaded">Downloaded</string>
+
+    <string name="model_download_notification_channel_name">Model downloads</string>
+    <string name="model_download_notification_title">Downloading language model</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">Model not downloaded, falling back to default model</string>
 </resources>

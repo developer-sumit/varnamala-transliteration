@@ -6,6 +6,7 @@ import com.sumit.varnamala.ui.screens.GalleryScreen
 import com.sumit.varnamala.ui.screens.ImageDetailScreen
 import com.sumit.varnamala.ui.screens.SettingsScreen
 import com.sumit.varnamala.ui.screens.LanguageScreen
+import com.sumit.varnamala.ui.screens.ModelsScreen
 import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
 import com.sumit.varnamala.ui.theme.VarnamalaTheme
@@ -162,6 +163,23 @@ class MainActivity : ComponentActivity() {
                             }
                         ) {
                             LanguageScreen(navController)
+                        }
+                        composable(
+                            Screen.Models.route,
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }
+                        ) {
+                            ModelsScreen(navController)
                         }
                         composable(
                             route = Screen.ImageDetail.route,

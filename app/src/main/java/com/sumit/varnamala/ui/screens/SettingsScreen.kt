@@ -179,6 +179,7 @@ fun SettingsScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier
                 .fillMaxSize()
+                .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp))
                 .verticalScroll(scrollState)
                 .padding(bottom = 16.dp)
         ) {
@@ -400,6 +401,23 @@ fun SettingsScreen(
 
             // Data & Storage Section
             SettingsCategory(title = stringResource(R.string.data_storage)) {
+                // Language models
+                SettingItem(
+                    title = stringResource(R.string.models),
+                    subtitle = stringResource(R.string.manage_models),
+                    icon = painterResource(id = R.drawable.ic_database),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { navController.navigate(Screen.Models.route) },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
                 // Cache Storage
                 SettingItem(
                     title = stringResource(R.string.enable_cache_storage),
