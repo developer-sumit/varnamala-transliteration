@@ -125,4 +125,53 @@
     <string name="frames_value">%d ఫ్రేమ్‌లు</string>
 
     <string name="unable_to_open_link">లింక్‌ను తెరవలేకపోయాం.</string>
+
+    <!-- Onboarding / tutorial -->
+    <string name="choose_language">భాషను ఎంచుకోండి</string>
+    <string name="choose_language_hint">కొనసాగడానికి మీకు నచ్చిన యాప్ భాషను ఎంచుకోండి.</string>
+    <string name="default_mlkit">డిఫాల్ట్ (ML Kit)</string>
+
+    <string name="detect">గుర్తించు</string>
+    <string name="to">కి</string>
+    <string name="transliterate">లిప్యంతరణ</string>
+    <string name="select_ocr_language">OCR భాషను ఎంచుకోండి</string>
+    <string name="select_transliteration_language">లిప్యంతరణ భాషను ఎంచుకోండి</string>
+    <string name="transliterate_to">కి లిప్యంతరణ చేయండి</string>
+
+    <string name="select_ocr_engine">OCR ఇంజిన్‌ను ఎంచుకోండి</string>
+    <string name="ocr_engine_mlkit_description">వేగంగా, ఆన్‌లైన్, అనేక భాషలకు మద్దతు</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">ఆఫ్‌లైన్, భాషా డేటా డౌన్‌లోడ్ అవసరం</string>
+
+    <string name="tutorial_next">తదుపరి</string>
+    <string name="tutorial_skip">దాటవేయి</string>
+
+    <string name="tutorial_settings_title">సెట్టింగ్‌లు</string>
+    <string name="tutorial_settings_message">ఇక్కడ OCR మరియు యాప్ అభిరుచులను అనుకూలీకరించండి.</string>
+
+    <string name="tutorial_languages_title">భాషలు</string>
+    <string name="tutorial_languages_message">టెక్స్ట్ గుర్తింపు మరియు లిప్యంతరీకరణ కోసం భాషను ఎంచుకోండి.</string>
+
+    <string name="tutorial_flash_title">ఫ్లాష్</string>
+    <string name="tutorial_flash_message">మెరుగైన దృశ్యమానత కోసం ఫ్లాష్‌ను ఆన్/ఆఫ్ చేయండి.</string>
+
+    <string name="tutorial_capture_title">క్యాప్చర్</string>
+    <string name="tutorial_capture_message">టెక్స్ట్ గుర్తించడానికి ఫోటో తీయండి.</string>
+
+    <string name="tutorial_gallery_title">గ్యాలరీ</string>
+    <string name="tutorial_gallery_message">చిత్రాన్ని ఎంచుకోవడానికి గ్యాలరీని తెరవండి.</string>
+
+    <!-- Model downloads -->
+    <string name="models">భాష మోడళ్లు</string>
+    <string name="manage_models">డౌన్‌లోడ్ చేసిన OCR మోడళ్లను నిర్వహించండి</string>
+    <string name="download_models_hint">అవసరమైనప్పుడు ఆఫ్‌లైన్ Tesseract భాష మోడళ్లను డౌన్‌లోడ్ చేయండి</string>
+    <string name="model_download">మోడల్ డౌన్‌లోడ్ చేయండి</string>
+    <string name="model_downloaded">డౌన్‌లోడ్ అయింది</string>
+
+    <string name="model_download_notification_channel_name">మోడల్ డౌన్‌లోడ్‌లు</string>
+    <string name="model_download_notification_title">భాష మోడల్ డౌన్‌లోడ్ అవుతోంది</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">మోడల్ డౌన్‌లోడ్ కాలేదు, డిఫాల్ట్ మోడల్‌కు మారుతోంది</string>
+
+    <string name="no_internet_connection">ఇంటర్నెట్ కనెక్షన్ అందుబాటులో లేదు</string>
 </resources>

@@ -15,6 +15,10 @@ import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
+import com.sumit.varnamala.data.preferences.OnboardingRepository
+import com.sumit.varnamala.ui.tutorial.CoachMarkStep
+import com.sumit.varnamala.ui.tutorial.CoachMarksOverlay
+import com.sumit.varnamala.ui.tutorial.captureBounds
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -39,11 +43,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.res.stringResource
+import kotlinx.coroutines.launch
 
 @Composable
 fun CameraScreen(navController: NavController) {
     val context = LocalContext.current
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
+
+    val onboardingRepository = remember { OnboardingRepository(context) }
+    val hasSeenTutorial by onboardingRepository.hasSeenCameraTutorialLoaded.collectAsState(initial = null)
+    val tutorialScope = rememberCoroutineScope()
+    val tutorialTargets = remember { mutableStateMapOf<String, Rect>() }
+    var cameraPermissionGranted by remember { mutableStateOf(false) }
 
     val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
     val detectionIntervalMs by ocrSettingsRepository.cameraDetectionIntervalMs.collectAsState(initial = 1000L)
@@ -84,6 +97,9 @@ fun CameraScreen(navController: NavController) {
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface),
             onGranted = {
+                SideEffect {
+                    cameraPermissionGranted = true
+                }
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -189,6 +205,9 @@ fun CameraScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlassButton(
+                modifier = Modifier.captureBounds("settings") { key, rect ->
+                    tutorialTargets[key] = rect
+                },
                 icon = painterResource(R.drawable.ic_settings_outline),
                 background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
                 onClick = { navController.navigate(Screen.Settings.route) })
@@ -235,7 +254,10 @@ fun CameraScreen(navController: NavController) {
                 sourceLanguage = selectedSourceLanguage,
                 targetLanguage = selectedTargetLanguage,
                 onSourceLanguageClick = { showSourceLanguageDialog = true },
-                onTargetLanguageClick = { showTargetLanguageDialog = true }
+                onTargetLanguageClick = { showTargetLanguageDialog = true },
+                modifier = Modifier.captureBounds("languages") { key, rect ->
+                    tutorialTargets[key] = rect
+                }
             )
 
             // Bottom controls
@@ -248,6 +270,9 @@ fun CameraScreen(navController: NavController) {
             ) {
                 // Flash toggle
                 GlassButton(
+                    modifier = Modifier.captureBounds("flash") { key, rect ->
+                        tutorialTargets[key] = rect
+                    },
                     icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
                         R.drawable.ic_flash_off_outline
                     ),
@@ -268,6 +293,9 @@ fun CameraScreen(navController: NavController) {
                     longPressBackgroundColor = Color(0xFF4CAF50),
                     progressColor = Color.White,
                     isRealTimeMode = detectionRunning,
+                    modifier = Modifier.captureBounds("capture") { key, rect ->
+                        tutorialTargets[key] = rect
+                    },
                     onSingleCapture = {
                         // Tap = capture single image
                         if (!isCapturing && !detectionRunning) {
@@ -301,11 +329,62 @@ fun CameraScreen(navController: NavController) {
 
                 // Gallery button
                 GlassButton(
+                    modifier = Modifier.captureBounds("gallery") { key, rect ->
+                        tutorialTargets[key] = rect
+                    },
                     icon = painterResource(R.drawable.ic_image_outline),
                     size = 60.dp,
                     onClick = { navController.navigate(Screen.Gallery.route) }
                 )
             }
+        }
+
+        val shouldShowTutorial =
+            cameraPermissionGranted &&
+                capturedBitmap == null &&
+                hasSeenTutorial != null &&
+                (hasSeenTutorial == false)
+        if (shouldShowTutorial) {
+            val steps = listOf(
+                CoachMarkStep(
+                    targetKey = "settings",
+                    title = stringResource(R.string.tutorial_settings_title),
+                    message = stringResource(R.string.tutorial_settings_message)
+                ),
+                CoachMarkStep(
+                    targetKey = "languages",
+                    title = stringResource(R.string.tutorial_languages_title),
+                    message = stringResource(R.string.tutorial_languages_message)
+                ),
+                CoachMarkStep(
+                    targetKey = "flash",
+                    title = stringResource(R.string.tutorial_flash_title),
+                    message = stringResource(R.string.tutorial_flash_message)
+                ),
+                CoachMarkStep(
+                    targetKey = "capture",
+                    title = stringResource(R.string.tutorial_capture_title),
+                    message = stringResource(R.string.tutorial_capture_message)
+                ),
+                CoachMarkStep(
+                    targetKey = "gallery",
+                    title = stringResource(R.string.tutorial_gallery_title),
+                    message = stringResource(R.string.tutorial_gallery_message)
+                ),
+            )
+
+            CoachMarksOverlay(
+                steps = steps,
+                targetRects = tutorialTargets,
+                nextLabel = stringResource(R.string.tutorial_next),
+                skipLabel = stringResource(R.string.tutorial_skip),
+                doneLabel = stringResource(R.string.done),
+                onFinished = {
+                    tutorialScope.launch {
+                        onboardingRepository.setHasSeenCameraTutorial(true)
+                    }
+                }
+            )
         }
 
         // Captured Image Overlay - shows as full screen over camera
@@ -443,20 +522,26 @@ fun CameraScreen(navController: NavController) {
         // Language Selection Dialogs
         if (showSourceLanguageDialog) {
             LanguageSelectionDialog(
-                title = "Select OCR Language",
+                title = stringResource(R.string.select_ocr_language),
                 currentLanguage = selectedSourceLanguage,
                 onLanguageSelected = { language ->
                     selectedSourceLanguage = language
                     showSourceLanguageDialog = false
                     // Trigger OCR re-processing if needed
                 },
-                onDismiss = { showSourceLanguageDialog = false }
+                onDismiss = { showSourceLanguageDialog = false },
+                includeDefaultOption = true,
+                defaultOptionLabel = stringResource(R.string.default_mlkit),
+                onDefaultSelected = {
+                    selectedSourceLanguage = null
+                    showSourceLanguageDialog = false
+                }
             )
         }
 
         if (showTargetLanguageDialog) {
             LanguageSelectionDialog(
-                title = "Select Translation Language",
+                title = stringResource(R.string.select_transliteration_language),
                 currentLanguage = selectedTargetLanguage,
                 onLanguageSelected = { language ->
                     selectedTargetLanguage = language

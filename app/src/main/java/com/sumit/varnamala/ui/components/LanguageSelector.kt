@@ -8,6 +8,7 @@ import com.sumit.varnamala.models.TesseractModelStore
 import com.sumit.varnamala.models.modeldownload.ModelDownloadManager
 import com.sumit.varnamala.models.modeldownload.ModelDownloadWorker
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,7 +51,7 @@ fun LanguageSelectionRow(
         // Source Language Button
         LanguageButton(
             language = sourceLanguage,
-            label = "Detect",
+            label = stringResource(R.string.detect),
             onClick = onSourceLanguageClick,
             modifier = Modifier
                 .weight(1f)
@@ -59,7 +61,7 @@ fun LanguageSelectionRow(
         // Arrow Icon
         Icon(
             painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = "To",
+            contentDescription = stringResource(R.string.to),
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .size(30.dp),
@@ -69,7 +71,7 @@ fun LanguageSelectionRow(
         // Target Language Button
         LanguageButton(
             language = targetLanguage,
-            label = "Transliterate",
+            label = stringResource(R.string.transliterate),
             onClick = onTargetLanguageClick,
             modifier = Modifier
                 .weight(1f)
@@ -125,7 +127,10 @@ fun LanguageSelectionDialog(
     title: String,
     currentLanguage: Language?,
     onLanguageSelected: (Language) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    includeDefaultOption: Boolean = false,
+    defaultOptionLabel: String = "",
+    onDefaultSelected: (() -> Unit)? = null
 ) {
     val languages = remember { AppLanguageRepository.getSupportedLanguages() }
     val context = LocalContext.current
@@ -140,9 +145,7 @@ fun LanguageSelectionDialog(
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 6.dp
         ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 // Header
                 Text(
                     text = title,
@@ -160,6 +163,50 @@ fun LanguageSelectionDialog(
                         .fillMaxWidth(),
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
+                    if (includeDefaultOption && onDefaultSelected != null) {
+                        item {
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onDefaultSelected()
+                                        onDismiss()
+                                    },
+                                color = if (currentLanguage == null) {
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+                                } else {
+                                    Color.Transparent
+                                }
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                                        .fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            text = defaultOptionLabel,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            fontWeight = if (currentLanguage == null) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    }
+
+                                    if (currentLanguage == null) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_check),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        item { HorizontalDivider() }
+                    }
+
                     items(languages) { language ->
                         val model = remember(language.code) { ModelRegistry.forLanguage(language) }
                         val isModelDownloaded = model?.let {
@@ -176,7 +223,9 @@ fun LanguageSelectionDialog(
                             }
                         }?.collectAsState(initial = emptyList()) ?: remember { mutableStateOf(emptyList()) }
 
-                        val activeWork = workInfos.firstOrNull { it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED }
+                        val activeWork = workInfos.firstOrNull {
+                            it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
+                        }
                         val progressPercent = activeWork?.progress?.getInt(ModelDownloadWorker.KEY_PROGRESS, 0)
                         val isDownloading = activeWork != null
 
@@ -186,14 +235,29 @@ fun LanguageSelectionDialog(
                             showDownload = (model != null && !isModelDownloaded && !isDownloading),
                             downloadPercent = if (isDownloading) progressPercent else null,
                             onDownloadClick = {
-                                val tessCode = model?.tesseractLanguageCode ?: return@LanguageItem
-                                ModelDownloadManager.enqueueDownload(context, tessCode)
+                                val code = model?.tesseractLanguageCode ?: return@LanguageItem
+                                val started = runCatching { ModelDownloadManager.enqueueDownload(context, code) }
+                                    .getOrDefault(false)
+                                if (!started) {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.no_internet_connection),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             },
                             onClick = {
-                                // If model isn't available yet, tapping the row should also start the download.
                                 if (model != null && !isModelDownloaded && !isDownloading) {
-                                    val tessCode = model.tesseractLanguageCode
-                                    ModelDownloadManager.enqueueDownload(context, tessCode)
+                                    val code = model.tesseractLanguageCode
+                                    val started = runCatching { ModelDownloadManager.enqueueDownload(context, code) }
+                                        .getOrDefault(false)
+                                    if (!started) {
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.no_internet_connection),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                                 onLanguageSelected(language)
                                 onDismiss()
@@ -209,7 +273,7 @@ fun LanguageSelectionDialog(
                         .align(Alignment.End)
                         .padding(16.dp)
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         }
@@ -268,7 +332,7 @@ private fun LanguageItem(
             if (isSelected) {
                 Icon(
                     painter = painterResource(R.drawable.ic_check),
-                    contentDescription = "Selected",
+                    contentDescription = stringResource(R.string.selected),
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(24.dp)
                 )
@@ -290,7 +354,7 @@ private fun LanguageItem(
                 IconButton(onClick = onDownloadClick) {
                     Icon(
                         painter = painterResource(R.drawable.ic_download),
-                        contentDescription = "Download",
+                        contentDescription = stringResource(R.string.model_download),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -321,7 +385,7 @@ fun OCREngineSelectionDialog(
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "Select OCR Engine",
+                    text = stringResource(R.string.select_ocr_engine),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -331,8 +395,8 @@ fun OCREngineSelectionDialog(
 
                 // ML Kit Option
                 OCREngineOption(
-                    name = "ML Kit (Google)",
-                    description = "Fast, online, supports multiple languages",
+                    name = stringResource(R.string.default_mlkit),
+                    description = stringResource(R.string.ocr_engine_mlkit_description),
                     isSelected = currentEngine == com.sumit.varnamala.data.ocr.OcrEngine.ML_KIT,
                     onClick = {
                         onEngineSelected(com.sumit.varnamala.data.ocr.OcrEngine.ML_KIT)
@@ -344,8 +408,8 @@ fun OCREngineSelectionDialog(
 
                 // Tesseract Option
                 OCREngineOption(
-                    name = "Tesseract",
-                    description = "Offline, requires language data download",
+                    name = stringResource(R.string.ocr_engine_tesseract_name),
+                    description = stringResource(R.string.ocr_engine_tesseract_description),
                     isSelected = currentEngine == com.sumit.varnamala.data.ocr.OcrEngine.TESSERACT,
                     onClick = {
                         onEngineSelected(com.sumit.varnamala.data.ocr.OcrEngine.TESSERACT)
@@ -359,7 +423,7 @@ fun OCREngineSelectionDialog(
                     onClick = onDismiss,
                     modifier = Modifier.align(Alignment.End)
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         }
@@ -419,7 +483,7 @@ private fun OCREngineOption(
             if (isSelected) {
                 Icon(
                     painter = painterResource(R.drawable.ic_check),
-                    contentDescription = "Selected",
+                    contentDescription = stringResource(R.string.selected),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

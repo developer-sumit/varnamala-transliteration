@@ -125,4 +125,53 @@
     <string name="frames_value">%d ಫ್ರೇಮ್‌ಗಳು</string>
 
     <string name="unable_to_open_link">ಲಿಂಕ್ ತೆರೆಯಲಾಗಲಿಲ್ಲ.</string>
+
+    <!-- Onboarding / tutorial -->
+    <string name="choose_language">ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="choose_language_hint">ಮುಂದುವರಿಸಲು ನಿಮ್ಮ ಇಷ್ಟದ ಆಪ್ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.</string>
+    <string name="default_mlkit">ಡೀಫಾಲ್ಟ್ (ML Kit)</string>
+
+    <string name="detect">ಗುರುತಿಸಿ</string>
+    <string name="to">ಗೆ</string>
+    <string name="transliterate">ಲಿಪ್ಯಂತರಣೆ</string>
+    <string name="select_ocr_language">OCR ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="select_transliteration_language">ಲಿಪ್ಯಂತರಣೆ ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="transliterate_to">ಗೆ ಲಿಪ್ಯಂತರಣೆ ಮಾಡಿ</string>
+
+    <string name="select_ocr_engine">OCR ಎಂಜಿನ್ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="ocr_engine_mlkit_description">ವೇಗವಾದ, ಆನ್‌ಲೈನ್, ಅನೇಕ ಭಾಷೆಗಳಿಗೆ ಬೆಂಬಲ</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">ಆಫ್‌ಲೈನ್, ಭಾಷಾ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಅಗತ್ಯ</string>
+
+    <string name="tutorial_next">ಮುಂದಿನದು</string>
+    <string name="tutorial_skip">ಬಿಟ್ಟುಹೋಗಿ</string>
+
+    <string name="tutorial_settings_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="tutorial_settings_message">ಇಲ್ಲಿ OCR ಮತ್ತು ಆಪ್ ಆದ್ಯತೆಗಳನ್ನು ಹೊಂದಿಸಿ.</string>
+
+    <string name="tutorial_languages_title">ಭಾಷೆಗಳು</string>
+    <string name="tutorial_languages_message">ಪಠ್ಯ ಗುರುತಿಸುವಿಕೆ ಮತ್ತು ಲಿಪ್ಯಂತರಣಕ್ಕಾಗಿ ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ.</string>
+
+    <string name="tutorial_flash_title">ಫ್ಲ್ಯಾಶ್</string>
+    <string name="tutorial_flash_message">ಉತ್ತಮ ದೃಶ್ಯತೆಗೆ ಫ್ಲ್ಯಾಶ್ ಅನ್ನು ಆನ್/ಆಫ್ ಮಾಡಿ.</string>
+
+    <string name="tutorial_capture_title">ಕ್ಯಾಪ್ಚರ್</string>
+    <string name="tutorial_capture_message">ಪಠ್ಯ ಗುರುತಿಸಲು ಫೋಟೋ ತೆಗೆಯಿರಿ.</string>
+
+    <string name="tutorial_gallery_title">ಗ್ಯಾಲರಿ</string>
+    <string name="tutorial_gallery_message">ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಲು ಗ್ಯಾಲರಿ ತೆರೆಯಿರಿ.</string>
+
+    <!-- Model downloads -->
+    <string name="models">ಭಾಷಾ ಮಾದರಿಗಳು</string>
+    <string name="manage_models">ಡೌನ್‌ಲೋಡ್ ಮಾಡಿದ OCR ಮಾದರಿಗಳನ್ನು ನಿರ್ವಹಿಸಿ</string>
+    <string name="download_models_hint">ಬೇಡಿಕೆಯಂತೆ ಆಫ್‌ಲೈನ್ Tesseract ಭಾಷಾ ಮಾದರಿಗಳನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="model_download">ಮಾದರಿಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="model_downloaded">ಡೌನ್‌ಲೋಡ್ ಆಯಿತು</string>
+
+    <string name="model_download_notification_channel_name">ಮಾದರಿ ಡೌನ್‌ಲೋಡ್‌ಗಳು</string>
+    <string name="model_download_notification_title">ಭಾಷಾ ಮಾದರಿ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">ಮಾದರಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿಲ್ಲ, ಡಿಫಾಲ್ಟ್ ಮಾದರಿಗೆ ಹಿಂತಿರುಗುತ್ತಿದೆ</string>
+
+    <string name="no_internet_connection">ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಲಭ್ಯವಿಲ್ಲ</string>
 </resources>

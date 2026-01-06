@@ -125,4 +125,53 @@
     <string name="frames_value">%d ਫ੍ਰੇਮ</string>
 
     <string name="unable_to_open_link">ਲਿੰਕ ਨਹੀਂ ਖੁੱਲਿਆ।</string>
+
+    <!-- Onboarding / tutorial -->
+    <string name="choose_language">ਭਾਸ਼ਾ ਚੁਣੋ</string>
+    <string name="choose_language_hint">ਅੱਗੇ ਵਧਣ ਲਈ ਆਪਣੀ ਪਸੰਦੀਦਾ ਐਪ ਭਾਸ਼ਾ ਚੁਣੋ।</string>
+    <string name="default_mlkit">ਡਿਫਾਲਟ (ML Kit)</string>
+
+    <string name="detect">ਪਛਾਣੋ</string>
+    <string name="to">ਨੂੰ</string>
+    <string name="transliterate">ਲਿਪਿਆੰਤਰਨ</string>
+    <string name="select_ocr_language">OCR ਭਾਸ਼ਾ ਚੁਣੋ</string>
+    <string name="select_transliteration_language">ਲਿਪਿਆੰਤਰਨ ਭਾਸ਼ਾ ਚੁਣੋ</string>
+    <string name="transliterate_to">ਵਿੱਚ ਲਿਪਿਆੰਤਰਨ ਕਰੋ</string>
+
+    <string name="select_ocr_engine">OCR ਇੰਜਨ ਚੁਣੋ</string>
+    <string name="ocr_engine_mlkit_description">ਤੇਜ਼, ਆਨਲਾਈਨ, ਕਈ ਭਾਸ਼ਾਵਾਂ ਦਾ ਸਮਰਥਨ</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">ਆਫਲਾਈਨ, ਭਾਸ਼ਾ ਡੇਟਾ ਡਾਊਨਲੋਡ ਲੋੜੀਂਦਾ</string>
+
+    <string name="tutorial_next">ਅੱਗੇ</string>
+    <string name="tutorial_skip">ਛੱਡੋ</string>
+
+    <string name="tutorial_settings_title">ਸੈਟਿੰਗਾਂ</string>
+    <string name="tutorial_settings_message">ਇੱਥੇ OCR ਅਤੇ ਐਪ ਦੀਆਂ ਪਸੰਦਾਂ ਨੂੰ ਕਸਟਮਾਈਜ਼ ਕਰੋ।</string>
+
+    <string name="tutorial_languages_title">ਭਾਸ਼ਾਵਾਂ</string>
+    <string name="tutorial_languages_message">ਟੈਕਸਟ ਪਛਾਣ ਅਤੇ ਲਿਪੀਅੰਤਰਣ ਲਈ ਭਾਸ਼ਾ ਚੁਣੋ।</string>
+
+    <string name="tutorial_flash_title">ਫਲੈਸ਼</string>
+    <string name="tutorial_flash_message">ਵਧੀਆ ਦਿੱਖ ਲਈ ਫਲੈਸ਼ ਆਨ/ਆਫ਼ ਕਰੋ।</string>
+
+    <string name="tutorial_capture_title">ਕੈਪਚਰ</string>
+    <string name="tutorial_capture_message">ਟੈਕਸਟ ਪਛਾਣ ਲਈ ਫੋਟੋ ਖਿੱਚੋ।</string>
+
+    <string name="tutorial_gallery_title">ਗੈਲਰੀ</string>
+    <string name="tutorial_gallery_message">ਚਿੱਤਰ ਚੁਣਨ ਲਈ ਗੈਲਰੀ ਖੋਲ੍ਹੋ।</string>
+
+    <!-- Model downloads -->
+    <string name="models">ਭਾਸ਼ਾ ਮਾਡਲ</string>
+    <string name="manage_models">ਡਾਊਨਲੋਡ ਕੀਤੇ OCR ਮਾਡਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ</string>
+    <string name="download_models_hint">ਲੋੜ ਅਨੁਸਾਰ ਆਫਲਾਈਨ Tesseract ਭਾਸ਼ਾ ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <string name="model_download">ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰੋ</string>
+    <string name="model_downloaded">ਡਾਊਨਲੋਡ ਹੋ ਗਿਆ</string>
+
+    <string name="model_download_notification_channel_name">ਮਾਡਲ ਡਾਊਨਲੋਡ</string>
+    <string name="model_download_notification_title">ਭਾਸ਼ਾ ਮਾਡਲ ਡਾਊਨਲੋਡ ਹੋ ਰਿਹਾ ਹੈ</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">ਮਾਡਲ ਡਾਊਨਲੋਡ ਨਹੀਂ, ਡਿਫਾਲਟ ਮਾਡਲ ਵਰਤਿਆ ਜਾ ਰਿਹਾ ਹੈ</string>
+
+    <string name="no_internet_connection">ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਉਪਲਬਧ ਨਹੀਂ ਹੈ</string>
 </resources>

@@ -28,6 +28,20 @@
     <string name="clear_cache">Clear Cache</string>
     <string name="gallery">Gallery</string>
     <string name="done">Done</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">Next</string>
+    <string name="tutorial_skip">Skip</string>
+    <string name="tutorial_settings_title">Settings</string>
+    <string name="tutorial_settings_message">Change theme, manage OCR options, and configure the app.</string>
+    <string name="tutorial_languages_title">Languages</string>
+    <string name="tutorial_languages_message">Choose the OCR language (left) and transliteration language (right).</string>
+    <string name="tutorial_flash_title">Flash</string>
+    <string name="tutorial_flash_message">Toggle the camera flash in low light.</string>
+    <string name="tutorial_capture_title">Capture / Scan</string>
+    <string name="tutorial_capture_message">Tap to capture a photo, or press and hold to scan continuously.</string>
+    <string name="tutorial_gallery_title">Gallery</string>
+    <string name="tutorial_gallery_message">Open saved images and view OCR results.</string>
     
     <!-- Common UI actions -->
     <string name="confirm">Confirm</string>
@@ -123,6 +137,27 @@
     <string name="data_storage">Data &amp; Storage</string>
     <string name="legal">Legal</string>
 
+    <!-- Onboarding language selection -->
+    <string name="choose_language">Choose your language</string>
+    <string name="choose_language_hint">You can change this later in Settings</string>
+
+    <!-- Language selection -->
+    <string name="detect">Detect</string>
+    <string name="to">To</string>
+    <string name="transliterate">Transliterate</string>
+    <string name="select_ocr_language">Select OCR language</string>
+    <string name="select_transliteration_language">Select transliteration language</string>
+    <string name="transliterate_to">Transliterate to</string>
+
+    <!-- OCR engine selection -->
+    <string name="select_ocr_engine">Select OCR engine</string>
+    <string name="ocr_engine_mlkit_description">Fast, online, supports multiple languages</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">Offline, requires language data download</string>
+
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">Default (ML Kit)</string>
+
     <string name="unable_to_open_link">Unable to open link.</string>
 
     <!-- Model downloads -->
@@ -136,4 +171,6 @@
     <string name="model_download_notification_title">Downloading language model</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
     <string name="model_not_downloaded_fallback">Model not downloaded, falling back to default model</string>
+
+    <string name="no_internet_connection">No internet connection</string>
 </resources>

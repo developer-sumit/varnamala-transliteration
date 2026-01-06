@@ -125,4 +125,53 @@
     <string name="frames_value">%d ফ্ৰেম</string>
 
     <string name="unable_to_open_link">লিংক খুলিব পৰা নগ\'ল।</string>
+
+    <!-- Onboarding / tutorial -->
+    <string name="choose_language">ভাষা বাছনি কৰক</string>
+    <string name="choose_language_hint">আগবাঢ়িবলৈ আপোনাৰ পছন্দৰ এপ ভাষা বাছক।</string>
+    <string name="default_mlkit">ডিফ\'ল্ট (ML Kit)</string>
+
+    <string name="detect">চিনাক্ত কৰক</string>
+    <string name="to">লৈ</string>
+    <string name="transliterate">লিপ্যন্তৰ</string>
+    <string name="select_ocr_language">OCR ভাষা বাছনি কৰক</string>
+    <string name="select_transliteration_language">লিপ্যন্তৰ ভাষা বাছনি কৰক</string>
+    <string name="transliterate_to">লৈ লিপ্যন্তৰ কৰক</string>
+
+    <string name="select_ocr_engine">OCR ইঞ্জিন বাছনি কৰক</string>
+    <string name="ocr_engine_mlkit_description">দ্ৰুত, অনলাইন, একাধিক ভাষা সমৰ্থন কৰে</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">অফলাইন, ভাষা ডাটা ডাউনলোড প্ৰয়োজন</string>
+
+    <string name="tutorial_next">পৰৱৰ্তী</string>
+    <string name="tutorial_skip">এৰি দিয়া</string>
+
+    <string name="tutorial_settings_title">ছেটিংছ</string>
+    <string name="tutorial_settings_message">ইয়াত OCR আৰু এপ পছন্দসমূহ কাষ্টমাইজ কৰক।</string>
+
+    <string name="tutorial_languages_title">ভাষাসমূহ</string>
+    <string name="tutorial_languages_message">পাঠ চিনাক্তকৰণ আৰু লিপ্যন্তৰৰ বাবে ভাষা বাছক।</string>
+
+    <string name="tutorial_flash_title">ফ্ল্যাশ</string>
+    <string name="tutorial_flash_message">ভাল দৃশ্যমানতাৰ বাবে ফ্ল্যাশ টগল কৰক।</string>
+
+    <string name="tutorial_capture_title">কেপচাৰ</string>
+    <string name="tutorial_capture_message">পাঠ চিনাক্ত কৰিবলৈ এখন ছবি তুলক।</string>
+
+    <string name="tutorial_gallery_title">গেলাৰী</string>
+    <string name="tutorial_gallery_message">এখন ছবি বাছিবলৈ গেলাৰী খোলক।</string>
+
+    <!-- Model downloads -->
+    <string name="models">ভাষা মডেলসমূহ</string>
+    <string name="manage_models">ডাউনলোড কৰা OCR মডেলসমূহ পৰিচালনা কৰক</string>
+    <string name="download_models_hint">প্ৰয়োজন অনুসৰি অফলাইন Tesseract ভাষা মডেল ডাউনলোড কৰক</string>
+    <string name="model_download">মডেল ডাউনলোড কৰক</string>
+    <string name="model_downloaded">ডাউনলোড সম্পন্ন</string>
+
+    <string name="model_download_notification_channel_name">মডেল ডাউনলোডসমূহ</string>
+    <string name="model_download_notification_title">ভাষা মডেল ডাউনলোড হৈ আছে</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">মডেল ডাউনলোড হোৱা নাই, ডিফ\'ল্ট মডেল ব্যৱহাৰ কৰা হৈছে</string>
+
+    <string name="no_internet_connection">ইণ্টাৰনেট সংযোগ উপলব্ধ নহয়</string>
 </resources>

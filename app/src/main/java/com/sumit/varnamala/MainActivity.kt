@@ -7,8 +7,10 @@ import com.sumit.varnamala.ui.screens.ImageDetailScreen
 import com.sumit.varnamala.ui.screens.SettingsScreen
 import com.sumit.varnamala.ui.screens.LanguageScreen
 import com.sumit.varnamala.ui.screens.ModelsScreen
+import com.sumit.varnamala.ui.screens.OnboardingLanguageScreen
 import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
+import com.sumit.varnamala.data.preferences.OnboardingRepository
 import com.sumit.varnamala.ui.theme.VarnamalaTheme
 import com.sumit.varnamala.service.OverlayManager
 import com.sumit.varnamala.utils.ScreenCaptureHelper
@@ -22,6 +24,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -60,6 +63,10 @@ class MainActivity : ComponentActivity() {
                 AppLanguageRepository(context)
             }
 
+            val onboardingRepository = remember {
+                OnboardingRepository(context)
+            }
+
             // Update locale when language changes
             val currentLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
             LaunchedEffect(currentLanguage) {
@@ -77,6 +84,9 @@ class MainActivity : ComponentActivity() {
 
             val isDarkTheme by themeSettingsRepository.isDarkTheme.collectAsState(initial = true)
 
+            val hasSelectedAppLanguage by onboardingRepository.hasSelectedAppLanguageLoaded.collectAsState(initial = null)
+            val hasExplicitAppLanguage by languageRepository.hasExplicitAppLanguageLoaded.collectAsState(initial = null)
+
             SideEffect {
                 WindowCompat.setDecorFitsSystemWindows(activity.window, false)
                 val windowInsetsController =
@@ -88,11 +98,40 @@ class MainActivity : ComponentActivity() {
 
             VarnamalaTheme(darkTheme = isDarkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = Screen.Home.route,
-                        modifier = Modifier.padding(innerPadding)
-                    ) {
+                    val startDestination = when {
+                        hasSelectedAppLanguage == null || hasExplicitAppLanguage == null -> null
+                        hasSelectedAppLanguage == true || hasExplicitAppLanguage == true -> Screen.Home.route
+                        else -> Screen.OnboardingLanguage.route
+                    }
+
+                    if (startDestination == null) {
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                        )
+                    } else {
+                        NavHost(
+                            navController = navController,
+                            startDestination = startDestination,
+                            modifier = Modifier.padding(innerPadding)
+                        ) {
+                            composable(
+                                Screen.OnboardingLanguage.route,
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                        animationSpec = tween(300)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                        animationSpec = tween(300)
+                                    )
+                                }
+                            ) {
+                                OnboardingLanguageScreen(navController)
+                            }
                         composable(
                             Screen.Home.route,
                             enterTransition = {
@@ -203,6 +242,7 @@ class MainActivity : ComponentActivity() {
                                 imageId = imageId
                             )
                         }
+                    }
                     }
                 }
             }

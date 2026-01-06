@@ -125,4 +125,53 @@
     <string name="frames_value">%d பிரேம்கள்</string>
 
     <string name="unable_to_open_link">இணைப்பை திறக்க முடியவில்லை.</string>
+
+    <!-- Onboarding / tutorial -->
+    <string name="choose_language">மொழியைத் தேர்ந்தெடு</string>
+    <string name="choose_language_hint">தொடர உங்கள் விருப்பமான செயலி மொழியைத் தேர்வு செய்யுங்கள்.</string>
+    <string name="default_mlkit">இயல்புநிலை (ML Kit)</string>
+
+    <string name="detect">கண்டறி</string>
+    <string name="to">க்கு</string>
+    <string name="transliterate">எழுத்துப்பெயர்ப்பு</string>
+    <string name="select_ocr_language">OCR மொழியைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="select_transliteration_language">எழுத்துப்பெயர்ப்பு மொழியைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="transliterate_to">க்கு எழுத்துப்பெயர்க்கவும்</string>
+
+    <string name="select_ocr_engine">OCR என்ஜினைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="ocr_engine_mlkit_description">வேகமானது, ஆன்லைன், பல மொழிகள் ஆதரவு</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">ஆஃப்லைன், மொழி தரவு பதிவிறக்கம் தேவை</string>
+
+    <string name="tutorial_next">அடுத்து</string>
+    <string name="tutorial_skip">தவிர்</string>
+
+    <string name="tutorial_settings_title">அமைப்புகள்</string>
+    <string name="tutorial_settings_message">இங்கே OCR மற்றும் செயலி விருப்பங்களை அமைக்கலாம்.</string>
+
+    <string name="tutorial_languages_title">மொழிகள்</string>
+    <string name="tutorial_languages_message">உரை கண்டறிதல் மற்றும் எழுத்துபெயர்ப்புக்கான மொழியைத் தேர்வு செய்யுங்கள்.</string>
+
+    <string name="tutorial_flash_title">ஃப்ளாஷ்</string>
+    <string name="tutorial_flash_message">சிறந்த காட்சிக்காக ஃப்ளாஷை ஆன்/ஆஃப் செய்யுங்கள்.</string>
+
+    <string name="tutorial_capture_title">பிடிப்பு</string>
+    <string name="tutorial_capture_message">உரை கண்டறிய ஒரு புகைப்படம் எடுக்கவும்.</string>
+
+    <string name="tutorial_gallery_title">கேலரி</string>
+    <string name="tutorial_gallery_message">படத்தைத் தேர்வு செய்ய கேலரியைத் திறக்கவும்.</string>
+
+    <!-- Model downloads -->
+    <string name="models">மொழி மாதிரிகள்</string>
+    <string name="manage_models">பதிவிறக்கப்பட்ட OCR மாதிரிகளை நிர்வகிக்கவும்</string>
+    <string name="download_models_hint">தேவைக்கேற்ப ஆஃப்லைன் Tesseract மொழி மாதிரிகளை பதிவிறக்கவும்</string>
+    <string name="model_download">மாதிரியை பதிவிறக்கவும்</string>
+    <string name="model_downloaded">பதிவிறக்கப்பட்டது</string>
+
+    <string name="model_download_notification_channel_name">மாதிரி பதிவிறக்கங்கள்</string>
+    <string name="model_download_notification_title">மொழி மாதிரி பதிவிறக்கப்படுகிறது</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">மாதிரி பதிவிறக்கப்படவில்லை, இயல்புநிலை மாதிரிக்கு மாறுகிறது</string>
+    
+    <string name="no_internet_connection">இணைய இணைப்பு கிடைக்கவில்லை</string>
 </resources>

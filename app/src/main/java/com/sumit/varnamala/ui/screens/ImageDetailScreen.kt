@@ -445,7 +445,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     // Source Language Selection Dialog
     if (showSourceLanguageDialog) {
         LanguageSelectionDialog(
-            title = "Select OCR Language",
+            title = stringResource(R.string.select_ocr_language),
             currentLanguage = selectedSourceLanguage,
             onLanguageSelected = { language ->
                 selectedSourceLanguage = language
@@ -466,14 +466,34 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     )
                 }
             },
-            onDismiss = { showSourceLanguageDialog = false }
+            onDismiss = { showSourceLanguageDialog = false },
+            includeDefaultOption = true,
+            defaultOptionLabel = stringResource(R.string.default_mlkit),
+            onDefaultSelected = {
+                selectedSourceLanguage = null
+                coroutineScope.launch {
+                    runOCRWithCache(
+                        repository = cacheRepository,
+                        imageId = imageId,
+                        context = context,
+                        forceRefresh = true,
+                        preferredLanguage = null,
+                        settingsRepository = settingsRepository,
+                        setLoading = { ocrLoading = it },
+                        setError = { ocrError = it },
+                        setText = { rawOcrText = it },
+                        setLang = { newLang -> detectedLanguage = newLang },
+                        setResult = { lastResult = it }
+                    )
+                }
+            }
         )
     }
 
     // Target Language Selection Dialog
     if (showTargetLanguageDialog) {
         LanguageSelectionDialog(
-            title = "Transliterate To",
+            title = stringResource(R.string.transliterate_to),
             currentLanguage = selectedTargetLanguage,
             onLanguageSelected = { language ->
                 selectedTargetLanguage = language

@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import android.widget.Toast
 
 @Composable
 fun ModelsScreen(navController: NavController) {
@@ -146,7 +147,17 @@ fun ModelsScreen(navController: NavController) {
                         downloaded = downloaded,
                         percent = percent,
                         sizeBytes = localSizeBytes ?: remoteSizeBytes,
-                        onDownload = { ModelDownloadManager.enqueueDownload(context, row.tessCode) }
+                        onDownload = {
+                            val started = runCatching {
+                                ModelDownloadManager.enqueueDownload(context, row.tessCode)
+                            }.getOrDefault(false)
+
+                            if (!started) {
+                                Toast
+                                    .makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
                     )
                 }
             }

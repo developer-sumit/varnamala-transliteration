@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 
 private val Context.appLanguageDataStore: DataStore<Preferences> by preferencesDataStore(name = "app_language_settings")
 
@@ -20,6 +21,15 @@ class AppLanguageRepository(private val context: Context) {
         .map { preferences ->
             preferences[PreferencesKeys.APP_LANGUAGE] ?: "en"
         }
+
+    val hasExplicitAppLanguage: Flow<Boolean> = context.appLanguageDataStore.data
+        .map { preferences ->
+            preferences.contains(PreferencesKeys.APP_LANGUAGE)
+        }
+
+    val hasExplicitAppLanguageLoaded: Flow<Boolean?> = hasExplicitAppLanguage
+        .map { it as Boolean? }
+        .onStart { emit(null) }
 
     suspend fun setAppLanguage(value: String) {
         context.appLanguageDataStore.edit { preferences ->

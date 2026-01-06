@@ -125,4 +125,53 @@
     <string name="frames_value">%d फ्रेम</string>
 
     <string name="unable_to_open_link">लिंक नहीं खुल सका।</string>
+
+    <!-- Onboarding / tutorial -->
+    <string name="choose_language">भाषा चुनें</string>
+    <string name="choose_language_hint">आगे बढ़ने के लिए अपनी पसंदीदा ऐप भाषा चुनें।</string>
+    <string name="default_mlkit">डिफ़ॉल्ट (ML Kit)</string>
+
+    <string name="detect">पहचानें</string>
+    <string name="to">को</string>
+    <string name="transliterate">लिप्यंतरण</string>
+    <string name="select_ocr_language">OCR भाषा चुनें</string>
+    <string name="select_transliteration_language">लिप्यंतरण भाषा चुनें</string>
+    <string name="transliterate_to">लिप्यंतरण करें</string>
+
+    <string name="select_ocr_engine">OCR इंजन चुनें</string>
+    <string name="ocr_engine_mlkit_description">तेज़, ऑनलाइन, कई भाषाओं का समर्थन</string>
+    <string name="ocr_engine_tesseract_name">Tesseract</string>
+    <string name="ocr_engine_tesseract_description">ऑफ़लाइन, भाषा डेटा डाउनलोड आवश्यक</string>
+
+    <string name="tutorial_next">आगे</string>
+    <string name="tutorial_skip">छोड़ें</string>
+
+    <string name="tutorial_settings_title">सेटिंग्स</string>
+    <string name="tutorial_settings_message">यहाँ OCR और ऐप की प्राथमिकताएँ अनुकूलित करें।</string>
+
+    <string name="tutorial_languages_title">भाषाएँ</string>
+    <string name="tutorial_languages_message">टेक्स्ट पहचान और लिप्यंतरण के लिए भाषा चुनें।</string>
+
+    <string name="tutorial_flash_title">फ़्लैश</string>
+    <string name="tutorial_flash_message">बेहतर दृश्यता के लिए फ़्लैश चालू/बंद करें।</string>
+
+    <string name="tutorial_capture_title">कैप्चर</string>
+    <string name="tutorial_capture_message">टेक्स्ट पहचानने के लिए फोटो लें।</string>
+
+    <string name="tutorial_gallery_title">गैलरी</string>
+    <string name="tutorial_gallery_message">छवि चुनने के लिए गैलरी खोलें।</string>
+
+    <!-- Model downloads -->
+    <string name="models">भाषा मॉडल</string>
+    <string name="manage_models">डाउनलोड किए गए OCR मॉडल प्रबंधित करें</string>
+    <string name="download_models_hint">आवश्यकता अनुसार ऑफ़लाइन Tesseract भाषा मॉडल डाउनलोड करें</string>
+    <string name="model_download">मॉडल डाउनलोड करें</string>
+    <string name="model_downloaded">डाउनलोड हो गया</string>
+
+    <string name="model_download_notification_channel_name">मॉडल डाउनलोड</string>
+    <string name="model_download_notification_title">भाषा मॉडल डाउनलोड हो रहा है</string>
+    <string name="model_download_notification_content">%1$s • %2$d%%</string>
+    <string name="model_not_downloaded_fallback">मॉडल डाउनलोड नहीं है, डिफ़ॉल्ट मॉडल का उपयोग किया जा रहा है</string>
+    
+    <string name="no_internet_connection">इंटरनेट कनेक्शन उपलब्ध नहीं है</string>
 </resources>

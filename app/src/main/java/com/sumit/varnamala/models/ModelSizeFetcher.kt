@@ -7,7 +7,7 @@ import okhttp3.Request
 import java.util.concurrent.ConcurrentHashMap
 
 object ModelSizeFetcher {
-    private val cache = ConcurrentHashMap<String, Long?>()
+    private val cache = ConcurrentHashMap<String, Long>()
     private val client by lazy { OkHttpClient.Builder().build() }
 
     suspend fun getRemoteSizeBytes(url: String): Long? {
@@ -25,7 +25,9 @@ object ModelSizeFetcher {
             }
         }
 
-        cache[url] = size
+        if (size != null) {
+            cache[url] = size
+        }
         return size
     }
 }
