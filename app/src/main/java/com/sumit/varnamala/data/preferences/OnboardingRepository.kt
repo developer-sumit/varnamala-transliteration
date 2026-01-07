@@ -24,8 +24,8 @@ class OnboardingRepository(private val context: Context) {
         }
 
     val hasSeenCameraTutorialLoaded: Flow<Boolean?> = hasSeenCameraTutorial
-        .map { it as Boolean? }
-        .onStart { emit(null) }
+        .map { it }
+        .onStart { emit(false) }
 
     val hasSelectedAppLanguage: Flow<Boolean> = context.onboardingDataStore.data
         .map { preferences ->
@@ -33,8 +33,8 @@ class OnboardingRepository(private val context: Context) {
         }
 
     val hasSelectedAppLanguageLoaded: Flow<Boolean?> = hasSelectedAppLanguage
-        .map { it as Boolean? }
-        .onStart { emit(null) }
+        .map { it }
+        .onStart { emit(false) }
 
     suspend fun setHasSeenCameraTutorial(value: Boolean) {
         context.onboardingDataStore.edit { preferences ->

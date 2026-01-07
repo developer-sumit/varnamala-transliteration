@@ -28,8 +28,8 @@ class AppLanguageRepository(private val context: Context) {
         }
 
     val hasExplicitAppLanguageLoaded: Flow<Boolean?> = hasExplicitAppLanguage
-        .map { it as Boolean? }
-        .onStart { emit(null) }
+        .map { it }
+        .onStart { emit(false) }
 
     suspend fun setAppLanguage(value: String) {
         context.appLanguageDataStore.edit { preferences ->

@@ -1,7 +1,6 @@
 package com.sumit.varnamala.ui.tutorial
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -101,35 +100,49 @@ fun CoachMarksOverlay(
 
         val tooltipOffset by remember(targetRect, tooltipSize, maxWidthPx, maxHeightPx) {
             derivedStateOf {
-                val size = tooltipSize
-                if (size == null) return@derivedStateOf IntOffset(
+                if (tooltipSize == null) return@derivedStateOf IntOffset(
                     (tooltipMarginPx).roundToInt(),
                     (tooltipMarginPx).roundToInt()
                 )
 
-                val tooltipWidth = size.width.toFloat()
-                val tooltipHeight = size.height.toFloat()
+                val tooltipWidth = tooltipSize!!.width.toFloat()
+                val tooltipHeight = tooltipSize!!.height.toFloat()
 
-                val rect = targetRect
-                if (rect == null) {
-                    val x = ((maxWidthPx - tooltipWidth) / 2f).coerceIn(tooltipMarginPx, (maxWidthPx - tooltipWidth - tooltipMarginPx).coerceAtLeast(tooltipMarginPx))
-                    val y = ((maxHeightPx - tooltipHeight) / 2f).coerceIn(tooltipMarginPx, (maxHeightPx - tooltipHeight - tooltipMarginPx).coerceAtLeast(tooltipMarginPx))
+                if (targetRect == null) {
+                    val x = ((maxWidthPx - tooltipWidth) / 2f).coerceIn(
+                        tooltipMarginPx,
+                        (maxWidthPx - tooltipWidth - tooltipMarginPx).coerceAtLeast(tooltipMarginPx)
+                    )
+                    val y = ((maxHeightPx - tooltipHeight) / 2f).coerceIn(
+                        tooltipMarginPx,
+                        (maxHeightPx - tooltipHeight - tooltipMarginPx).coerceAtLeast(
+                            tooltipMarginPx
+                        )
+                    )
                     return@derivedStateOf IntOffset(x.roundToInt(), y.roundToInt())
                 }
 
-                val preferBelow = rect.center.y < maxHeightPx / 2f
-                val belowY = rect.bottom + tooltipMarginPx
-                val aboveY = rect.top - tooltipHeight - tooltipMarginPx
+                val preferBelow = targetRect.center.y < maxHeightPx / 2f
+                val belowY = targetRect.bottom + tooltipMarginPx
+                val aboveY = targetRect.top - tooltipHeight - tooltipMarginPx
 
                 val y = when {
                     preferBelow && belowY + tooltipHeight <= maxHeightPx - tooltipMarginPx -> belowY
                     !preferBelow && aboveY >= tooltipMarginPx -> aboveY
                     // Fallback: clamp in view
-                    else -> (belowY).coerceIn(tooltipMarginPx, (maxHeightPx - tooltipHeight - tooltipMarginPx).coerceAtLeast(tooltipMarginPx))
+                    else -> (belowY).coerceIn(
+                        tooltipMarginPx,
+                        (maxHeightPx - tooltipHeight - tooltipMarginPx).coerceAtLeast(
+                            tooltipMarginPx
+                        )
+                    )
                 }
 
-                val desiredX = rect.center.x - tooltipWidth / 2f
-                val x = desiredX.coerceIn(tooltipMarginPx, (maxWidthPx - tooltipWidth - tooltipMarginPx).coerceAtLeast(tooltipMarginPx))
+                val desiredX = targetRect.center.x - tooltipWidth / 2f
+                val x = desiredX.coerceIn(
+                    tooltipMarginPx,
+                    (maxWidthPx - tooltipWidth - tooltipMarginPx).coerceAtLeast(tooltipMarginPx)
+                )
 
                 IntOffset(x.roundToInt(), y.roundToInt())
             }
