@@ -3,11 +3,13 @@ package com.sumit.varnamala
 import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.screens.CameraScreen
 import com.sumit.varnamala.ui.screens.GalleryScreen
+import com.sumit.varnamala.ui.screens.HistoryScreen
 import com.sumit.varnamala.ui.screens.ImageDetailScreen
 import com.sumit.varnamala.ui.screens.SettingsScreen
 import com.sumit.varnamala.ui.screens.LanguageScreen
 import com.sumit.varnamala.ui.screens.ModelsScreen
 import com.sumit.varnamala.ui.screens.OnboardingLanguageScreen
+import com.sumit.varnamala.ui.screens.TextInputScreen
 import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
 import com.sumit.varnamala.data.preferences.OnboardingRepository
@@ -26,9 +28,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -38,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import java.util.Locale
 import android.content.res.Configuration
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -87,34 +85,33 @@ class MainActivity : ComponentActivity() {
             val hasSelectedAppLanguage by onboardingRepository.hasSelectedAppLanguageLoaded.collectAsState(initial = null)
             val hasExplicitAppLanguage by languageRepository.hasExplicitAppLanguageLoaded.collectAsState(initial = null)
 
-            SideEffect {
+            LaunchedEffect(isDarkTheme) {
                 WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-                val windowInsetsController =
-                    WindowInsetsControllerCompat(activity.window, activity.window.decorView)
-                windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
-                windowInsetsController.systemBarsBehavior =
-                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                
+                val windowInsetsController = WindowInsetsControllerCompat(
+                    activity.window, 
+                    activity.window.decorView
+                )
+
+                windowInsetsController.isAppearanceLightStatusBars = !isDarkTheme
+                windowInsetsController.isAppearanceLightNavigationBars = !isDarkTheme
             }
 
             VarnamalaTheme(darkTheme = isDarkTheme) {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val startDestination = when {
-                        hasSelectedAppLanguage == null || hasExplicitAppLanguage == null -> null
-                        hasSelectedAppLanguage == true || hasExplicitAppLanguage == true -> Screen.Home.route
-                        else -> Screen.OnboardingLanguage.route
-                    }
+                val startDestination = when {
+                    hasSelectedAppLanguage == null || hasExplicitAppLanguage == null -> null
+                    hasSelectedAppLanguage == true || hasExplicitAppLanguage == true -> Screen.Home.route
+                    else -> Screen.OnboardingLanguage.route
+                }
 
-                    if (startDestination == null) {
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                        )
-                    } else {
-                        NavHost(
-                            navController = navController,
-                            startDestination = startDestination,
-                            modifier = Modifier.padding(innerPadding)
-                        ) {
+                if (startDestination == null) {
+                    Box(modifier = Modifier.fillMaxSize())
+                } else {
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDestination,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                             composable(
                                 Screen.OnboardingLanguage.route,
                                 enterTransition = {
@@ -221,6 +218,40 @@ class MainActivity : ComponentActivity() {
                             ModelsScreen(navController)
                         }
                         composable(
+                            Screen.TextInput.route,
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }
+                        ) {
+                            TextInputScreen(navController)
+                        }
+                        composable(
+                            Screen.History.route,
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }
+                        ) {
+                            HistoryScreen(navController)
+                        }
+                        composable(
                             route = Screen.ImageDetail.route,
                             arguments = listOf(navArgument("id") { type = NavType.LongType }),
                             enterTransition = {
@@ -242,7 +273,6 @@ class MainActivity : ComponentActivity() {
                                 imageId = imageId
                             )
                         }
-                    }
                     }
                 }
             }

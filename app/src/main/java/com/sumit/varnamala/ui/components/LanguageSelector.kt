@@ -119,9 +119,6 @@ private fun LanguageButton(
     }
 }
 
-/**
- * Language selection dialog
- */
 @Composable
 fun LanguageSelectionDialog(
     title: String,
@@ -130,7 +127,8 @@ fun LanguageSelectionDialog(
     onDismiss: () -> Unit,
     includeDefaultOption: Boolean = false,
     defaultOptionLabel: String = "",
-    onDefaultSelected: (() -> Unit)? = null
+    onDefaultSelected: (() -> Unit)? = null,
+    showDownloadOption: Boolean = true
 ) {
     val languages = remember { AppLanguageRepository.getSupportedLanguages() }
     val context = LocalContext.current
@@ -208,12 +206,15 @@ fun LanguageSelectionDialog(
                     }
 
                     items(languages) { language ->
-                        val model = remember(language.code) { ModelRegistry.forLanguage(language) }
-                        val isModelDownloaded = model?.let {
-                            TesseractModelStore.isModelDownloaded(context, it.tesseractLanguageCode)
-                        } ?: true
+                        val model = if (showDownloadOption) {
+                            remember(language.code) { ModelRegistry.forLanguage(language) }
+                        } else null
+                        
+                        val isModelDownloaded = if (showDownloadOption && model != null) {
+                            TesseractModelStore.isModelDownloaded(context, model.tesseractLanguageCode)
+                        } else true
 
-                        val tessCode = model?.tesseractLanguageCode
+                        val tessCode = if (showDownloadOption) model?.tesseractLanguageCode else null
                         val tag = tessCode?.let { ModelDownloadManager.tagForLanguage(it) }
                         val workInfos by remember(tag) {
                             if (tag == null) {
@@ -232,9 +233,10 @@ fun LanguageSelectionDialog(
                         LanguageItem(
                             language = language,
                             isSelected = language.code == currentLanguage?.code,
-                            showDownload = (model != null && !isModelDownloaded && !isDownloading),
-                            downloadPercent = if (isDownloading) progressPercent else null,
+                            showDownload = showDownloadOption && (model != null && !isModelDownloaded && !isDownloading),
+                            downloadPercent = if (showDownloadOption && isDownloading) progressPercent else null,
                             onDownloadClick = {
+                                if (!showDownloadOption) return@LanguageItem
                                 val code = model?.tesseractLanguageCode ?: return@LanguageItem
                                 val started = runCatching { ModelDownloadManager.enqueueDownload(context, code) }
                                     .getOrDefault(false)
@@ -247,7 +249,7 @@ fun LanguageSelectionDialog(
                                 }
                             },
                             onClick = {
-                                if (model != null && !isModelDownloaded && !isDownloading) {
+                                if (showDownloadOption && model != null && !isModelDownloaded && !isDownloading) {
                                     val code = model.tesseractLanguageCode
                                     val started = runCatching { ModelDownloadManager.enqueueDownload(context, code) }
                                         .getOrDefault(false)

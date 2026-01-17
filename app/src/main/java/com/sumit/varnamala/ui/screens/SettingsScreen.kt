@@ -10,6 +10,7 @@ import com.sumit.varnamala.utils.ScreenCaptureHelper
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
+import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,6 +87,7 @@ fun SettingsScreen(
     val cacheRepository = remember { OCRCacheRepository(context) }
     val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
     val languageRepository = remember { AppLanguageRepository(context) }
+    val userPrefsRepository = remember { UserPreferencesRepository(context) }
 
     val isDarkTheme by themeRepository.isDarkTheme.collectAsState(initial = true)
     val enableCacheStorage by ocrSettingsRepository.enableCacheStorage.collectAsState(initial = true)
@@ -106,6 +108,13 @@ fun SettingsScreen(
     var showReadingMsPerWordDialog by remember { mutableStateOf(false) }
     var showMaxExtraDelayDialog by remember { mutableStateOf(false) }
     var showSkipFramesDialog by remember { mutableStateOf(false) }
+    var showTextSizeDialog by remember { mutableStateOf(false) }
+
+    // User preferences
+    val hapticEnabled by userPrefsRepository.hapticFeedbackEnabled.collectAsState(initial = true)
+    val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
+    val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
+    val textDisplaySize by userPrefsRepository.textDisplaySize.collectAsState(initial = 1.0f)
 
     val appName = stringResource(R.string.app_name)
     val appVersion = packageInfo?.versionName ?: "Unknown"
@@ -442,6 +451,99 @@ fun SettingsScreen(
                     onClick = { showClearCacheDialog = true })
             }
 
+            // User Experience Section
+            SettingsCategory(title = stringResource(R.string.user_experience)) {
+                // History
+                SettingItem(
+                    title = stringResource(R.string.history),
+                    subtitle = stringResource(R.string.no_history_hint),
+                    icon = painterResource(id = R.drawable.ic_history),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { navController.navigate(Screen.History.route) },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                // Text Display Size
+                SettingItem(
+                    title = stringResource(R.string.text_display_size),
+                    subtitle = when {
+                        textDisplaySize <= 0.85f -> stringResource(R.string.text_size_small)
+                        textDisplaySize <= 1.1f -> stringResource(R.string.text_size_normal)
+                        textDisplaySize <= 1.35f -> stringResource(R.string.text_size_large)
+                        else -> stringResource(R.string.text_size_extra_large)
+                    },
+                    icon = painterResource(id = R.drawable.ic_settings_outline),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { showTextSizeDialog = true },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                // Haptic Feedback
+                SettingItem(
+                    title = stringResource(R.string.haptic_feedback),
+                    subtitle = stringResource(R.string.haptic_feedback_hint),
+                    icon = painterResource(id = R.drawable.ic_settings_outline),
+                    isLastItem = false,
+                    showDivider = true,
+                    trailingContent = {
+                        Switch(
+                            checked = hapticEnabled,
+                            onCheckedChange = { newValue ->
+                                scope.launch { userPrefsRepository.setHapticFeedbackEnabled(newValue) }
+                            }
+                        )
+                    }
+                )
+
+                // Auto-copy
+                SettingItem(
+                    title = stringResource(R.string.auto_copy),
+                    subtitle = stringResource(R.string.auto_copy_hint),
+                    icon = painterResource(id = R.drawable.ic_copy),
+                    isLastItem = false,
+                    showDivider = true,
+                    trailingContent = {
+                        Switch(
+                            checked = autoCopyEnabled,
+                            onCheckedChange = { newValue ->
+                                scope.launch { userPrefsRepository.setAutoCopyEnabled(newValue) }
+                            }
+                        )
+                    }
+                )
+
+                // Text-to-Speech
+                SettingItem(
+                    title = stringResource(R.string.enable_tts),
+                    subtitle = stringResource(R.string.enable_tts_hint),
+                    icon = painterResource(id = R.drawable.ic_volume_up),
+                    isLastItem = true,
+                    showDivider = false,
+                    trailingContent = {
+                        Switch(
+                            checked = ttsEnabled,
+                            onCheckedChange = { newValue ->
+                                scope.launch { userPrefsRepository.setTtsEnabled(newValue) }
+                            }
+                        )
+                    }
+                )
+            }
+
             // Legal Section
             SettingsCategory(title = stringResource(R.string.legal)) {
                 // Privacy Policy
@@ -653,6 +755,50 @@ fun SettingsScreen(
             },
             dismissButton = {
                 TextButton(onClick = { showSkipFramesDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    // Text Size Dialog
+    if (showTextSizeDialog) {
+        var pending by remember { mutableFloatStateOf(textDisplaySize) }
+        AlertDialog(
+            onDismissRequest = { showTextSizeDialog = false },
+            title = { Text(stringResource(R.string.text_display_size)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        when {
+                            pending <= 0.85f -> stringResource(R.string.text_size_small)
+                            pending <= 1.1f -> stringResource(R.string.text_size_normal)
+                            pending <= 1.35f -> stringResource(R.string.text_size_large)
+                            else -> stringResource(R.string.text_size_extra_large)
+                        }
+                    )
+                    Slider(
+                        value = pending,
+                        onValueChange = { pending = it },
+                        valueRange = 0.8f..1.5f,
+                        steps = 3
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            userPrefsRepository.setTextDisplaySize(pending)
+                        }
+                        showTextSizeDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showTextSizeDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }

@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Varnamala</string>
 
-    <string name="stop">STOP</string>
-    <string name="start">START</string>
-
     <string name="dark_mode">Dark Mode</string>
     <string name="language">Language</string>
     <string name="terms_of_service">Terms of Service</string>
@@ -49,8 +46,6 @@
     <string name="close">Close</string>
     <string name="retry">Retry</string>
     <string name="copy">Copy</string>
-    <string name="share">Share</string>
-    <string name="refresh">Refresh</string>
     <string name="clear">Clear</string>
     
     <!-- OCR related -->
@@ -87,15 +82,7 @@
     <string name="ms_value">%d ms</string>
     <string name="frames_value">%d frames</string>
     
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR Screen</string>
-    <string name="browse_gallery">Browse Gallery</string>
-    
     <!-- Content descriptions -->
-    <string name="zoom_out">Zoom Out</string>
-    <string name="zoom_in">Zoom In</string>
-    <string name="rotate_90">Rotate 90°</string>
-    <string name="reset_view">Reset View</string>
     <string name="copied">Copied</string>
     <string name="select_language">Select language</string>
     <string name="selected">Selected</string>
@@ -109,7 +96,6 @@
     <string name="transliterated">Transliterated</string>
     <string name="display_options">Display Options</string>
     <string name="detection_options">Detection Options</string>
-    <string name="ocr_status">OCR Status</string>
     <string name="ocr_results">OCR Results</string>
     <string name="hide">Hide</string>
     <string name="show">Show</string>
@@ -173,4 +159,43 @@
     <string name="model_not_downloaded_fallback">Model not downloaded, falling back to default model</string>
 
     <string name="no_internet_connection">No internet connection</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">Text Input</string>
+    <string name="enter_text">Enter text</string>
+    <string name="type_to_transliterate">Type or paste text here to transliterate…</string>
+    <string name="characters">characters</string>
+    <string name="auto_detect">Auto-detect</string>
+
+    <!-- History Screen -->
+    <string name="history">History</string>
+    <string name="all">All</string>
+    <string name="favorites">Favorites</string>
+    <string name="no_history">No history yet</string>
+    <string name="no_history_hint">Your transliteration history will appear here</string>
+    <string name="no_favorites">No favorites yet</string>
+    <string name="no_favorites_hint">Long-press items to add to favorites</string>
+    <string name="clear_history">Clear History</string>
+    <string name="clear_history_confirmation">Are you sure you want to clear your history?</string>
+    <string name="clear_keep_favorites">Clear (Keep Favorites)</string>
+    <string name="delete">Delete</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">User Experience</string>
+    <string name="text_display_size">Text Display Size</string>
+    <string name="text_size_small">Small</string>
+    <string name="text_size_normal">Normal</string>
+    <string name="text_size_large">Large</string>
+    <string name="text_size_extra_large">Extra Large</string>
+    <string name="haptic_feedback">Haptic Feedback</string>
+    <string name="haptic_feedback_hint">Vibration on button taps and actions</string>
+    <string name="auto_copy">Auto-copy Results</string>
+    <string name="auto_copy_hint">Automatically copy transliterated text to clipboard</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">Text-to-Speech</string>
+    <string name="enable_tts">Enable TTS</string>
+    <string name="enable_tts_hint">Read aloud transliterated text</string>
+    <string name="tts_auto_speak">Auto-speak Results</string>
+    <string name="tts_auto_speak_hint">Automatically speak after transliteration</string>
 </resources>

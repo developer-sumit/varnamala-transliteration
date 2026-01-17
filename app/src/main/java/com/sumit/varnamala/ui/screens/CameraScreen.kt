@@ -14,8 +14,11 @@ import com.sumit.varnamala.utils.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.AppLanguageRepository
+import com.sumit.varnamala.data.HistoryEntry
+import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 import com.sumit.varnamala.data.preferences.OnboardingRepository
+import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 import com.sumit.varnamala.ui.tutorial.CoachMarkStep
 import com.sumit.varnamala.ui.tutorial.CoachMarksOverlay
 import com.sumit.varnamala.ui.tutorial.captureBounds
@@ -24,6 +27,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.speech.tts.TextToSpeech
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
@@ -46,6 +51,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @Composable
 fun CameraScreen(navController: NavController) {
@@ -59,10 +65,59 @@ fun CameraScreen(navController: NavController) {
     var cameraPermissionGranted by remember { mutableStateOf(false) }
 
     val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
+    val userPrefsRepository = remember { UserPreferencesRepository(context) }
+    val historyRepository = remember { TransliterationHistoryRepository(context) }
+    
     val detectionIntervalMs by ocrSettingsRepository.cameraDetectionIntervalMs.collectAsState(initial = 1000L)
     val readingMsPerWord by ocrSettingsRepository.cameraReadingMsPerWord.collectAsState(initial = 300)
     val maxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
     val skipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
+    
+    // User preferences
+    val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
+    val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
+    val ttsAutoSpeak by userPrefsRepository.ttsAutoSpeak.collectAsState(initial = false)
+    
+    // TTS
+    var tts by remember { mutableStateOf<TextToSpeech?>(null) }
+    var ttsReady by remember { mutableStateOf(false) }
+    
+    LaunchedEffect(ttsEnabled) {
+        if (ttsEnabled) {
+            tts = TextToSpeech(context) { status ->
+                ttsReady = status == TextToSpeech.SUCCESS
+            }
+        } else {
+            tts?.shutdown()
+            tts = null
+            ttsReady = false
+        }
+    }
+    
+    DisposableEffect(Unit) {
+        onDispose {
+            tts?.shutdown()
+        }
+    }
+
+    fun speakText(text: String, targetLangCode: String) {
+        if (ttsReady && tts != null && text.isNotBlank()) {
+            val locale = when (targetLangCode) {
+                "hi" -> Locale("hi", "IN")
+                "bn" -> Locale("bn", "IN")
+                "ta" -> Locale("ta", "IN")
+                "te" -> Locale("te", "IN")
+                "gu" -> Locale("gu", "IN")
+                "kn" -> Locale("kn", "IN")
+                "ml" -> Locale("ml", "IN")
+                "pa" -> Locale("pa", "IN")
+                "mr" -> Locale("mr", "IN")
+                else -> Locale.getDefault()
+            }
+            tts?.language = locale
+            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+    }
 
     // State variables
     var flashEnabled by remember { mutableStateOf(false) }
@@ -201,16 +256,32 @@ fun CameraScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // Left side - Text Input button
             GlassButton(
-                modifier = Modifier.captureBounds("settings") { key, rect ->
-                    tutorialTargets[key] = rect
-                },
-                icon = painterResource(R.drawable.ic_settings_outline),
+                icon = painterResource(R.drawable.ic_keyboard),
                 background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                onClick = { navController.navigate(Screen.Settings.route) })
+                onClick = { navController.navigate(Screen.TextInput.route) }
+            )
+            
+            // Right side - History and Settings
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                GlassButton(
+                    icon = painterResource(R.drawable.ic_history),
+                    background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                    onClick = { navController.navigate(Screen.History.route) }
+                )
+                GlassButton(
+                    modifier = Modifier.captureBounds("settings") { key, rect ->
+                        tutorialTargets[key] = rect
+                    },
+                    icon = painterResource(R.drawable.ic_settings_outline),
+                    background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                    onClick = { navController.navigate(Screen.Settings.route) }
+                )
+            }
         }
 
         // Bottom section
@@ -231,6 +302,33 @@ fun CameraScreen(navController: NavController) {
                         targetLanguage = targetLang.localeCode
                     )
                 } else rawOcrText
+                
+                LaunchedEffect(rawOcrText, transliteratedText) {
+                    if (rawOcrText.isNotBlank() && transliteratedText.isNotBlank() && transliteratedText != rawOcrText) {
+                        // Save to history
+                        historyRepository.addEntry(
+                            HistoryEntry(
+                                originalText = rawOcrText,
+                                transliteratedText = transliteratedText,
+                                sourceLanguage = detectedLanguage,
+                                targetLanguage = targetLang?.localeCode ?: "en",
+                                source = "camera"
+                            )
+                        )
+                        
+                        // Auto-copy if enabled
+                        if (autoCopyEnabled) {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(ClipData.newPlainText("Transliterated Text", transliteratedText))
+                            Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                        }
+                        
+                        // Auto-speak if enabled
+                        if (ttsEnabled && ttsAutoSpeak && targetLang != null) {
+                            speakText(transliteratedText, targetLang.localeCode)
+                        }
+                    }
+                }
 
                 OCRInfoCard(
                     ocrLoading = (detectionRunning || isCapturing) && rawOcrText.isBlank(),
@@ -242,9 +340,10 @@ fun CameraScreen(navController: NavController) {
                             context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         val clip = ClipData.newPlainText(
                             context.getString(R.string.ocr_text),
-                            rawOcrText
+                            transliteratedText
                         )
                         clipboard.setPrimaryClip(clip)
+                        Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
                     },
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
                 )
@@ -455,9 +554,10 @@ fun CameraScreen(navController: NavController) {
                                     context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                                 val clip = ClipData.newPlainText(
                                     context.getString(R.string.ocr_text),
-                                    rawOcrText
+                                    transliteratedText
                                 )
                                 clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
                             },
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                         )
@@ -548,7 +648,8 @@ fun CameraScreen(navController: NavController) {
                     showTargetLanguageDialog = false
                     // Trigger transliteration update if needed
                 },
-                onDismiss = { showTargetLanguageDialog = false }
+                onDismiss = { showTargetLanguageDialog = false },
+                showDownloadOption = false  // No download needed for transliteration
             )
         }
     }

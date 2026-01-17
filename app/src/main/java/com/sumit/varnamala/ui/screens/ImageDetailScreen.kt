@@ -9,6 +9,8 @@ import com.sumit.varnamala.ui.components.LanguageSelectionDialog
 import com.sumit.varnamala.ui.components.OCREngineSelectionDialog
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.AppLanguageRepository
+import com.sumit.varnamala.data.HistoryEntry
+import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
 import com.sumit.varnamala.data.ocr.CachedOCRResult
 import com.sumit.varnamala.data.ocr.OCRResult
@@ -20,6 +22,7 @@ import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.ocr.CachedLanguageGroup
 import com.sumit.varnamala.data.ocr.CachedTextElement
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
+import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCROverlayCanvas
 import com.sumit.varnamala.data.ocr.OcrEngine
@@ -48,6 +51,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.content.ContentResolver
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
@@ -79,6 +83,11 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val coroutineScope = rememberCoroutineScope()
     val cacheRepository = remember { OCRCacheRepository(context) }
     val settingsRepository = remember { OCRSettingsRepository(context) }
+    val userPrefsRepository = remember { UserPreferencesRepository(context) }
+    val historyRepository = remember { TransliterationHistoryRepository(context) }
+    
+    // User preferences
+    val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
 
     // OCR state variables
     var ocrLoading by remember { mutableStateOf(false) }
@@ -258,6 +267,28 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         )
                     } else rawOcrText
                 } ?: rawOcrText
+                
+                LaunchedEffect(rawOcrText, transliteratedText) {
+                    if (rawOcrText.isNotBlank() && transliteratedText.isNotBlank() && transliteratedText != rawOcrText) {
+                        // Save to history
+                        historyRepository.addEntry(
+                            HistoryEntry(
+                                originalText = rawOcrText,
+                                transliteratedText = transliteratedText,
+                                sourceLanguage = detectedLanguage,
+                                targetLanguage = selectedTargetLanguage?.localeCode ?: "en",
+                                source = "gallery"
+                            )
+                        )
+                        
+                        // Auto-copy if enabled
+                        if (autoCopyEnabled) {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(ClipData.newPlainText("Transliterated Text", transliteratedText))
+                            Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
 
                 OCRInfoCard(
                     ocrLoading = ocrLoading,
@@ -267,10 +298,11 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     onCopy = {
                         val clip = ClipData.newPlainText(
                             context.getString(R.string.ocr_text),
-                            rawOcrText
+                            transliteratedText
                         )
-                        ClipboardManager::class.java.cast(context.getSystemService(Context.CLIPBOARD_SERVICE))
-                            ?.setPrimaryClip(clip)
+                        (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+                            .setPrimaryClip(clip)
+                        Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
                     },
                 )
             }
@@ -498,7 +530,8 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             onLanguageSelected = { language ->
                 selectedTargetLanguage = language
             },
-            onDismiss = { showTargetLanguageDialog = false }
+            onDismiss = { showTargetLanguageDialog = false },
+            showDownloadOption = false  // No download needed for transliteration
         )
     }
 
