@@ -2,176 +2,195 @@
 <resources>
     <string name="app_name">ବର୍ଣ୍ଣମାଳା</string>
 
-    <string name="stop">ବନ୍ଦ କରନ୍ତୁ</string>
-    <string name="start">ଆରମ୍ଭ କରନ୍ତୁ</string>
-
     <string name="dark_mode">ଡାର୍କ ମୋଡ୍</string>
     <string name="language">ଭାଷା</string>
     <string name="terms_of_service">ସେବା ସର୍ତ୍ତାବଳୀ</string>
     <string name="privacy_policy">ଗୋପନୀୟତା ନୀତି</string>
+    <string name="rate_app">ଆପ୍ ରେଟ୍ କରନ୍ତୁ</string>
 
     <string name="grant_permission">ଅନୁମତି ଦିଅନ୍ତୁ</string>
     <string name="open_settings">ସେଟିଂସ୍ ଖୋଲନ୍ତୁ</string>
     <string name="camera_permission_required">କ୍ୟାମେରା ଅନୁମତି ଆବଶ୍ୟକ</string>
-    <string name="camera_permission_description">ରିଏଲ୍-ଟାଇମ୍‌ରେ ଟେକ୍ସଟ୍ ଚିହ୍ନଟ କରିବା ପାଇଁ ଆମକୁ ଆପଣଙ୍କ କ୍ୟାମେରାର ଆକ୍ସେସ୍ ଆବଶ୍ୟକ।</string>
-    <string name="camera_permission_denied_description">କ୍ୟାମେରା ଅନୁମତି ସ୍ଥାୟୀ ଭାବରେ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି।</string>
+    <string name="camera_permission_description">ରିଅଲ-ଟାଇମ୍‌ରେ ଟେକ୍ସଟ୍ ଖୋଜିବା ପାଇଁ ଆମକୁ ଆପଣଙ୍କ କ୍ୟାମେରା ଆକ୍ସେସ୍ ଦରକାର।</string>
+    <string name="camera_permission_denied_description">କ୍ୟାମେରା ଅନୁମତି ସ୍ଥାୟୀ ଭାବରେ ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି।</string>
     <string name="camera_permission_allow_hint">ଜାରି ରଖିବା ପାଇଁ ଦୟାକରି ସେଟିଂସ୍‌ରେ ଏହାକୁ ସକ୍ଷମ କରନ୍ତୁ।</string>
     <string name="media_permission_required">ମିଡିଆ ଅନୁମତି ଆବଶ୍ୟକ</string>
-    <string name="media_permission_description">ଗ୍ୟାଲେରୀରେ ଚିତ୍ର ପ୍ରଦର୍ଶନ କରିବା ପାଇଁ ଆମକୁ ଆପଣଙ୍କ ଚିତ୍ରଗୁଡିକର ଆକ୍ସେସ୍ ଆବଶ୍ୟକ।</string>
-    <string name="media_permission_denied_description">ମିଡିଆ ଅନୁମତି ସ୍ଥାୟୀ ଭାବରେ ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି।</string>
-    <string name="media_permission_allow_hint">ଜାରି ରଖିବା ପାଇଁ ସିସ୍ଟମ୍ ସେଟିଂସ୍‌ରେ ଅନୁମତି ସକ୍ଷମ କରନ୍ତୁ।</string>
-    <string name="overlay_permission_required">ଆପ୍‌ଗୁଡିକ ଉପରେ ପ୍ରଦର୍ଶନ ଅନୁମତି ଆବଶ୍ୟକ</string>
-    <string name="overlay_permission_description">ଅନ୍ୟ ଆପ୍‌ଗୁଡିକ ଉପରେ ଓଭରଲେ ୱିଣ୍ଡୋ ପ୍ରଦର୍ଶନ କରିବା ପାଇଁ ଆମକୁ ଅନୁମତି ଆବଶ୍ୟକ।</string>
-    <string name="overlay_permission_denied_description">ଆପ୍‌ଗୁଡିକ ଉପରେ ପ୍ରଦର୍ଶନ ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି।</string>
+    <string name="media_permission_description">ଗ୍ୟାଲେରୀରେ ଚିତ୍ର ଦେଖାଇବା ପାଇଁ ଆମକୁ ଆପଣଙ୍କ ଚିତ୍ର ଆକ୍ସେସ୍ ଦରକାର।</string>
+    <string name="media_permission_denied_description">ମିଡିଆ ଅନୁମତି ସ୍ଥାୟୀ ଭାବରେ ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି।</string>
+    <string name="media_permission_allow_hint">ଜାରି ରଖିବା ପାଇଁ ସିଷ୍ଟମ୍ ସେଟିଂସ୍‌ରେ ଅନୁମତି ସକ୍ଷମ କରନ୍ତୁ।</string>
+    <string name="overlay_permission_required">ଆପ୍ ଉପରେ ଦେଖାଇବା ଅନୁମତି ଆବଶ୍ୟକ</string>
+    <string name="overlay_permission_description">ଅନ୍ୟ ଆପ୍ ଉପରେ ଓଭରଲେ ୱିଣ୍ଡୋ ଦେଖାଇବା ପାଇଁ ଆମକୁ ଅନୁମତି ଦରକାର।</string>
+    <string name="overlay_permission_denied_description">ଆପ୍ ଉପରେ ଦେଖାଇବା ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି।</string>
     <string name="overlay_permission_allow_hint">ଏହି ବୈଶିଷ୍ଟ୍ୟ ବ୍ୟବହାର କରିବା ପାଇଁ ଦୟାକରି ସେଟିଂସ୍‌ରେ ଏହାକୁ ସକ୍ଷମ କରନ୍ତୁ।</string>
 
-    <string name="clear_cache">କ୍ୟାଶ୍ ସଫା କରନ୍ତୁ</string>
+    <string name="clear_cache">କ୍ୟାସ୍ ସଫା କରନ୍ତୁ</string>
     <string name="gallery">ଗ୍ୟାଲେରୀ</string>
-    <string name="done">ସମ୍ପୂର୍ଣ୍ଣ</string>
+    <string name="done">ସମାପ୍ତ</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">ପରବର୍ତ୍ତୀ</string>
+    <string name="tutorial_skip">ଛାଡି ଦିଅନ୍ତୁ</string>
+    <string name="tutorial_settings_title">ସେଟିଂସ୍</string>
+    <string name="tutorial_settings_message">ଥିମ୍ ବଦଳାନ୍ତୁ, OCR ବିକଳ୍ପ ପରିଚାଳନା କରନ୍ତୁ ଏବଂ ଆପ୍ କନଫିଗର୍ କରନ୍ତୁ।</string>
+    <string name="tutorial_languages_title">ଭାଷାଗୁଡିକ</string>
+    <string name="tutorial_languages_message">OCR ଭାଷା (ବାମ) ଏବଂ ଲିପ୍ୟନ୍ତରଣ ଭାଷା (ଡାହାଣ) ବାଛନ୍ତୁ।</string>
+    <string name="tutorial_flash_title">ଫ୍ଲାସ୍</string>
+    <string name="tutorial_flash_message">କମ୍ ଆଲୋକରେ କ୍ୟାମେରା ଫ୍ଲାସ୍ ଟଗଲ୍ କରନ୍ତୁ।</string>
+    <string name="tutorial_capture_title">କ୍ୟାପଚର / ସ୍କାନ୍</string>
+    <string name="tutorial_capture_message">ଫଟୋ ନେବା ପାଇଁ ଟ୍ୟାପ୍ କରନ୍ତୁ, କିମ୍ବା କ୍ରମାଗତ ସ୍କାନ୍ ପାଇଁ ଦବାଇ ଧରନ୍ତୁ।</string>
+    <string name="tutorial_gallery_title">ଗ୍ୟାଲେରୀ</string>
+    <string name="tutorial_gallery_message">ସେଭ୍ କରାଯାଇଥିବା ଚିତ୍ର ଖୋଲନ୍ତୁ ଏବଂ OCR ଫଳାଫଳ ଦେଖନ୍ତୁ।</string>
     
     <!-- Common UI actions -->
     <string name="confirm">ନିଶ୍ଚିତ କରନ୍ତୁ</string>
     <string name="cancel">ବାତିଲ କରନ୍ତୁ</string>
     <string name="close">ବନ୍ଦ କରନ୍ତୁ</string>
-    <string name="retry">ପୁନଃ ଚେଷ୍ଟା କରନ୍ତୁ</string>
     <string name="copy">କପି କରନ୍ତୁ</string>
-    <string name="hide">ଲୁଚାନ୍ତୁ</string>
-    <string name="show">ଦେଖାନ୍ତୁ</string>
-    <string name="both_text_panels_hidden">ଦୁଇଟି ଟେକ୍ସଟ୍ ପ୍ୟାନେଲ୍ ଲୁଚାଇ ରହିଛି</string>
-    <string name="share">ସେୟାର କରନ୍ତୁ</string>
-    <string name="refresh">ରିଫ୍ରେସ୍ କରନ୍ତୁ</string>
     <string name="clear">ସଫା କରନ୍ତୁ</string>
     
     <!-- OCR related -->
     <string name="ocr_text">OCR ଟେକ୍ସଟ୍</string>
-    <string name="clear_all_ocr_cache">ସମସ୍ତ OCR କ୍ୟାଶ୍ ସଫା କରନ୍ତୁ</string>
-    <string name="clear_cache_confirmation">ଏହା ସମସ୍ତ ଚିତ୍ର ପାଇଁ କ୍ୟାଶ୍ କରାଯାଇଥିବା OCR କୁ ହଟାଇବ। ଜାରି ରଖିବେ?</string>
-    <string name="clear_cache_confirmation_settings">ଆପଣ ନିଶ୍ଚିତ ଭାବରେ ସମସ୍ତ କ୍ୟାଶ୍ କରାଯାଇଥିବା OCR ଡାଟା ସଫା କରିବାକୁ ଚାହୁଁଛନ୍ତି କି? ଏହି କାର୍ଯ୍ୟକୁ ପୂର୍ବବତ କରାଯାଇପାରିବ ନାହିଁ।</string>
-    <string name="detect_again">ପୁନଃ ଚିହ୍ନଟ କରନ୍ତୁ</string>
+    <string name="clear_all_ocr_cache">ସମସ୍ତ OCR କ୍ୟାସ୍ ସଫା କରନ୍ତୁ</string>
+    <string name="clear_cache_confirmation">ଏହା ସମସ୍ତ ଚିତ୍ର ପାଇଁ କ୍ୟାସ୍ ହୋଇଥିବା OCR ହଟାଇବ। ଜାରି ରଖିବେ?</string>
+    <string name="clear_cache_confirmation_settings">ଆପଣ ନିଶ୍ଚିତ ଯେ ସମସ୍ତ କ୍ୟାସ୍ ହୋଇଥିବା OCR ଡାଟା ସଫା କରିବେ? ଏହି କାର୍ଯ୍ୟ ପୂର୍ବବତ୍ ହୋଇପାରିବ ନାହିଁ।</string>
+    <string name="detect_again">ପୁଣି ଖୋଜନ୍ତୁ</string>
     <string name="clear_all">ସବୁ ସଫା କରନ୍ତୁ</string>
-    <string name="language_detection">ଭାଷା ଚିହ୍ନଟ</string>
+    <string name="language_detection">ଭାଷା ଖୋଜ</string>
     <string name="ocr_actions">OCR କାର୍ଯ୍ୟଗୁଡିକ</string>
     
     <!-- Display options -->
-    <string name="show_bounding_boxes">ସୀମା ବାକ୍ସ ଦେଖାନ୍ତୁ</string>
+    <string name="show_bounding_boxes">ବାଉଣ୍ଡିଂ ବକ୍ସ ଦେଖାନ୍ତୁ</string>
     <string name="text_blocks">ଟେକ୍ସଟ୍ ବ୍ଲକ୍</string>
     <string name="text_lines">ଟେକ୍ସଟ୍ ଲାଇନ୍</string>
     <string name="words">ଶବ୍ଦଗୁଡିକ</string>
-    <string name="bounding_box_width">ସୀମା ବାକ୍ସ ଓସାର: %dpx</string>
+    <string name="bounding_box_width">ବାଉଣ୍ଡିଂ ବକ୍ସ ଓସାର: %dpx</string>
     <string name="show_text_overlay">ଟେକ୍ସଟ୍ ଓଭରଲେ ଦେଖାନ୍ତୁ</string>
-    <string name="text_background_opacity">ଟେକ୍ସଟ୍ ପୃଷ୍ଠଭୂମି ଅସ୍ପଷ୍ଟତା: %d%%</string>
-    <string name="enable_cache_storage">କ୍ୟାଶ୍ ଷ୍ଟୋରେଜ୍ ସକ୍ଷମ କରନ୍ତୁ</string>
-    <string name="enable_cache_storage_hint">ଦ୍ରୁତ ଲୋଡିଂ ପାଇଁ OCR ଚିହ୍ନଟ ଫଳାଫଳ ସଂରକ୍ଷଣ କରନ୍ତୁ</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">ସ୍କାନର୍ ସେଟିଂସ୍</string>
-    <string name="detection_interval">ଚିହ୍ନଟ ବ୍ୟବଧାନ</string>
-    <string name="reading_time_per_word">ପ୍ରତି ଶବ୍ଦ ପାଇଁ ପଢିବା ସମୟ</string>
-    
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR ସ୍କ୍ରୀନ୍</string>
-    <string name="browse_gallery">ଗ୍ୟାଲେରୀ ବ୍ରାଉଜ୍ କରନ୍ତୁ</string>
+    <string name="text_background_opacity">ଟେକ୍ସଟ୍ ବ୍ୟାକଗ୍ରାଉଣ୍ଡ ଅସ୍ପଷ୍ଟତା: %d%%</string>
+    <string name="enable_cache_storage">କ୍ୟାସ୍ ଷ୍ଟୋରେଜ୍ ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="enable_cache_storage_hint">ଶୀଘ୍ର ଲୋଡିଂ ପାଇଁ OCR ଖୋଜ ଫଳାଫଳ ଷ୍ଟୋର୍ କରନ୍ତୁ</string>
+
+    <!-- Camera OCR settings -->
+    <string name="camera_ocr_settings">କ୍ୟାମେରା OCR ସେଟିଂସ୍</string>
+    <string name="camera_ocr_detection_interval">ଖୋଜ ଅନ୍ତରାଳ</string>
+    <string name="camera_ocr_reading_ms_per_word">ଶବ୍ଦ ପ୍ରତି ପଢିବା ସମୟ</string>
+    <string name="camera_ocr_max_extra_delay_ms">ସର୍ବାଧିକ ଅତିରିକ୍ତ ବିଳମ୍ବ</string>
+    <string name="camera_ocr_skip_frames">ଫ୍ରେମ୍ ଛାଡନ୍ତୁ</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ଫ୍ରେମ୍</string>
     
     <!-- Content descriptions -->
-    <string name="zoom_out">ଜୁମ୍ ଆଉଟ୍</string>
-    <string name="zoom_in">ଜୁମ୍ ଇନ୍</string>
-    <string name="rotate_90">90° ଘୂର୍ଣ୍ଣନ କରନ୍ତୁ</string>
-    <string name="reset_view">ଦୃଶ୍ୟ ରିସେଟ୍ କରନ୍ତୁ</string>
-    <string name="copied">କପି କରାଯାଇଛି</string>
+    <string name="copied">କପି ହୋଇଗଲା</string>
     <string name="select_language">ଭାଷା ବାଛନ୍ତୁ</string>
-    <string name="selected">ବାଛାଯାଇଛି</string>
+    <string name="selected">ଚୟନ ହୋଇଛି</string>
     <string name="back">ପଛକୁ</string>
-    <string name="captured_image">କ୍ୟାପଚର କରାଯାଇଥିବା ଚିତ୍ର</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">ଚିତ୍ର ବିବରଣୀ</string>
     <string name="ocr_result">OCR ଫଳାଫଳ</string>
     <string name="original">ମୂଳ</string>
     <string name="transliterated">ଲିପ୍ୟନ୍ତରିତ</string>
-    <string name="display_options">ପ୍ରଦର୍ଶନ ବିକଳ୍ପଗୁଡିକ</string>
-    <string name="detection_options">ଚିହ୍ନଟ ବିକଳ୍ପଗୁଡିକ</string>
-    <string name="ocr_status">OCR ସ୍ଥିତି</string>
+    <string name="display_options">ଡିସ୍‌ପ୍ଲେ ବିକଳ୍ପ</string>
+    <string name="detection_options">ଖୋଜ ବିକଳ୍ପ</string>
     <string name="ocr_results">OCR ଫଳାଫଳଗୁଡିକ</string>
+    <string name="hide">ଲୁଚାନ୍ତୁ</string>
+    <string name="show">ଦେଖାନ୍ତୁ</string>
+    <string name="both_text_panels_hidden">ଉଭୟ ଟେକ୍ସଟ୍ ପ୍ୟାନେଲ୍ ଲୁଚି ଅଛି</string>
     <string name="no_text_detected">ଚିତ୍ରରେ କୌଣସି ଟେକ୍ସଟ୍ ମିଳିଲା ନାହିଁ</string>
     
     <!-- Language change message -->
-    <string name="language_changed_restart">ଭାଷା ପରିବର୍ତ୍ତନ କରାଯାଇଛି। ପରିବର୍ତ୍ତନଗୁଡିକ ଦେଖିବା ପାଇଁ ଦୟାକରି ଆପ୍ ପୁନଃଆରମ୍ଭ କରନ୍ତୁ।</string>
+    <string name="language_changed_restart">ଭାଷା ବଦଳିଗଲା। ପରିବର୍ତ୍ତନ ଦେଖିବା ପାଇଁ ଦୟାକରି ଆପ୍ ପୁନଃଚାଳନା କରନ୍ତୁ।</string>
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ଓଭରଲେ ସେଟିଂସ୍</string>
     <string name="enable_overlay">ସ୍କ୍ରିନ୍ ଓଭରଲେ OCR</string>
     <string name="overlay_enabled">ଫ୍ଲୋଟିଂ ବଟନ୍ ସକ୍ରିୟ</string>
-    <string name="overlay_disabled">ଫ୍ଲୋଟିଂ ବଟନ୍ ସକ୍ଷମ କରିବାକୁ ଟ୍ୟାପ୍ କରନ୍ତୁ</string>
-    <string name="overlay_feature_description">ଏହି ବୈଶିଷ୍ଟ୍ୟ ଏକ ଫ୍ଲୋଟିଂ ବଟନ୍ ଯୋଡିଥାଏ ଯାହା ଆପଣଙ୍କ ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ କରେ ଏବଂ OCR ଟେକ୍ସଟ୍ ଏବଂ ବାଉଣ୍ଡିଂ ବକ୍ସକୁ ଓଭରଲେ ଭାବରେ ଦେଖାଏ।</string>
-    <string name="overlay_permission_hint">ଆପଣଙ୍କୁ ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ ଏବଂ ଓଭରଲେ ଅନୁମତି ଦେବାକୁ ପଡିବ।</string>
-    <string name="overlay_permission_denied">ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ କରାଯାଇଛି</string>
+    <string name="overlay_disabled">ଫ୍ଲୋଟିଂ ବଟନ୍ ସକ୍ଷମ କରିବା ପାଇଁ ଟ୍ୟାପ୍ କରନ୍ତୁ</string>
+    <string name="overlay_feature_description">ଏହି ବୈଶିଷ୍ଟ୍ୟ ଏକ ଫ୍ଲୋଟିଂ ବଟନ୍ ଯୋଡେ ଯାହା ଆପଣଙ୍କ ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ କରେ ଏବଂ OCR ଟେକ୍ସଟ୍ ଓ ବାଉଣ୍ଡିଂ ବକ୍ସ ଓଭରଲେ ଭାବରେ ଦେଖାଏ।</string>
+    <string name="overlay_permission_hint">ଆପଣଙ୍କୁ ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ ଏବଂ ଓଭରଲେ ଅନୁମତି ଦେବାକୁ ହେବ।</string>
+    <string name="overlay_permission_denied">ସ୍କ୍ରିନ୍ କ୍ୟାପଚର୍ ଅନୁମତି ପ୍ରତ୍ୟାଖ୍ୟାନ ହୋଇଛି</string>
     <string name="enable">ସକ୍ଷମ କରନ୍ତୁ</string>
     <string name="start_overlay">ଓଭରଲେ ଆରମ୍ଭ କରନ୍ତୁ</string>
     <string name="stop_overlay">ଓଭରଲେ ବନ୍ଦ କରନ୍ତୁ</string>
     
     <!-- Settings categories -->
-    <string name="appearance">ଦେଖା</string>
+    <string name="appearance">ଦେଖାଯିବା</string>
     <string name="ocr_features">OCR ବୈଶିଷ୍ଟ୍ୟଗୁଡିକ</string>
     <string name="data_storage">ଡାଟା ଏବଂ ଷ୍ଟୋରେଜ୍</string>
     <string name="legal">ଆଇନଗତ</string>
 
-    <string name="rate_app">ଆପ୍‌କୁ ରେଟ୍ କରନ୍ତୁ</string>
-    <string name="camera_ocr_settings">କ୍ୟାମେରା OCR ସେଟିଂସ୍</string>
-    <string name="camera_ocr_detection_interval">ସନ୍ଧାନ ଅନ୍ତରାଳ</string>
-    <string name="camera_ocr_reading_ms_per_word">ପ୍ରତି ଶବ୍ଦ ପଢିବା ସମୟ</string>
-    <string name="camera_ocr_max_extra_delay_ms">ସର୍ବାଧିକ ଅତିରିକ୍ତ ବିଳମ୍ବ</string>
-    <string name="camera_ocr_skip_frames">ଫ୍ରେମ୍ ଛାଡନ୍ତୁ</string>
-    <string name="ms_value">%d ms</string>
-    <string name="frames_value">%d ଫ୍ରେମ୍</string>
+    <!-- Onboarding language selection -->
+    <string name="choose_language">ଆପଣଙ୍କ ଭାଷା ବାଛନ୍ତୁ</string>
+    <string name="choose_language_hint">ଆପଣ ଏହାକୁ ପରେ ସେଟିଂସ୍‌ରେ ବଦଳାଇ ପାରିବେ</string>
 
-    <string name="unable_to_open_link">ଲିଙ୍କ ଖୋଲିବାରେ ଅସମର୍ଥ।</string>
-
-    <!-- Onboarding / tutorial -->
-    <string name="choose_language">ଭାଷା ବାଛନ୍ତୁ</string>
-    <string name="choose_language_hint">ଆଗକୁ ଯିବା ପାଇଁ ଆପଣଙ୍କ ପସନ୍ଦର ଆପ୍ ଭାଷା ବାଛନ୍ତୁ।</string>
-    <string name="default_mlkit">ଡିଫଲ୍ଟ (ML Kit)</string>
-
-    <string name="detect">ଚିହ୍ନଟ କରନ୍ତୁ</string>
+    <!-- Language selection -->
+    <string name="detect">ଖୋଜନ୍ତୁ</string>
     <string name="to">କୁ</string>
     <string name="transliterate">ଲିପ୍ୟନ୍ତରଣ</string>
     <string name="select_ocr_language">OCR ଭାଷା ବାଛନ୍ତୁ</string>
     <string name="select_transliteration_language">ଲିପ୍ୟନ୍ତରଣ ଭାଷା ବାଛନ୍ତୁ</string>
-    <string name="transliterate_to">କୁ ଲିପ୍ୟନ୍ତରଣ କରନ୍ତୁ</string>
+    <string name="transliterate_to">ଲିପ୍ୟନ୍ତରଣ କରନ୍ତୁ</string>
 
-    <string name="select_ocr_engine">OCR ଇଞ୍ଜିନ ବାଛନ୍ତୁ</string>
-    <string name="ocr_engine_mlkit_description">ତ୍ୱରିତ, ଅନଲାଇନ, ବହୁ ଭାଷାକୁ ସମର୍ଥନ କରେ</string>
+    <!-- OCR engine selection -->
+    <string name="select_ocr_engine">OCR ଇଞ୍ଜିନ୍ ବାଛନ୍ତୁ</string>
+    <string name="ocr_engine_mlkit_description">ଦ୍ରୁତ, ଅନଲାଇନ୍, ଅନେକ ଭାଷା ସମର୍ଥିତ</string>
     <string name="ocr_engine_tesseract_name">Tesseract</string>
-    <string name="ocr_engine_tesseract_description">ଅଫଲାଇନ, ଭାଷା ଡାଟା ଡାଉନଲୋଡ୍ ଆବଶ୍ୟକ</string>
+    <string name="ocr_engine_tesseract_description">ଅଫଲାଇନ୍, ଭାଷା ଡାଟା ଡାଉନଲୋଡ୍ ଆବଶ୍ୟକ</string>
 
-    <string name="tutorial_next">ପରବର୍ତ୍ତୀ</string>
-    <string name="tutorial_skip">ଛାଡ଼ନ୍ତୁ</string>
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">ଡିଫଲ୍ଟ (ML Kit)</string>
 
-    <string name="tutorial_settings_title">ସେଟିଂସ୍</string>
-    <string name="tutorial_settings_message">ଏଠାରେ OCR ଏବଂ ଆପ୍ ପସନ୍ଦଗୁଡିକ କଷ୍ଟମାଇଜ୍ କରନ୍ତୁ।</string>
-
-    <string name="tutorial_languages_title">ଭାଷାଗୁଡ଼ିକ</string>
-    <string name="tutorial_languages_message">ଟେକ୍ସଟ୍ ଚିହ୍ନଟ ଏବଂ ଲିପ୍ୟନ୍ତରଣ ପାଇଁ ଭାଷା ବାଛନ୍ତୁ।</string>
-
-    <string name="tutorial_flash_title">ଫ୍ଲାସ୍</string>
-    <string name="tutorial_flash_message">ଭଲ ଦୃଶ୍ୟମାନତା ପାଇଁ ଫ୍ଲାସ୍ ଅନ୍/ଅଫ୍ କରନ୍ତୁ।</string>
-
-    <string name="tutorial_capture_title">କ୍ୟାପଚର୍</string>
-    <string name="tutorial_capture_message">ଟେକ୍ସଟ୍ ଚିହ୍ନଟ ପାଇଁ ଫଟୋ ନିଅନ୍ତୁ।</string>
-
-    <string name="tutorial_gallery_title">ଗ୍ୟାଲେରୀ</string>
-    <string name="tutorial_gallery_message">ଏକ ଛବି ବାଛିବାକୁ ଗ୍ୟାଲେରୀ ଖୋଲନ୍ତୁ।</string>
+    <string name="unable_to_open_link">ଲିଙ୍କ ଖୋଲିବାରେ ଅସମର୍ଥ।</string>
 
     <!-- Model downloads -->
-    <string name="models">ଭାଷା ମୋଡେଲ୍</string>
-    <string name="manage_models">ଡାଉନଲୋଡ୍ ହୋଇଥିବା OCR ମୋଡେଲ୍‌ଗୁଡ଼ିକୁ ପରିଚାଳନା କରନ୍ତୁ</string>
-    <string name="download_models_hint">ଆବଶ୍ୟକ ହେଲେ ଅଫଲାଇନ୍ Tesseract ଭାଷା ମୋଡେଲ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ</string>
-    <string name="model_download">ମୋଡେଲ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ</string>
-    <string name="model_downloaded">ଡାଉନଲୋଡ୍ ହୋଇଛି</string>
+    <string name="models">ଭାଷା ମଡେଲ</string>
+    <string name="manage_models">ଡାଉନଲୋଡ୍ ହୋଇଥିବା OCR ମଡେଲ ପରିଚାଳନା କରନ୍ତୁ</string>
+    <string name="download_models_hint">ଆବଶ୍ୟକ ଅନୁସାରେ ଅଫଲାଇନ୍ Tesseract ଭାଷା ମଡେଲ ଡାଉନଲୋଡ୍ କରନ୍ତୁ</string>
+    <string name="model_download">ମଡେଲ ଡାଉନଲୋଡ୍ କରନ୍ତୁ</string>
+    <string name="model_downloaded">ଡାଉନଲୋଡ୍ ହୋଇଗଲା</string>
 
-    <string name="model_download_notification_channel_name">ମୋଡେଲ୍ ଡାଉନଲୋଡ୍</string>
-    <string name="model_download_notification_title">ଭାଷା ମୋଡେଲ୍ ଡାଉନଲୋଡ୍ ହେଉଛି</string>
+    <string name="model_download_notification_channel_name">ମଡେଲ ଡାଉନଲୋଡ୍</string>
+    <string name="model_download_notification_title">ଭାଷା ମଡେଲ ଡାଉନଲୋଡ୍ ହେଉଛି</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">ମୋଡେଲ୍ ଡାଉନଲୋଡ୍ ହୋଇନାହିଁ, ଡିଫଲ୍ଟ ମୋଡେଲ୍‌କୁ ଫେରୁଛି</string>
+    <string name="model_not_downloaded_fallback">ମଡେଲ ଡାଉନଲୋଡ୍ ହୋଇନାହିଁ, ଡିଫଲ୍ଟ ମଡେଲକୁ ଯାଉଛି</string>
 
-    <string name="no_internet_connection">ଇଣ୍ଟରନେଟ ସଂଯୋଗ ଉପଲବ୍ଧ ନାହିଁ</string>
+    <string name="no_internet_connection">ଇଣ୍ଟରନେଟ୍ ସଂଯୋଗ ନାହିଁ</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">ଟେକ୍ସଟ୍ ଇନପୁଟ୍</string>
+    <string name="enter_text">ଟେକ୍ସଟ୍ ଲେଖନ୍ତୁ</string>
+    <string name="type_to_transliterate">ଲିପ୍ୟନ୍ତରଣ ପାଇଁ ଏଠାରେ ଟେକ୍ସଟ୍ ଟାଇପ୍ କିମ୍ବା ପେଷ୍ଟ କରନ୍ତୁ…</string>
+    <string name="characters">ଅକ୍ଷରଗୁଡିକ</string>
+    <string name="auto_detect">ଅଟୋ-ଖୋଜ</string>
+
+    <!-- History Screen -->
+    <string name="history">ଇତିହାସ</string>
+    <string name="all">ସବୁ</string>
+    <string name="favorites">ପ୍ରିୟ</string>
+    <string name="no_history">ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ଇତିହାସ ନାହିଁ</string>
+    <string name="no_history_hint">ଆପଣଙ୍କ ଲିପ୍ୟନ୍ତରଣ ଇତିହାସ ଏଠାରେ ଦେଖାଯିବ</string>
+    <string name="no_favorites">ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ପ୍ରିୟ ନାହିଁ</string>
+    <string name="no_favorites_hint">ପ୍ରିୟରେ ଯୋଡିବା ପାଇଁ ଆଇଟମ୍ ଦୀର୍ଘ ଦବାନ୍ତୁ</string>
+    <string name="clear_history">ଇତିହାସ ସଫା କରନ୍ତୁ</string>
+    <string name="clear_history_confirmation">ଆପଣ ନିଶ୍ଚିତ ଯେ ଆପଣଙ୍କ ଇତିହାସ ସଫା କରିବେ?</string>
+    <string name="clear_keep_favorites">ସଫା କରନ୍ତୁ (ପ୍ରିୟ ରଖନ୍ତୁ)</string>
+    <string name="delete">ଲିଭାନ୍ତୁ</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">ଉପଭୋକ୍ତା ଅନୁଭବ</string>
+    <string name="text_display_size">ଟେକ୍ସଟ୍ ଡିସ୍‌ପ୍ଲେ ଆକାର</string>
+    <string name="text_size_small">ଛୋଟ</string>
+    <string name="text_size_normal">ସାଧାରଣ</string>
+    <string name="text_size_large">ବଡ</string>
+    <string name="text_size_extra_large">ଅତି ବଡ</string>
+    <string name="haptic_feedback">ହ୍ୟାପ୍ଟିକ୍ ଫିଡବ୍ୟାକ୍</string>
+    <string name="haptic_feedback_hint">ବଟନ୍ ଟ୍ୟାପ୍ ଏବଂ କାର୍ଯ୍ୟରେ ଭାଇବ୍ରେସନ୍</string>
+    <string name="auto_copy">ଫଳାଫଳ ଅଟୋ-କପି</string>
+    <string name="auto_copy_hint">ଲିପ୍ୟନ୍ତରିତ ଟେକ୍ସଟ୍ ସ୍ୱୟଂଚାଳିତ ଭାବରେ କ୍ଲିପବୋର୍ଡରେ କପି କରନ୍ତୁ</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">ଟେକ୍ସଟ୍-ଟୁ-ସ୍ପିଚ୍</string>
+    <string name="enable_tts">TTS ସକ୍ଷମ କରନ୍ତୁ</string>
+    <string name="enable_tts_hint">ଲିପ୍ୟନ୍ତରିତ ଟେକ୍ସଟ୍ ଜୋରରେ ପଢନ୍ତୁ</string>
+    <string name="tts_auto_speak">ଫଳାଫଳ ଅଟୋ-ବୋଲନ୍ତୁ</string>
+    <string name="tts_auto_speak_hint">ଲିପ୍ୟନ୍ତରଣ ପରେ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ବୋଲନ୍ତୁ</string>
 </resources>

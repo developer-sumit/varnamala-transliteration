@@ -44,7 +44,6 @@
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
     <string name="close">Close</string>
-    <string name="retry">Retry</string>
     <string name="copy">Copy</string>
     <string name="clear">Clear</string>
     
@@ -68,12 +67,8 @@
     <string name="text_background_opacity">Text Background Opacity: %d%%</string>
     <string name="enable_cache_storage">Enable Cache Storage</string>
     <string name="enable_cache_storage_hint">Store OCR detection results for faster loading</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">Scanner Settings</string>
-    <string name="detection_interval">Detection Interval</string>
-    <string name="reading_time_per_word">Reading Time per Word</string>
 
+    <!-- Camera OCR settings -->
     <string name="camera_ocr_settings">Camera OCR Settings</string>
     <string name="camera_ocr_detection_interval">Detection interval</string>
     <string name="camera_ocr_reading_ms_per_word">Reading time per word</string>
@@ -87,7 +82,6 @@
     <string name="select_language">Select language</string>
     <string name="selected">Selected</string>
     <string name="back">Back</string>
-    <string name="captured_image">Captured Image</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">Image Details</string>

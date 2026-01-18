@@ -2,13 +2,11 @@
 <resources>
     <string name="app_name">वर्णमाला</string>
 
-    <string name="stop">रोकें</string>
-    <string name="start">शुरू</string>
-
     <string name="dark_mode">डार्क मोड</string>
     <string name="language">भाषा</string>
     <string name="terms_of_service">सेवा की शर्तें</string>
     <string name="privacy_policy">गोपनीयता नीति</string>
+    <string name="rate_app">ऐप को रेट करें</string>
 
     <string name="grant_permission">अनुमति दें</string>
     <string name="open_settings">सेटिंग्स खोलें</string>
@@ -28,18 +26,26 @@
     <string name="clear_cache">कैश साफ़ करें</string>
     <string name="gallery">गैलरी</string>
     <string name="done">पूर्ण</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">आगे</string>
+    <string name="tutorial_skip">छोड़ें</string>
+    <string name="tutorial_settings_title">सेटिंग्स</string>
+    <string name="tutorial_settings_message">थीम बदलें, OCR विकल्प प्रबंधित करें और ऐप कॉन्फ़िगर करें।</string>
+    <string name="tutorial_languages_title">भाषाएँ</string>
+    <string name="tutorial_languages_message">OCR भाषा (बाएं) और लिप्यंतरण भाषा (दाएं) चुनें।</string>
+    <string name="tutorial_flash_title">फ़्लैश</string>
+    <string name="tutorial_flash_message">कम रोशनी में कैमरा फ्लैश टॉगल करें।</string>
+    <string name="tutorial_capture_title">कैप्चर / स्कैन</string>
+    <string name="tutorial_capture_message">फोटो कैप्चर करने के लिए टैप करें, या लगातार स्कैन करने के लिए दबाकर रखें।</string>
+    <string name="tutorial_gallery_title">गैलरी</string>
+    <string name="tutorial_gallery_message">सहेजी गई छवियां खोलें और OCR परिणाम देखें।</string>
     
     <!-- Common UI actions -->
     <string name="confirm">पुष्टि करें</string>
     <string name="cancel">रद्द करें</string>
     <string name="close">बंद करें</string>
-    <string name="retry">पुनः प्रयास</string>
     <string name="copy">कॉपी करें</string>
-    <string name="hide">छिपाएँ</string>
-    <string name="show">दिखाएँ</string>
-    <string name="both_text_panels_hidden">दोनों टेक्स्ट पैनल छिपे हैं</string>
-    <string name="share">साझा करें</string>
-    <string name="refresh">नवीनीकरण</string>
     <string name="clear">साफ़ करें</string>
     
     <!-- OCR related -->
@@ -62,26 +68,21 @@
     <string name="text_background_opacity">टेक्स्ट बैकग्राउंड अपारदर्शिता: %d%%</string>
     <string name="enable_cache_storage">कैश स्टोरेज सक्षम करें</string>
     <string name="enable_cache_storage_hint">तेज़ लोडिंग के लिए OCR पहचान परिणाम संग्रहीत करें</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">स्कैनर सेटिंग्स</string>
-    <string name="detection_interval">पहचान अंतराल</string>
-    <string name="reading_time_per_word">प्रति शब्द पढ़ने का समय</string>
-    
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR स्क्रीन</string>
-    <string name="browse_gallery">गैलरी ब्राउज़ करें</string>
+
+    <!-- Camera OCR settings -->
+    <string name="camera_ocr_settings">कैमरा OCR सेटिंग्स</string>
+    <string name="camera_ocr_detection_interval">पहचान अंतराल</string>
+    <string name="camera_ocr_reading_ms_per_word">प्रति शब्द पढ़ने का समय</string>
+    <string name="camera_ocr_max_extra_delay_ms">अधिकतम अतिरिक्त देरी</string>
+    <string name="camera_ocr_skip_frames">फ्रेम छोड़ें</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d फ्रेम</string>
     
     <!-- Content descriptions -->
-    <string name="zoom_out">ज़ूम आउट</string>
-    <string name="zoom_in">ज़ूम इन</string>
-    <string name="rotate_90">90° घुमाएं</string>
-    <string name="reset_view">दृश्य रीसेट करें</string>
     <string name="copied">कॉपी किया गया</string>
     <string name="select_language">भाषा चुनें</string>
     <string name="selected">चयनित</string>
     <string name="back">वापस</string>
-    <string name="captured_image">कैप्चर की गई छवि</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">छवि विवरण</string>
@@ -90,19 +91,21 @@
     <string name="transliterated">लिप्यंतरित</string>
     <string name="display_options">प्रदर्शन विकल्प</string>
     <string name="detection_options">पहचान विकल्प</string>
-    <string name="ocr_status">OCR स्थिति</string>
     <string name="ocr_results">OCR परिणाम</string>
+    <string name="hide">छुपाएं</string>
+    <string name="show">दिखाएं</string>
+    <string name="both_text_panels_hidden">दोनों टेक्स्ट पैनल छिपे हुए हैं</string>
     <string name="no_text_detected">छवि में कोई टेक्स्ट नहीं मिला</string>
     
     <!-- Language change message -->
-    <string name="language_changed_restart">भाषा बदल गई। बदलाव देखने के लिए कृपया ऐप को पुनः शुरू करें।</string>
+    <string name="language_changed_restart">भाषा बदल गई। परिवर्तन देखने के लिए कृपया ऐप पुनः प्रारंभ करें।</string>
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ओवरले सेटिंग्स</string>
     <string name="enable_overlay">स्क्रीन ओवरले OCR</string>
     <string name="overlay_enabled">फ्लोटिंग बटन सक्रिय</string>
     <string name="overlay_disabled">फ्लोटिंग बटन सक्षम करने के लिए टैप करें</string>
-    <string name="overlay_feature_description">यह सुविधा एक फ्लोटिंग बटन जोड़ती है जो आपकी स्क्रीन को कैप्चर करता है और OCR टेक्स्ट और बाउंडिंग बॉक्स को ओवरले के रूप में दिखाता है।</string>
+    <string name="overlay_feature_description">यह सुविधा एक फ्लोटिंग बटन जोड़ती है जो आपकी स्क्रीन कैप्चर करती है और OCR टेक्स्ट और बाउंडिंग बॉक्स को ओवरले के रूप में दिखाती है।</string>
     <string name="overlay_permission_hint">आपको स्क्रीन कैप्चर और ओवरले अनुमतियां देनी होंगी।</string>
     <string name="overlay_permission_denied">स्क्रीन कैप्चर अनुमति अस्वीकृत</string>
     <string name="enable">सक्षम करें</string>
@@ -111,67 +114,83 @@
     
     <!-- Settings categories -->
     <string name="appearance">दिखावट</string>
-    <string name="ocr_features">OCR सुविधाएं</string>
+    <string name="ocr_features">OCR विशेषताएं</string>
     <string name="data_storage">डेटा और स्टोरेज</string>
     <string name="legal">कानूनी</string>
 
-    <string name="rate_app">ऐप को रेट करें</string>
-    <string name="camera_ocr_settings">कैमरा OCR सेटिंग्स</string>
-    <string name="camera_ocr_detection_interval">डिटेक्शन अंतराल</string>
-    <string name="camera_ocr_reading_ms_per_word">प्रति शब्द पढ़ने का समय</string>
-    <string name="camera_ocr_max_extra_delay_ms">अधिकतम अतिरिक्त देरी</string>
-    <string name="camera_ocr_skip_frames">फ्रेम छोड़ें</string>
-    <string name="ms_value">%d ms</string>
-    <string name="frames_value">%d फ्रेम</string>
+    <!-- Onboarding language selection -->
+    <string name="choose_language">अपनी भाषा चुनें</string>
+    <string name="choose_language_hint">आप इसे बाद में सेटिंग्स में बदल सकते हैं</string>
 
-    <string name="unable_to_open_link">लिंक नहीं खुल सका।</string>
-
-    <!-- Onboarding / tutorial -->
-    <string name="choose_language">भाषा चुनें</string>
-    <string name="choose_language_hint">आगे बढ़ने के लिए अपनी पसंदीदा ऐप भाषा चुनें।</string>
-    <string name="default_mlkit">डिफ़ॉल्ट (ML Kit)</string>
-
+    <!-- Language selection -->
     <string name="detect">पहचानें</string>
-    <string name="to">को</string>
+    <string name="to">में</string>
     <string name="transliterate">लिप्यंतरण</string>
     <string name="select_ocr_language">OCR भाषा चुनें</string>
     <string name="select_transliteration_language">लिप्यंतरण भाषा चुनें</string>
     <string name="transliterate_to">लिप्यंतरण करें</string>
 
+    <!-- OCR engine selection -->
     <string name="select_ocr_engine">OCR इंजन चुनें</string>
     <string name="ocr_engine_mlkit_description">तेज़, ऑनलाइन, कई भाषाओं का समर्थन</string>
     <string name="ocr_engine_tesseract_name">Tesseract</string>
     <string name="ocr_engine_tesseract_description">ऑफ़लाइन, भाषा डेटा डाउनलोड आवश्यक</string>
 
-    <string name="tutorial_next">आगे</string>
-    <string name="tutorial_skip">छोड़ें</string>
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">डिफ़ॉल्ट (ML Kit)</string>
 
-    <string name="tutorial_settings_title">सेटिंग्स</string>
-    <string name="tutorial_settings_message">यहाँ OCR और ऐप की प्राथमिकताएँ अनुकूलित करें।</string>
-
-    <string name="tutorial_languages_title">भाषाएँ</string>
-    <string name="tutorial_languages_message">टेक्स्ट पहचान और लिप्यंतरण के लिए भाषा चुनें।</string>
-
-    <string name="tutorial_flash_title">फ़्लैश</string>
-    <string name="tutorial_flash_message">बेहतर दृश्यता के लिए फ़्लैश चालू/बंद करें।</string>
-
-    <string name="tutorial_capture_title">कैप्चर</string>
-    <string name="tutorial_capture_message">टेक्स्ट पहचानने के लिए फोटो लें।</string>
-
-    <string name="tutorial_gallery_title">गैलरी</string>
-    <string name="tutorial_gallery_message">छवि चुनने के लिए गैलरी खोलें।</string>
+    <string name="unable_to_open_link">लिंक खोलने में असमर्थ।</string>
 
     <!-- Model downloads -->
     <string name="models">भाषा मॉडल</string>
     <string name="manage_models">डाउनलोड किए गए OCR मॉडल प्रबंधित करें</string>
-    <string name="download_models_hint">आवश्यकता अनुसार ऑफ़लाइन Tesseract भाषा मॉडल डाउनलोड करें</string>
+    <string name="download_models_hint">आवश्यकतानुसार ऑफ़लाइन Tesseract भाषा मॉडल डाउनलोड करें</string>
     <string name="model_download">मॉडल डाउनलोड करें</string>
     <string name="model_downloaded">डाउनलोड हो गया</string>
 
     <string name="model_download_notification_channel_name">मॉडल डाउनलोड</string>
     <string name="model_download_notification_title">भाषा मॉडल डाउनलोड हो रहा है</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">मॉडल डाउनलोड नहीं है, डिफ़ॉल्ट मॉडल का उपयोग किया जा रहा है</string>
-    
-    <string name="no_internet_connection">इंटरनेट कनेक्शन उपलब्ध नहीं है</string>
+    <string name="model_not_downloaded_fallback">मॉडल डाउनलोड नहीं हुआ, डिफ़ॉल्ट मॉडल पर जा रहे हैं</string>
+
+    <string name="no_internet_connection">इंटरनेट कनेक्शन नहीं है</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">टेक्स्ट इनपुट</string>
+    <string name="enter_text">टेक्स्ट दर्ज करें</string>
+    <string name="type_to_transliterate">लिप्यंतरण के लिए यहां टेक्स्ट टाइप या पेस्ट करें…</string>
+    <string name="characters">अक्षर</string>
+    <string name="auto_detect">ऑटो-डिटेक्ट</string>
+
+    <!-- History Screen -->
+    <string name="history">इतिहास</string>
+    <string name="all">सभी</string>
+    <string name="favorites">पसंदीदा</string>
+    <string name="no_history">अभी तक कोई इतिहास नहीं</string>
+    <string name="no_history_hint">आपका लिप्यंतरण इतिहास यहां दिखाई देगा</string>
+    <string name="no_favorites">अभी तक कोई पसंदीदा नहीं</string>
+    <string name="no_favorites_hint">पसंदीदा में जोड़ने के लिए आइटम दबाकर रखें</string>
+    <string name="clear_history">इतिहास साफ़ करें</string>
+    <string name="clear_history_confirmation">क्या आप वाकई अपना इतिहास साफ़ करना चाहते हैं?</string>
+    <string name="clear_keep_favorites">साफ़ करें (पसंदीदा रखें)</string>
+    <string name="delete">हटाएं</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">उपयोगकर्ता अनुभव</string>
+    <string name="text_display_size">टेक्स्ट प्रदर्शन आकार</string>
+    <string name="text_size_small">छोटा</string>
+    <string name="text_size_normal">सामान्य</string>
+    <string name="text_size_large">बड़ा</string>
+    <string name="text_size_extra_large">अतिरिक्त बड़ा</string>
+    <string name="haptic_feedback">हैप्टिक फीडबैक</string>
+    <string name="haptic_feedback_hint">बटन टैप और कार्यों पर वाइब्रेशन</string>
+    <string name="auto_copy">परिणाम ऑटो-कॉपी</string>
+    <string name="auto_copy_hint">लिप्यंतरित टेक्स्ट को क्लिपबोर्ड पर स्वचालित रूप से कॉपी करें</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">टेक्स्ट-टू-स्पीच</string>
+    <string name="enable_tts">TTS सक्षम करें</string>
+    <string name="enable_tts_hint">लिप्यंतरित टेक्स्ट को ज़ोर से पढ़ें</string>
+    <string name="tts_auto_speak">परिणाम ऑटो-स्पीक</string>
+    <string name="tts_auto_speak_hint">लिप्यंतरण के बाद स्वचालित रूप से बोलें</string>
 </resources>

@@ -2,176 +2,195 @@
 <resources>
     <string name="app_name">వర్ణమాల</string>
 
-    <string name="stop">ఆపండి</string>
-    <string name="start">ప్రారంభించండి</string>
-
     <string name="dark_mode">డార్క్ మోడ్</string>
     <string name="language">భాష</string>
     <string name="terms_of_service">సేవా నిబంధనలు</string>
     <string name="privacy_policy">గోప్యతా విధానం</string>
+    <string name="rate_app">యాప్‌ను రేట్ చేయండి</string>
 
     <string name="grant_permission">అనుమతి ఇవ్వండి</string>
     <string name="open_settings">సెట్టింగ్‌లు తెరవండి</string>
     <string name="camera_permission_required">కెమెరా అనుమతి అవసరం</string>
-    <string name="camera_permission_description">రియల్-టైమ్‌లో టెక్స్ట్‌ను గుర్తించడానికి మాకు మీ కెమెరాకు యాక్సెస్ అవసరం.</string>
-    <string name="camera_permission_denied_description">కెమెరా అనుమతి శాశ్వతంగా తిరస్కరించబడింది.</string>
-    <string name="camera_permission_allow_hint">కొనసాగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ప్రారంభించండి.</string>
+    <string name="camera_permission_description">రియల్-టైమ్‌లో టెక్స్ట్‌ను గుర్తించడానికి మీ కెమెరాకు యాక్సెస్ అవసరం.</string>
+    <string name="camera_permission_denied_description">కెమెరా అనుమతి శాశ్వతంగా నిరాకరించబడింది.</string>
+    <string name="camera_permission_allow_hint">కొనసాగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ఎనేబుల్ చేయండి.</string>
     <string name="media_permission_required">మీడియా అనుమతి అవసరం</string>
-    <string name="media_permission_description">గ్యాలరీలో చిత్రాలను ప్రదర్శించడానికి మాకు మీ చిత్రాలకు యాక్సెస్ అవసరం.</string>
-    <string name="media_permission_denied_description">మీడియా అనుమతి శాశ్వతంగా తిరస్కరించబడింది.</string>
-    <string name="media_permission_allow_hint">కొనసాగించడానికి సిస్టమ్ సెట్టింగ్‌లలో అనుమతిని ప్రారంభించండి.</string>
-    <string name="overlay_permission_required">యాప్‌లపై ప్రదర్శన అనుమతి అవసరం</string>
+    <string name="media_permission_description">గ్యాలరీలో చిత్రాలను ప్రదర్శించడానికి మీ చిత్రాలకు యాక్సెస్ అవసరం.</string>
+    <string name="media_permission_denied_description">మీడియా అనుమతి శాశ్వతంగా నిరాకరించబడింది.</string>
+    <string name="media_permission_allow_hint">కొనసాగించడానికి సిస్టమ్ సెట్టింగ్‌లలో అనుమతిని ఎనేబుల్ చేయండి.</string>
+    <string name="overlay_permission_required">యాప్‌ల పైన ప్రదర్శన అనుమతి అవసరం</string>
     <string name="overlay_permission_description">ఇతర యాప్‌ల పైన ఓవర్‌లే విండోలను ప్రదర్శించడానికి మాకు అనుమతి అవసరం.</string>
-    <string name="overlay_permission_denied_description">యాప్‌లపై ప్రదర్శన అనుమతి తిరస్కరించబడింది.</string>
-    <string name="overlay_permission_allow_hint">ఈ ఫీచర్‌ను ఉపయోగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ప్రారంభించండి.</string>
+    <string name="overlay_permission_denied_description">యాప్‌ల పైన ప్రదర్శన అనుమతి నిరాకరించబడింది.</string>
+    <string name="overlay_permission_allow_hint">ఈ ఫీచర్‌ను ఉపయోగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ఎనేబుల్ చేయండి.</string>
 
-    <string name="clear_cache">కాష్‌ను క్లియర్ చేయండి</string>
+    <string name="clear_cache">క్యాష్ క్లియర్ చేయండి</string>
     <string name="gallery">గ్యాలరీ</string>
     <string name="done">పూర్తయింది</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">తదుపరి</string>
+    <string name="tutorial_skip">దాటవేయి</string>
+    <string name="tutorial_settings_title">సెట్టింగ్‌లు</string>
+    <string name="tutorial_settings_message">థీమ్ మార్చండి, OCR ఎంపికలను నిర్వహించండి మరియు యాప్‌ను కాన్ఫిగర్ చేయండి.</string>
+    <string name="tutorial_languages_title">భాషలు</string>
+    <string name="tutorial_languages_message">OCR భాష (ఎడమ) మరియు లిప్యంతరీకరణ భాష (కుడి) ఎంచుకోండి.</string>
+    <string name="tutorial_flash_title">ఫ్లాష్</string>
+    <string name="tutorial_flash_message">తక్కువ వెలుతురులో కెమెరా ఫ్లాష్ టాగుల్ చేయండి.</string>
+    <string name="tutorial_capture_title">క్యాప్చర్ / స్కాన్</string>
+    <string name="tutorial_capture_message">ఫోటో తీయడానికి ట్యాప్ చేయండి, లేదా నిరంతరం స్కాన్ చేయడానికి నొక్కి పట్టుకోండి.</string>
+    <string name="tutorial_gallery_title">గ్యాలరీ</string>
+    <string name="tutorial_gallery_message">సేవ్ చేసిన చిత్రాలను తెరిచి OCR ఫలితాలను చూడండి.</string>
     
     <!-- Common UI actions -->
-    <string name="confirm">నిర్ధారించండి</string>
-    <string name="cancel">రద్దు చేయండి</string>
-    <string name="close">మూసివేయండి</string>
-    <string name="retry">మళ్లీ ప్రయత్నించండి</string>
-    <string name="copy">కాపీ చేయండి</string>
-    <string name="hide">దాచండి</string>
-    <string name="show">చూపించండి</string>
-    <string name="both_text_panels_hidden">రెండు టెక్స్ట్ ప్యానెల్లు దాచబడ్డాయి</string>
-    <string name="share">షేర్ చేయండి</string>
-    <string name="refresh">రిఫ్రెష్ చేయండి</string>
-    <string name="clear">క్లియర్ చేయండి</string>
+    <string name="confirm">నిర్ధారించు</string>
+    <string name="cancel">రద్దు చేయి</string>
+    <string name="close">మూసివేయి</string>
+    <string name="copy">కాపీ చేయి</string>
+    <string name="clear">క్లియర్ చేయి</string>
     
     <!-- OCR related -->
     <string name="ocr_text">OCR టెక్స్ట్</string>
-    <string name="clear_all_ocr_cache">అన్ని OCR కాష్‌ను క్లియర్ చేయండి</string>
-    <string name="clear_cache_confirmation">ఇది అన్ని చిత్రాల కోసం కాష్ చేసిన OCR ను తొలగిస్తుంది. కొనసాగించాలా?</string>
-    <string name="clear_cache_confirmation_settings">మీరు ఖచ్చితంగా అన్ని కాష్ చేసిన OCR డేటాను క్లియర్ చేయాలనుకుంటున్నారా? ఈ చర్యను రద్దు చేయలేము.</string>
-    <string name="detect_again">మళ్లీ గుర్తించండి</string>
-    <string name="clear_all">అన్నీ క్లియర్ చేయండి</string>
+    <string name="clear_all_ocr_cache">అన్ని OCR క్యాష్ క్లియర్ చేయండి</string>
+    <string name="clear_cache_confirmation">ఇది అన్ని చిత్రాలకు క్యాష్ చేసిన OCR ను తొలగిస్తుంది. కొనసాగించాలా?</string>
+    <string name="clear_cache_confirmation_settings">మీరు అన్ని క్యాష్ చేసిన OCR డేటాను క్లియర్ చేయాలనుకుంటున్నారా? ఈ చర్యను రద్దు చేయలేరు.</string>
+    <string name="detect_again">మళ్ళీ గుర్తించు</string>
+    <string name="clear_all">అన్నీ క్లియర్ చేయి</string>
     <string name="language_detection">భాష గుర్తింపు</string>
     <string name="ocr_actions">OCR చర్యలు</string>
     
     <!-- Display options -->
-    <string name="show_bounding_boxes">సరిహద్దు పెట్టెలు చూపించు</string>
+    <string name="show_bounding_boxes">బౌండింగ్ బాక్సులు చూపించు</string>
     <string name="text_blocks">టెక్స్ట్ బ్లాక్‌లు</string>
     <string name="text_lines">టెక్స్ట్ లైన్లు</string>
     <string name="words">పదాలు</string>
-    <string name="bounding_box_width">సరిహద్దు పెట్టె వెడల్పు: %dpx</string>
+    <string name="bounding_box_width">బౌండింగ్ బాక్స్ వెడల్పు: %dpx</string>
     <string name="show_text_overlay">టెక్స్ట్ ఓవర్‌లే చూపించు</string>
-    <string name="text_background_opacity">టెక్స్ట్ నేపథ్య అస్పష్టత: %d%%</string>
-    <string name="enable_cache_storage">కాష్ స్టోరేజ్‌ను ప్రారంభించండి</string>
+    <string name="text_background_opacity">టెక్స్ట్ బ్యాక్‌గ్రౌండ్ అపారదర్శకత: %d%%</string>
+    <string name="enable_cache_storage">క్యాష్ స్టోరేజ్ ఎనేబుల్ చేయి</string>
     <string name="enable_cache_storage_hint">వేగవంతమైన లోడింగ్ కోసం OCR గుర్తింపు ఫలితాలను నిల్వ చేయండి</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">స్కానర్ సెట్టింగ్‌లు</string>
-    <string name="detection_interval">గుర్తింపు విరామం</string>
-    <string name="reading_time_per_word">ఒక పదానికి చదివే సమయం</string>
-    
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR స్క్రీన్</string>
-    <string name="browse_gallery">గ్యాలరీని బ్రౌజ్ చేయండి</string>
+
+    <!-- Camera OCR settings -->
+    <string name="camera_ocr_settings">కెమెరా OCR సెట్టింగ్‌లు</string>
+    <string name="camera_ocr_detection_interval">గుర్తింపు విరామం</string>
+    <string name="camera_ocr_reading_ms_per_word">పదానికి చదివే సమయం</string>
+    <string name="camera_ocr_max_extra_delay_ms">గరిష్ట అదనపు ఆలస్యం</string>
+    <string name="camera_ocr_skip_frames">ఫ్రేమ్‌లు దాటవేయి</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ఫ్రేమ్‌లు</string>
     
     <!-- Content descriptions -->
-    <string name="zoom_out">జూమ్ అవుట్</string>
-    <string name="zoom_in">జూమ్ ఇన్</string>
-    <string name="rotate_90">90° తిప్పండి</string>
-    <string name="reset_view">వీక్షణను రీసెట్ చేయండి</string>
-    <string name="copied">కాపీ చేయబడింది</string>
-    <string name="select_language">భాషను ఎంచుకోండి</string>
-    <string name="selected">ఎంచుకోబడింది</string>
+    <string name="copied">కాపీ అయింది</string>
+    <string name="select_language">భాష ఎంచుకోండి</string>
+    <string name="selected">ఎంచుకున్నది</string>
     <string name="back">వెనుకకు</string>
-    <string name="captured_image">క్యాప్చర్ చేసిన చిత్రం</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">చిత్ర వివరాలు</string>
     <string name="ocr_result">OCR ఫలితం</string>
     <string name="original">అసలు</string>
-    <string name="transliterated">లిప్యంతరీకరణ</string>
+    <string name="transliterated">లిప్యంతరీకరించబడింది</string>
     <string name="display_options">ప్రదర్శన ఎంపికలు</string>
     <string name="detection_options">గుర్తింపు ఎంపికలు</string>
-    <string name="ocr_status">OCR స్థితి</string>
     <string name="ocr_results">OCR ఫలితాలు</string>
-    <string name="no_text_detected">చిత్రంలో టెక్స్ట్ కనుగొనబడలేదు</string>
+    <string name="hide">దాచు</string>
+    <string name="show">చూపించు</string>
+    <string name="both_text_panels_hidden">రెండు టెక్స్ట్ ప్యానెల్‌లు దాచబడ్డాయి</string>
+    <string name="no_text_detected">చిత్రంలో టెక్స్ట్ గుర్తించబడలేదు</string>
     
     <!-- Language change message -->
-    <string name="language_changed_restart">భాష మార్చబడింది. మార్పులను చూడటానికి దయచేసి యాప్‌ను పునఃప్రారంభించండి.</string>
+    <string name="language_changed_restart">భాష మారింది. మార్పులు చూడటానికి దయచేసి యాప్‌ను పునఃప్రారంభించండి.</string>
     
     <!-- Overlay settings -->
     <string name="overlay_settings">ఓవర్‌లే సెట్టింగ్‌లు</string>
     <string name="enable_overlay">స్క్రీన్ ఓవర్‌లే OCR</string>
-    <string name="overlay_enabled">తేలియాడే బటన్ సక్రియం</string>
-    <string name="overlay_disabled">తేలియాడే బటన్‌ను ప్రారంభించడానికి నొక్కండి</string>
-    <string name="overlay_feature_description">ఈ ఫీచర్ మీ స్క్రీన్‌ను క్యాప్చర్ చేసి OCR టెక్స్ట్ మరియు బౌండింగ్ బాక్స్‌లను ఓవర్‌లేగా చూపించే తేలియాడే బటన్‌ను జోడిస్తుంది.</string>
-    <string name="overlay_permission_hint">మీరు స్క్రీన్ క్యాప్చర్ మరియు ఓవర్‌లే అనుమతులను ఇవ్వాలి.</string>
-    <string name="overlay_permission_denied">స్క్రీన్ క్యాప్చర్ అనుమతి తిరస్కరించబడింది</string>
-    <string name="enable">ప్రారంభించు</string>
-    <string name="start_overlay">ఓవర్‌లేను ప్రారంభించు</string>
-    <string name="stop_overlay">ఓవర్‌లేను ఆపు</string>
+    <string name="overlay_enabled">ఫ్లోటింగ్ బటన్ యాక్టివ్</string>
+    <string name="overlay_disabled">ఫ్లోటింగ్ బటన్ ఎనేబుల్ చేయడానికి ట్యాప్ చేయండి</string>
+    <string name="overlay_feature_description">ఈ ఫీచర్ మీ స్క్రీన్‌ను క్యాప్చర్ చేసి OCR టెక్స్ట్ మరియు బౌండింగ్ బాక్సులను ఓవర్‌లేగా చూపించే ఫ్లోటింగ్ బటన్‌ను జోడిస్తుంది.</string>
+    <string name="overlay_permission_hint">మీరు స్క్రీన్ క్యాప్చర్ మరియు ఓవర్‌లే అనుమతులు మంజూరు చేయాలి.</string>
+    <string name="overlay_permission_denied">స్క్రీన్ క్యాప్చర్ అనుమతి నిరాకరించబడింది</string>
+    <string name="enable">ఎనేబుల్ చేయి</string>
+    <string name="start_overlay">ఓవర్‌లే ప్రారంభించు</string>
+    <string name="stop_overlay">ఓవర్‌లే ఆపు</string>
     
     <!-- Settings categories -->
-    <string name="appearance">స్వరూపం</string>
+    <string name="appearance">రూపం</string>
     <string name="ocr_features">OCR ఫీచర్లు</string>
-    <string name="data_storage">డేటా మరియు నిల్వ</string>
-    <string name="legal">చట్టపరమైనది</string>
+    <string name="data_storage">డేటా &amp; స్టోరేజ్</string>
+    <string name="legal">చట్టపరమైన</string>
 
-    <string name="rate_app">యాప్‌ను రేట్ చేయండి</string>
-    <string name="camera_ocr_settings">కెమెరా OCR సెట్టింగ్‌లు</string>
-    <string name="camera_ocr_detection_interval">గుర్తింపు వ్యవధి</string>
-    <string name="camera_ocr_reading_ms_per_word">ప్రతి పదం చదివే సమయం</string>
-    <string name="camera_ocr_max_extra_delay_ms">గరిష్ఠ అదనపు ఆలస్యం</string>
-    <string name="camera_ocr_skip_frames">ఫ్రేమ్‌లను దాటవేయండి</string>
-    <string name="ms_value">%d ms</string>
-    <string name="frames_value">%d ఫ్రేమ్‌లు</string>
+    <!-- Onboarding language selection -->
+    <string name="choose_language">మీ భాషను ఎంచుకోండి</string>
+    <string name="choose_language_hint">దీన్ని తర్వాత సెట్టింగ్‌లలో మార్చవచ్చు</string>
 
-    <string name="unable_to_open_link">లింక్‌ను తెరవలేకపోయాం.</string>
-
-    <!-- Onboarding / tutorial -->
-    <string name="choose_language">భాషను ఎంచుకోండి</string>
-    <string name="choose_language_hint">కొనసాగడానికి మీకు నచ్చిన యాప్ భాషను ఎంచుకోండి.</string>
-    <string name="default_mlkit">డిఫాల్ట్ (ML Kit)</string>
-
+    <!-- Language selection -->
     <string name="detect">గుర్తించు</string>
-    <string name="to">కి</string>
-    <string name="transliterate">లిప్యంతరణ</string>
-    <string name="select_ocr_language">OCR భాషను ఎంచుకోండి</string>
-    <string name="select_transliteration_language">లిప్యంతరణ భాషను ఎంచుకోండి</string>
-    <string name="transliterate_to">కి లిప్యంతరణ చేయండి</string>
+    <string name="to">కు</string>
+    <string name="transliterate">లిప్యంతరీకరించు</string>
+    <string name="select_ocr_language">OCR భాష ఎంచుకోండి</string>
+    <string name="select_transliteration_language">లిప్యంతరీకరణ భాష ఎంచుకోండి</string>
+    <string name="transliterate_to">లిప్యంతరీకరించు</string>
 
-    <string name="select_ocr_engine">OCR ఇంజిన్‌ను ఎంచుకోండి</string>
-    <string name="ocr_engine_mlkit_description">వేగంగా, ఆన్‌లైన్, అనేక భాషలకు మద్దతు</string>
+    <!-- OCR engine selection -->
+    <string name="select_ocr_engine">OCR ఇంజిన్ ఎంచుకోండి</string>
+    <string name="ocr_engine_mlkit_description">వేగవంతమైన, ఆన్‌లైన్, బహుళ భాషలకు మద్దతు</string>
     <string name="ocr_engine_tesseract_name">Tesseract</string>
     <string name="ocr_engine_tesseract_description">ఆఫ్‌లైన్, భాషా డేటా డౌన్‌లోడ్ అవసరం</string>
 
-    <string name="tutorial_next">తదుపరి</string>
-    <string name="tutorial_skip">దాటవేయి</string>
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">డిఫాల్ట్ (ML Kit)</string>
 
-    <string name="tutorial_settings_title">సెట్టింగ్‌లు</string>
-    <string name="tutorial_settings_message">ఇక్కడ OCR మరియు యాప్ అభిరుచులను అనుకూలీకరించండి.</string>
-
-    <string name="tutorial_languages_title">భాషలు</string>
-    <string name="tutorial_languages_message">టెక్స్ట్ గుర్తింపు మరియు లిప్యంతరీకరణ కోసం భాషను ఎంచుకోండి.</string>
-
-    <string name="tutorial_flash_title">ఫ్లాష్</string>
-    <string name="tutorial_flash_message">మెరుగైన దృశ్యమానత కోసం ఫ్లాష్‌ను ఆన్/ఆఫ్ చేయండి.</string>
-
-    <string name="tutorial_capture_title">క్యాప్చర్</string>
-    <string name="tutorial_capture_message">టెక్స్ట్ గుర్తించడానికి ఫోటో తీయండి.</string>
-
-    <string name="tutorial_gallery_title">గ్యాలరీ</string>
-    <string name="tutorial_gallery_message">చిత్రాన్ని ఎంచుకోవడానికి గ్యాలరీని తెరవండి.</string>
+    <string name="unable_to_open_link">లింక్ తెరవడం సాధ్యం కాలేదు.</string>
 
     <!-- Model downloads -->
-    <string name="models">భాష మోడళ్లు</string>
-    <string name="manage_models">డౌన్‌లోడ్ చేసిన OCR మోడళ్లను నిర్వహించండి</string>
-    <string name="download_models_hint">అవసరమైనప్పుడు ఆఫ్‌లైన్ Tesseract భాష మోడళ్లను డౌన్‌లోడ్ చేయండి</string>
-    <string name="model_download">మోడల్ డౌన్‌లోడ్ చేయండి</string>
+    <string name="models">భాషా మోడల్స్</string>
+    <string name="manage_models">డౌన్‌లోడ్ చేసిన OCR మోడల్స్ నిర్వహించు</string>
+    <string name="download_models_hint">అవసరానుసారం ఆఫ్‌లైన్ Tesseract భాషా మోడల్స్ డౌన్‌లోడ్ చేయండి</string>
+    <string name="model_download">మోడల్ డౌన్‌లోడ్ చేయి</string>
     <string name="model_downloaded">డౌన్‌లోడ్ అయింది</string>
 
-    <string name="model_download_notification_channel_name">మోడల్ డౌన్‌లోడ్‌లు</string>
-    <string name="model_download_notification_title">భాష మోడల్ డౌన్‌లోడ్ అవుతోంది</string>
+    <string name="model_download_notification_channel_name">మోడల్ డౌన్‌లోడ్లు</string>
+    <string name="model_download_notification_title">భాషా మోడల్ డౌన్‌లోడ్ అవుతోంది</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">మోడల్ డౌన్‌లోడ్ కాలేదు, డిఫాల్ట్ మోడల్‌కు మారుతోంది</string>
+    <string name="model_not_downloaded_fallback">మోడల్ డౌన్‌లోడ్ కాలేదు, డిఫాల్ట్ మోడల్‌కు వెళ్తోంది</string>
 
-    <string name="no_internet_connection">ఇంటర్నెట్ కనెక్షన్ అందుబాటులో లేదు</string>
+    <string name="no_internet_connection">ఇంటర్నెట్ కనెక్షన్ లేదు</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">టెక్స్ట్ ఇన్‌పుట్</string>
+    <string name="enter_text">టెక్స్ట్ నమోదు చేయండి</string>
+    <string name="type_to_transliterate">లిప్యంతరీకరించడానికి ఇక్కడ టెక్స్ట్ టైప్ చేయండి లేదా పేస్ట్ చేయండి…</string>
+    <string name="characters">అక్షరాలు</string>
+    <string name="auto_detect">ఆటో-డిటెక్ట్</string>
+
+    <!-- History Screen -->
+    <string name="history">చరిత్ర</string>
+    <string name="all">అన్నీ</string>
+    <string name="favorites">ఇష్టమైనవి</string>
+    <string name="no_history">ఇంకా చరిత్ర లేదు</string>
+    <string name="no_history_hint">మీ లిప్యంతరీకరణ చరిత్ర ఇక్కడ కనిపిస్తుంది</string>
+    <string name="no_favorites">ఇంకా ఇష్టమైనవి లేవు</string>
+    <string name="no_favorites_hint">ఇష్టమైనవాటికి జోడించడానికి అంశాలను నొక్కి పట్టుకోండి</string>
+    <string name="clear_history">చరిత్ర క్లియర్ చేయి</string>
+    <string name="clear_history_confirmation">మీ చరిత్రను క్లియర్ చేయాలనుకుంటున్నారా?</string>
+    <string name="clear_keep_favorites">క్లియర్ చేయి (ఇష్టమైనవి ఉంచు)</string>
+    <string name="delete">తొలగించు</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">వినియోగదారు అనుభవం</string>
+    <string name="text_display_size">టెక్స్ట్ ప్రదర్శన పరిమాణం</string>
+    <string name="text_size_small">చిన్న</string>
+    <string name="text_size_normal">సాధారణ</string>
+    <string name="text_size_large">పెద్ద</string>
+    <string name="text_size_extra_large">అదనపు పెద్ద</string>
+    <string name="haptic_feedback">హాప్టిక్ ఫీడ్‌బ్యాక్</string>
+    <string name="haptic_feedback_hint">బటన్ ట్యాప్‌లు మరియు చర్యలపై వైబ్రేషన్</string>
+    <string name="auto_copy">ఫలితాలు ఆటో-కాపీ</string>
+    <string name="auto_copy_hint">లిప్యంతరీకరించిన టెక్స్ట్‌ను ఆటోమేటిక్‌గా క్లిప్‌బోర్డ్‌కు కాపీ చేయండి</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">టెక్స్ట్-టు-స్పీచ్</string>
+    <string name="enable_tts">TTS ఎనేబుల్ చేయి</string>
+    <string name="enable_tts_hint">లిప్యంతరీకరించిన టెక్స్ట్‌ను బిగ్గరగా చదవండి</string>
+    <string name="tts_auto_speak">ఫలితాలు ఆటో-స్పీక్</string>
+    <string name="tts_auto_speak_hint">లిప్యంతరీకరణ తర్వాత ఆటోమేటిక్‌గా మాట్లాడండి</string>
 </resources>

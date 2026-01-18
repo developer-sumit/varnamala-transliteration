@@ -2,176 +2,195 @@
 <resources>
     <string name="app_name">வர்ணமாலா</string>
 
-    <string name="stop">நிறுத்து</string>
-    <string name="start">தொடங்கு</string>
-
-    <string name="dark_mode">இருண்ட பயன்முறை</string>
+    <string name="dark_mode">டார்க் மோட்</string>
     <string name="language">மொழி</string>
     <string name="terms_of_service">சேவை விதிமுறைகள்</string>
     <string name="privacy_policy">தனியுரிமைக் கொள்கை</string>
+    <string name="rate_app">ஆப்பை மதிப்பிடுங்கள்</string>
 
     <string name="grant_permission">அனுமதி வழங்கு</string>
     <string name="open_settings">அமைப்புகளைத் திற</string>
     <string name="camera_permission_required">கேமரா அனுமதி தேவை</string>
-    <string name="camera_permission_description">நிகழ்நேரத்தில் உரையைக் கண்டறிய உங்கள் கேமராவுக்கான அணுகல் எங்களுக்குத் தேவை.</string>
+    <string name="camera_permission_description">நிகழ்நேரத்தில் உரையைக் கண்டறிய உங்கள் கேமராவை அணுக வேண்டும்.</string>
     <string name="camera_permission_denied_description">கேமரா அனுமதி நிரந்தரமாக மறுக்கப்பட்டது.</string>
     <string name="camera_permission_allow_hint">தொடர அமைப்புகளில் இதை இயக்கவும்.</string>
     <string name="media_permission_required">மீடியா அனுமதி தேவை</string>
-    <string name="media_permission_description">கேலரியில் படங்களைக் காட்ட உங்கள் படங்களுக்கான அணுகல் எங்களுக்குத் தேவை.</string>
+    <string name="media_permission_description">கேலரியில் படங்களைக் காட்ட உங்கள் படங்களை அணுக வேண்டும்.</string>
     <string name="media_permission_denied_description">மீடியா அனுமதி நிரந்தரமாக மறுக்கப்பட்டது.</string>
     <string name="media_permission_allow_hint">தொடர கணினி அமைப்புகளில் அனுமதியை இயக்கவும்.</string>
-    <string name="overlay_permission_required">பயன்பாடுகளின் மேல் காட்சி அனுமதி தேவை</string>
-    <string name="overlay_permission_description">பிற பயன்பாடுகளின் மேல் மேலடுக்கு சாளரத்தைக் காட்ட எங்களுக்கு அனுமதி தேவை.</string>
-    <string name="overlay_permission_denied_description">பயன்பாடுகளின் மேல் காட்சி அனுமதி மறுக்கப்பட்டது.</string>
+    <string name="overlay_permission_required">ஆப்களின் மேல் காட்டு அனுமதி தேவை</string>
+    <string name="overlay_permission_description">மற்ற ஆப்களின் மேல் ஓவர்லே சாளரங்களைக் காட்ட எங்களுக்கு அனுமதி தேவை.</string>
+    <string name="overlay_permission_denied_description">ஆப்களின் மேல் காட்டு அனுமதி மறுக்கப்பட்டது.</string>
     <string name="overlay_permission_allow_hint">இந்த அம்சத்தைப் பயன்படுத்த அமைப்புகளில் இதை இயக்கவும்.</string>
 
-    <string name="clear_cache">தற்காலிக சேமிப்பை அழி</string>
+    <string name="clear_cache">கேச் அழி</string>
     <string name="gallery">கேலரி</string>
     <string name="done">முடிந்தது</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">அடுத்து</string>
+    <string name="tutorial_skip">தவிர்</string>
+    <string name="tutorial_settings_title">அமைப்புகள்</string>
+    <string name="tutorial_settings_message">தீம் மாற்று, OCR விருப்பங்களை நிர்வகி, ஆப்பை உள்ளமை.</string>
+    <string name="tutorial_languages_title">மொழிகள்</string>
+    <string name="tutorial_languages_message">OCR மொழி (இடது) மற்றும் எழுத்துப்பெயர்ப்பு மொழி (வலது) தேர்வு செய்.</string>
+    <string name="tutorial_flash_title">ஃப்ளாஷ்</string>
+    <string name="tutorial_flash_message">குறைந்த ஒளியில் கேமரா ஃப்ளாஷை மாற்று.</string>
+    <string name="tutorial_capture_title">படம் எடு / ஸ்கேன்</string>
+    <string name="tutorial_capture_message">புகைப்படம் எடுக்க தட்டவும், அல்லது தொடர்ந்து ஸ்கேன் செய்ய அழுத்திப் பிடிக்கவும்.</string>
+    <string name="tutorial_gallery_title">கேலரி</string>
+    <string name="tutorial_gallery_message">சேமித்த படங்களைத் திறந்து OCR முடிவுகளைப் பாருங்கள்.</string>
     
     <!-- Common UI actions -->
     <string name="confirm">உறுதிப்படுத்து</string>
-    <string name="cancel">ரத்துசெய்</string>
+    <string name="cancel">ரத்து செய்</string>
     <string name="close">மூடு</string>
-    <string name="retry">மீண்டும் முயற்சி செய்</string>
     <string name="copy">நகலெடு</string>
-    <string name="hide">மறை</string>
-    <string name="show">காட்டு</string>
-    <string name="both_text_panels_hidden">இரண்டு உரை பலகைகளும் மறைக்கப்பட்டுள்ளன</string>
-    <string name="share">பகிர்</string>
-    <string name="refresh">புதுப்பி</string>
     <string name="clear">அழி</string>
     
     <!-- OCR related -->
     <string name="ocr_text">OCR உரை</string>
-    <string name="clear_all_ocr_cache">அனைத்து OCR தற்காலிக சேமிப்பையும் அழி</string>
-    <string name="clear_cache_confirmation">இது அனைத்து படங்களுக்கான தற்காலிக OCR ஐ அகற்றும். தொடரவா?</string>
-    <string name="clear_cache_confirmation_settings">அனைத்து தற்காலிக OCR தரவையும் அழிக்க விரும்புகிறீர்களா? இந்த செயலை செயல்தவிர்க்க முடியாது.</string>
+    <string name="clear_all_ocr_cache">அனைத்து OCR கேச் அழி</string>
+    <string name="clear_cache_confirmation">இது அனைத்து படங்களுக்கும் கேச் செய்த OCR ஐ அகற்றும். தொடரவா?</string>
+    <string name="clear_cache_confirmation_settings">அனைத்து கேச் செய்த OCR தரவையும் அழிக்க விரும்புகிறீர்களா? இந்தச் செயலை மாற்ற முடியாது.</string>
     <string name="detect_again">மீண்டும் கண்டறி</string>
     <string name="clear_all">அனைத்தையும் அழி</string>
     <string name="language_detection">மொழி கண்டறிதல்</string>
     <string name="ocr_actions">OCR செயல்கள்</string>
     
     <!-- Display options -->
-    <string name="show_bounding_boxes">எல்லைப் பெட்டிகளைக் காட்டு</string>
-    <string name="text_blocks">உரைத் தொகுதிகள்</string>
+    <string name="show_bounding_boxes">எல்லைப் பெட்டிகள் காட்டு</string>
+    <string name="text_blocks">உரை தொகுதிகள்</string>
     <string name="text_lines">உரை வரிகள்</string>
     <string name="words">சொற்கள்</string>
     <string name="bounding_box_width">எல்லைப் பெட்டி அகலம்: %dpx</string>
-    <string name="show_text_overlay">உரை மேலடுக்கைக் காட்டு</string>
+    <string name="show_text_overlay">உரை ஓவர்லே காட்டு</string>
     <string name="text_background_opacity">உரை பின்னணி ஒளிபுகாமை: %d%%</string>
-    <string name="enable_cache_storage">தற்காலிக சேமிப்பை இயக்கு</string>
-    <string name="enable_cache_storage_hint">விரைவான ஏற்றத்திற்கு OCR கண்டறிதல் முடிவுகளைச் சேமி</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">ஸ்கேனர் அமைப்புகள்</string>
-    <string name="detection_interval">கண்டறிதல் இடைவெளி</string>
-    <string name="reading_time_per_word">ஒரு சொல்லுக்கான வாசிப்பு நேரம்</string>
-    
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR திரை</string>
-    <string name="browse_gallery">கேலரியை உலாவு</string>
+    <string name="enable_cache_storage">கேச் சேமிப்பு இயக்கு</string>
+    <string name="enable_cache_storage_hint">வேகமான ஏற்றத்திற்கு OCR கண்டறிதல் முடிவுகளை சேமி</string>
+
+    <!-- Camera OCR settings -->
+    <string name="camera_ocr_settings">கேமரா OCR அமைப்புகள்</string>
+    <string name="camera_ocr_detection_interval">கண்டறிதல் இடைவெளி</string>
+    <string name="camera_ocr_reading_ms_per_word">ஒரு சொல்லுக்கு படிக்கும் நேரம்</string>
+    <string name="camera_ocr_max_extra_delay_ms">அதிகபட்ச கூடுதல் தாமதம்</string>
+    <string name="camera_ocr_skip_frames">பிரேம்கள் தவிர்</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d பிரேம்கள்</string>
     
     <!-- Content descriptions -->
-    <string name="zoom_out">சிறிதாக்கு</string>
-    <string name="zoom_in">பெரிதாக்கு</string>
-    <string name="rotate_90">90° சுழற்று</string>
-    <string name="reset_view">காட்சியை மீட்டமை</string>
     <string name="copied">நகலெடுக்கப்பட்டது</string>
-    <string name="select_language">மொழியைத் தேர்ந்தெடு</string>
+    <string name="select_language">மொழி தேர்வு</string>
     <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
-    <string name="back">பின்னால்</string>
-    <string name="captured_image">கைப்பற்றப்பட்ட படம்</string>
+    <string name="back">பின்செல்</string>
     
     <!-- Additional UI labels -->
-    <string name="image_details">படத் தகவல்கள்</string>
+    <string name="image_details">படம் விவரங்கள்</string>
     <string name="ocr_result">OCR முடிவு</string>
-    <string name="original">அசல்</string>
-    <string name="transliterated">எழுத்துபெயர்ப்பு</string>
+    <string name="original">மூலம்</string>
+    <string name="transliterated">எழுத்துப்பெயர்க்கப்பட்டது</string>
     <string name="display_options">காட்சி விருப்பங்கள்</string>
     <string name="detection_options">கண்டறிதல் விருப்பங்கள்</string>
-    <string name="ocr_status">OCR நிலை</string>
     <string name="ocr_results">OCR முடிவுகள்</string>
-    <string name="no_text_detected">படத்தில் உரை எதுவும் கண்டறியப்படவில்லை</string>
+    <string name="hide">மறை</string>
+    <string name="show">காட்டு</string>
+    <string name="both_text_panels_hidden">இரு உரை பேனல்களும் மறைக்கப்பட்டன</string>
+    <string name="no_text_detected">படத்தில் உரை கண்டறியப்படவில்லை</string>
     
     <!-- Language change message -->
-    <string name="language_changed_restart">மொழி மாற்றப்பட்டது. மாற்றங்களைப் பார்க்க பயன்பாட்டை மீண்டும் தொடங்கவும்.</string>
+    <string name="language_changed_restart">மொழி மாற்றப்பட்டது. மாற்றங்களைக் காண ஆப்பை மீண்டும் தொடங்கவும்.</string>
     
     <!-- Overlay settings -->
-    <string name="overlay_settings">மேலோட்ட அமைப்புகள்</string>
-    <string name="enable_overlay">திரை மேலோட்டம் OCR</string>
+    <string name="overlay_settings">ஓவர்லே அமைப்புகள்</string>
+    <string name="enable_overlay">திரை ஓவர்லே OCR</string>
     <string name="overlay_enabled">மிதக்கும் பொத்தான் செயலில்</string>
     <string name="overlay_disabled">மிதக்கும் பொத்தானை இயக்க தட்டவும்</string>
-    <string name="overlay_feature_description">இந்த அம்சம் உங்கள் திரையைப் பிடிக்கும் மற்றும் OCR உரை மற்றும் எல்லைப் பெட்டிகளை மேலோட்டமாகக் காட்டும் மிதக்கும் பொத்தானைச் சேர்க்கிறது.</string>
-    <string name="overlay_permission_hint">நீங்கள் திரைப் பிடிப்பு மற்றும் மேலோட்ட அனுமதிகளை வழங்க வேண்டும்.</string>
-    <string name="overlay_permission_denied">திரைப் பிடிப்பு அனுமதி மறுக்கப்பட்டது</string>
+    <string name="overlay_feature_description">இந்த அம்சம் உங்கள் திரையைப் படம்பிடித்து OCR உரை மற்றும் எல்லைப் பெட்டிகளை ஓவர்லேயாகக் காட்டும் மிதக்கும் பொத்தானைச் சேர்க்கிறது.</string>
+    <string name="overlay_permission_hint">திரை படம்பிடிப்பு மற்றும் ஓவர்லே அனுமதிகளை வழங்க வேண்டும்.</string>
+    <string name="overlay_permission_denied">திரை படம்பிடிப்பு அனுமதி மறுக்கப்பட்டது</string>
     <string name="enable">இயக்கு</string>
-    <string name="start_overlay">மேலோட்டத்தைத் தொடங்கு</string>
-    <string name="stop_overlay">மேலோட்டத்தை நிறுத்து</string>
+    <string name="start_overlay">ஓவர்லே தொடங்கு</string>
+    <string name="stop_overlay">ஓவர்லே நிறுத்து</string>
     
     <!-- Settings categories -->
     <string name="appearance">தோற்றம்</string>
     <string name="ocr_features">OCR அம்சங்கள்</string>
-    <string name="data_storage">தரவு மற்றும் சேமிப்பு</string>
-    <string name="legal">சட்டபூர்வமானது</string>
+    <string name="data_storage">தரவு &amp; சேமிப்பு</string>
+    <string name="legal">சட்டம்</string>
 
-    <string name="rate_app">இந்த ஆப்பை மதிப்பிடுங்கள்</string>
-    <string name="camera_ocr_settings">கேமரா OCR அமைப்புகள்</string>
-    <string name="camera_ocr_detection_interval">கண்டறிதல் இடைவேளை</string>
-    <string name="camera_ocr_reading_ms_per_word">ஒவ்வொரு வார்த்தைக்கும் வாசிக்கும் நேரம்</string>
-    <string name="camera_ocr_max_extra_delay_ms">அதிகபட்ச கூடுதல் தாமதம்</string>
-    <string name="camera_ocr_skip_frames">பிரேம்களை தவிர்க்கவும்</string>
-    <string name="ms_value">%d ms</string>
-    <string name="frames_value">%d பிரேம்கள்</string>
+    <!-- Onboarding language selection -->
+    <string name="choose_language">உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்</string>
+    <string name="choose_language_hint">இதை பின்னர் அமைப்புகளில் மாற்றலாம்</string>
 
-    <string name="unable_to_open_link">இணைப்பை திறக்க முடியவில்லை.</string>
-
-    <!-- Onboarding / tutorial -->
-    <string name="choose_language">மொழியைத் தேர்ந்தெடு</string>
-    <string name="choose_language_hint">தொடர உங்கள் விருப்பமான செயலி மொழியைத் தேர்வு செய்யுங்கள்.</string>
-    <string name="default_mlkit">இயல்புநிலை (ML Kit)</string>
-
+    <!-- Language selection -->
     <string name="detect">கண்டறி</string>
     <string name="to">க்கு</string>
     <string name="transliterate">எழுத்துப்பெயர்ப்பு</string>
-    <string name="select_ocr_language">OCR மொழியைத் தேர்ந்தெடுக்கவும்</string>
-    <string name="select_transliteration_language">எழுத்துப்பெயர்ப்பு மொழியைத் தேர்ந்தெடுக்கவும்</string>
-    <string name="transliterate_to">க்கு எழுத்துப்பெயர்க்கவும்</string>
+    <string name="select_ocr_language">OCR மொழி தேர்வு</string>
+    <string name="select_transliteration_language">எழுத்துப்பெயர்ப்பு மொழி தேர்வு</string>
+    <string name="transliterate_to">எழுத்துப்பெயர்</string>
 
-    <string name="select_ocr_engine">OCR என்ஜினைத் தேர்ந்தெடுக்கவும்</string>
-    <string name="ocr_engine_mlkit_description">வேகமானது, ஆன்லைன், பல மொழிகள் ஆதரவு</string>
+    <!-- OCR engine selection -->
+    <string name="select_ocr_engine">OCR இயந்திரம் தேர்வு</string>
+    <string name="ocr_engine_mlkit_description">வேகமான, ஆன்லைன், பல மொழிகள் ஆதரிக்கும்</string>
     <string name="ocr_engine_tesseract_name">Tesseract</string>
     <string name="ocr_engine_tesseract_description">ஆஃப்லைன், மொழி தரவு பதிவிறக்கம் தேவை</string>
 
-    <string name="tutorial_next">அடுத்து</string>
-    <string name="tutorial_skip">தவிர்</string>
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">இயல்புநிலை (ML Kit)</string>
 
-    <string name="tutorial_settings_title">அமைப்புகள்</string>
-    <string name="tutorial_settings_message">இங்கே OCR மற்றும் செயலி விருப்பங்களை அமைக்கலாம்.</string>
-
-    <string name="tutorial_languages_title">மொழிகள்</string>
-    <string name="tutorial_languages_message">உரை கண்டறிதல் மற்றும் எழுத்துபெயர்ப்புக்கான மொழியைத் தேர்வு செய்யுங்கள்.</string>
-
-    <string name="tutorial_flash_title">ஃப்ளாஷ்</string>
-    <string name="tutorial_flash_message">சிறந்த காட்சிக்காக ஃப்ளாஷை ஆன்/ஆஃப் செய்யுங்கள்.</string>
-
-    <string name="tutorial_capture_title">பிடிப்பு</string>
-    <string name="tutorial_capture_message">உரை கண்டறிய ஒரு புகைப்படம் எடுக்கவும்.</string>
-
-    <string name="tutorial_gallery_title">கேலரி</string>
-    <string name="tutorial_gallery_message">படத்தைத் தேர்வு செய்ய கேலரியைத் திறக்கவும்.</string>
+    <string name="unable_to_open_link">இணைப்பைத் திறக்க முடியவில்லை.</string>
 
     <!-- Model downloads -->
     <string name="models">மொழி மாதிரிகள்</string>
-    <string name="manage_models">பதிவிறக்கப்பட்ட OCR மாதிரிகளை நிர்வகிக்கவும்</string>
-    <string name="download_models_hint">தேவைக்கேற்ப ஆஃப்லைன் Tesseract மொழி மாதிரிகளை பதிவிறக்கவும்</string>
-    <string name="model_download">மாதிரியை பதிவிறக்கவும்</string>
+    <string name="manage_models">பதிவிறக்கிய OCR மாதிரிகளை நிர்வகி</string>
+    <string name="download_models_hint">தேவைக்கேற்ப ஆஃப்லைன் Tesseract மொழி மாதிரிகளைப் பதிவிறக்கு</string>
+    <string name="model_download">மாதிரி பதிவிறக்கு</string>
     <string name="model_downloaded">பதிவிறக்கப்பட்டது</string>
 
     <string name="model_download_notification_channel_name">மாதிரி பதிவிறக்கங்கள்</string>
     <string name="model_download_notification_title">மொழி மாதிரி பதிவிறக்கப்படுகிறது</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
     <string name="model_not_downloaded_fallback">மாதிரி பதிவிறக்கப்படவில்லை, இயல்புநிலை மாதிரிக்கு மாறுகிறது</string>
-    
-    <string name="no_internet_connection">இணைய இணைப்பு கிடைக்கவில்லை</string>
+
+    <string name="no_internet_connection">இணைய இணைப்பு இல்லை</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">உரை உள்ளீடு</string>
+    <string name="enter_text">உரை உள்ளிடு</string>
+    <string name="type_to_transliterate">எழுத்துப்பெயர்க்க இங்கே உரை தட்டச்சு செய்யவும் அல்லது ஒட்டவும்…</string>
+    <string name="characters">எழுத்துக்கள்</string>
+    <string name="auto_detect">தானியங்கி-கண்டறி</string>
+
+    <!-- History Screen -->
+    <string name="history">வரலாறு</string>
+    <string name="all">அனைத்தும்</string>
+    <string name="favorites">பிடித்தவை</string>
+    <string name="no_history">இன்னும் வரலாறு இல்லை</string>
+    <string name="no_history_hint">உங்கள் எழுத்துப்பெயர்ப்பு வரலாறு இங்கே தோன்றும்</string>
+    <string name="no_favorites">இன்னும் பிடித்தவை இல்லை</string>
+    <string name="no_favorites_hint">பிடித்தவைகளில் சேர்க்க உருப்படிகளை நீண்ட நேரம் அழுத்துங்கள்</string>
+    <string name="clear_history">வரலாறு அழி</string>
+    <string name="clear_history_confirmation">உங்கள் வரலாற்றை அழிக்க விரும்புகிறீர்களா?</string>
+    <string name="clear_keep_favorites">அழி (பிடித்தவை வை)</string>
+    <string name="delete">நீக்கு</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">பயனர் அனுபவம்</string>
+    <string name="text_display_size">உரை காட்சி அளவு</string>
+    <string name="text_size_small">சிறிய</string>
+    <string name="text_size_normal">சாதாரண</string>
+    <string name="text_size_large">பெரிய</string>
+    <string name="text_size_extra_large">மிகப் பெரிய</string>
+    <string name="haptic_feedback">ஹாப்டிக் பின்னூட்டம்</string>
+    <string name="haptic_feedback_hint">பொத்தான் தட்டுதல் மற்றும் செயல்களில் அதிர்வு</string>
+    <string name="auto_copy">முடிவுகள் தானியங்கி-நகல்</string>
+    <string name="auto_copy_hint">எழுத்துப்பெயர்க்கப்பட்ட உரையை தானாக கிளிப்போர்டுக்கு நகலெடு</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">உரை-க்கு-பேச்சு</string>
+    <string name="enable_tts">TTS இயக்கு</string>
+    <string name="enable_tts_hint">எழுத்துப்பெயர்க்கப்பட்ட உரையை சத்தமாகப் படி</string>
+    <string name="tts_auto_speak">முடிவுகள் தானியங்கி-பேசு</string>
+    <string name="tts_auto_speak_hint">எழுத்துப்பெயர்ப்புக்குப் பிறகு தானாகப் பேசு</string>
 </resources>

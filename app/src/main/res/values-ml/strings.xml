@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">വര്‍ണമാല</string>
-
-    <string name="stop">നിർത്തുക</string>
-    <string name="start">ആരംഭിക്കുക</string>
+    <string name="app_name">വർണമാല</string>
 
     <string name="dark_mode">ഡാർക്ക് മോഡ്</string>
     <string name="language">ഭാഷ</string>
     <string name="terms_of_service">സേവന നിബന്ധനകൾ</string>
     <string name="privacy_policy">സ്വകാര്യതാ നയം</string>
+    <string name="rate_app">ആപ്പ് റേറ്റ് ചെയ്യുക</string>
 
     <string name="grant_permission">അനുമതി നൽകുക</string>
     <string name="open_settings">ക്രമീകരണങ്ങൾ തുറക്കുക</string>
@@ -28,18 +26,26 @@
     <string name="clear_cache">കാഷെ മായ്ക്കുക</string>
     <string name="gallery">ഗാലറി</string>
     <string name="done">പൂർത്തിയായി</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">അടുത്തത്</string>
+    <string name="tutorial_skip">ഒഴിവാക്കുക</string>
+    <string name="tutorial_settings_title">ക്രമീകരണങ്ങൾ</string>
+    <string name="tutorial_settings_message">തീം മാറ്റുക, OCR ഓപ്ഷനുകൾ നിയന്ത്രിക്കുക, ആപ്പ് കോൺഫിഗർ ചെയ്യുക.</string>
+    <string name="tutorial_languages_title">ഭാഷകൾ</string>
+    <string name="tutorial_languages_message">OCR ഭാഷ (ഇടത്) ലിപ്യന്തരണ ഭാഷ (വലത്) തിരഞ്ഞെടുക്കുക.</string>
+    <string name="tutorial_flash_title">ഫ്ലാഷ്</string>
+    <string name="tutorial_flash_message">കുറഞ്ഞ വെളിച്ചത്തിൽ ക്യാമറ ഫ്ലാഷ് ടോഗിൾ ചെയ്യുക.</string>
+    <string name="tutorial_capture_title">ക്യാപ്ചർ / സ്കാൻ</string>
+    <string name="tutorial_capture_message">ഫോട്ടോ എടുക്കാൻ ടാപ്പ് ചെയ്യുക, അല്ലെങ്കിൽ തുടർച്ചയായി സ്കാൻ ചെയ്യാൻ അമർത്തിപ്പിടിക്കുക.</string>
+    <string name="tutorial_gallery_title">ഗാലറി</string>
+    <string name="tutorial_gallery_message">സേവ് ചെയ്ത ചിത്രങ്ങൾ തുറന്ന് OCR ഫലങ്ങൾ കാണുക.</string>
     
     <!-- Common UI actions -->
     <string name="confirm">സ്ഥിരീകരിക്കുക</string>
     <string name="cancel">റദ്ദാക്കുക</string>
     <string name="close">അടയ്ക്കുക</string>
-    <string name="retry">വീണ്ടും ശ്രമിക്കുക</string>
     <string name="copy">പകർത്തുക</string>
-    <string name="hide">മറയ്ക്കുക</string>
-    <string name="show">കാണിക്കുക</string>
-    <string name="both_text_panels_hidden">രണ്ടും ടെക്സ്റ്റ് പാനലുകൾ മറച്ചിരിക്കുന്നു</string>
-    <string name="share">പങ്കിടുക</string>
-    <string name="refresh">പുതുക്കുക</string>
     <string name="clear">മായ്ക്കുക</string>
     
     <!-- OCR related -->
@@ -62,36 +68,33 @@
     <string name="text_background_opacity">വാചക പശ്ചാത്തല അതാര്യത: %d%%</string>
     <string name="enable_cache_storage">കാഷെ സംഭരണം പ്രവർത്തനക്ഷമമാക്കുക</string>
     <string name="enable_cache_storage_hint">വേഗത്തിലുള്ള ലോഡിംഗിനായി OCR കണ്ടെത്തൽ ഫലങ്ങൾ സംഭരിക്കുക</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">സ്കാനർ ക്രമീകരണങ്ങൾ</string>
-    <string name="detection_interval">കണ്ടെത്തൽ ഇടവേള</string>
-    <string name="reading_time_per_word">ഓരോ വാക്കിനും വായിക്കാനുള്ള സമയം</string>
-    
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR സ്ക്രീൻ</string>
-    <string name="browse_gallery">ഗാലറി ബ്രൗസ് ചെയ്യുക</string>
+
+    <!-- Camera OCR settings -->
+    <string name="camera_ocr_settings">ക്യാമറ OCR ക്രമീകരണങ്ങൾ</string>
+    <string name="camera_ocr_detection_interval">കണ്ടെത്തൽ ഇടവേള</string>
+    <string name="camera_ocr_reading_ms_per_word">ഒരു വാക്കിന് വായന സമയം</string>
+    <string name="camera_ocr_max_extra_delay_ms">പരമാവധി അധിക വൈകൽ</string>
+    <string name="camera_ocr_skip_frames">ഫ്രെയിമുകൾ ഒഴിവാക്കുക</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ഫ്രെയിമുകൾ</string>
     
     <!-- Content descriptions -->
-    <string name="zoom_out">സൂം ഔട്ട്</string>
-    <string name="zoom_in">സൂം ഇൻ</string>
-    <string name="rotate_90">90° തിരിക്കുക</string>
-    <string name="reset_view">കാഴ്ച റീസെറ്റ് ചെയ്യുക</string>
     <string name="copied">പകർത്തി</string>
     <string name="select_language">ഭാഷ തിരഞ്ഞെടുക്കുക</string>
     <string name="selected">തിരഞ്ഞെടുത്തു</string>
     <string name="back">പിന്നോട്ട്</string>
-    <string name="captured_image">പകർത്തിയ ചിത്രം</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">ചിത്ര വിശദാംശങ്ങൾ</string>
     <string name="ocr_result">OCR ഫലം</string>
     <string name="original">യഥാർത്ഥം</string>
-    <string name="transliterated">ലിപ്യന്തരണം</string>
+    <string name="transliterated">ലിപ്യന്തരണം ചെയ്തത്</string>
     <string name="display_options">പ്രദർശന ഓപ്ഷനുകൾ</string>
     <string name="detection_options">കണ്ടെത്തൽ ഓപ്ഷനുകൾ</string>
-    <string name="ocr_status">OCR നില</string>
     <string name="ocr_results">OCR ഫലങ്ങൾ</string>
+    <string name="hide">മറയ്ക്കുക</string>
+    <string name="show">കാണിക്കുക</string>
+    <string name="both_text_panels_hidden">രണ്ട് ടെക്സ്റ്റ് പാനലുകളും മറച്ചിരിക്കുന്നു</string>
     <string name="no_text_detected">ചിത്രത്തിൽ വാചകം കണ്ടെത്തിയില്ല</string>
     
     <!-- Language change message -->
@@ -115,56 +118,33 @@
     <string name="data_storage">ഡാറ്റയും സംഭരണവും</string>
     <string name="legal">നിയമപരം</string>
 
-    <string name="rate_app">ആപ്പ് റേറ്റ് ചെയ്യുക</string>
-    <string name="camera_ocr_settings">ക്യാമറ OCR ക്രമീകരണങ്ങൾ</string>
-    <string name="camera_ocr_detection_interval">കണ്ടെത്തൽ ഇടവേള</string>
-    <string name="camera_ocr_reading_ms_per_word">ഒരു വാക്കിന് വായന സമയം</string>
-    <string name="camera_ocr_max_extra_delay_ms">പരമാവധി അധിക വൈകീരം</string>
-    <string name="camera_ocr_skip_frames">ഫ്രെയിംസ് ഒഴിവാക്കുക</string>
-    <string name="ms_value">%d ms</string>
-    <string name="frames_value">%d ഫ്രെയിംസ്</string>
+    <!-- Onboarding language selection -->
+    <string name="choose_language">നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക</string>
+    <string name="choose_language_hint">ഇത് പിന്നീട് ക്രമീകരണങ്ങളിൽ മാറ്റാം</string>
 
-    <string name="unable_to_open_link">ലിങ്ക് തുറക്കാനായില്ല.</string>
-
-    <!-- Onboarding / tutorial -->
-    <string name="choose_language">ഭാഷ തിരഞ്ഞെടുക്കുക</string>
-    <string name="choose_language_hint">തുടരാൻ നിങ്ങളുടെ ഇഷ്ടമുള്ള ആപ്പ് ഭാഷ തിരഞ്ഞെടുക്കുക.</string>
-    <string name="default_mlkit">ഡിഫോൾട്ട് (ML Kit)</string>
-
+    <!-- Language selection -->
     <string name="detect">കണ്ടെത്തുക</string>
     <string name="to">ലേക്ക്</string>
     <string name="transliterate">ലിപ്യന്തരണം</string>
     <string name="select_ocr_language">OCR ഭാഷ തിരഞ്ഞെടുക്കുക</string>
-    <string name="select_transliteration_language">ലിപ്യന്തരണം ഭാഷ തിരഞ്ഞെടുക്കുക</string>
-    <string name="transliterate_to">ലേക്ക് ലിപ്യന്തരം ചെയ്യുക</string>
+    <string name="select_transliteration_language">ലിപ്യന്തരണ ഭാഷ തിരഞ്ഞെടുക്കുക</string>
+    <string name="transliterate_to">ലിപ്യന്തരണം ചെയ്യുക</string>
 
+    <!-- OCR engine selection -->
     <string name="select_ocr_engine">OCR എഞ്ചിൻ തിരഞ്ഞെടുക്കുക</string>
     <string name="ocr_engine_mlkit_description">വേഗം, ഓൺലൈൻ, നിരവധി ഭാഷകൾ പിന്തുണയ്ക്കുന്നു</string>
     <string name="ocr_engine_tesseract_name">Tesseract</string>
     <string name="ocr_engine_tesseract_description">ഓഫ്‌ലൈൻ, ഭാഷാ ഡാറ്റ ഡൗൺലോഡ് ആവശ്യമാണ്</string>
 
-    <string name="tutorial_next">അടുത്തത്</string>
-    <string name="tutorial_skip">ഒഴിവാക്കുക</string>
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">ഡിഫോൾട്ട് (ML Kit)</string>
 
-    <string name="tutorial_settings_title">ക്രമീകരണങ്ങൾ</string>
-    <string name="tutorial_settings_message">ഇവിടെ OCRയും ആപ്പ് മുൻഗണനകളും ക്രമീകരിക്കുക.</string>
-
-    <string name="tutorial_languages_title">ഭാഷകൾ</string>
-    <string name="tutorial_languages_message">ടെക്സ്റ്റ് തിരിച്ചറിയലിനും ലിപ്യന്തരണത്തിനും ഭാഷ തിരഞ്ഞെടുക്കുക.</string>
-
-    <string name="tutorial_flash_title">ഫ്ലാഷ്</string>
-    <string name="tutorial_flash_message">മികച്ച ദൃശ്യതയ്ക്കായി ഫ്ലാഷ് ഓൺ/ഓഫ് ചെയ്യുക.</string>
-
-    <string name="tutorial_capture_title">ക്യാപ്ചർ</string>
-    <string name="tutorial_capture_message">ടെക്സ്റ്റ് തിരിച്ചറിയാൻ ചിത്രം എടുക്കുക.</string>
-
-    <string name="tutorial_gallery_title">ഗാലറി</string>
-    <string name="tutorial_gallery_message">ഒരു ചിത്രം തിരഞ്ഞെടുക്കാൻ ഗാലറി തുറക്കുക.</string>
+    <string name="unable_to_open_link">ലിങ്ക് തുറക്കാനായില്ല.</string>
 
     <!-- Model downloads -->
     <string name="models">ഭാഷാ മോഡലുകൾ</string>
     <string name="manage_models">ഡൗൺലോഡ് ചെയ്ത OCR മോഡലുകൾ നിയന്ത്രിക്കുക</string>
-    <string name="download_models_hint">ആവശ്യത്തിന് ഓഫ്‌ലൈനായ Tesseract ഭാഷാ മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യുക</string>
+    <string name="download_models_hint">ആവശ്യത്തിന് ഓഫ്‌ലൈൻ Tesseract ഭാഷാ മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യുക</string>
     <string name="model_download">മോഡൽ ഡൗൺലോഡ് ചെയ്യുക</string>
     <string name="model_downloaded">ഡൗൺലോഡ് ചെയ്തു</string>
 
@@ -173,5 +153,44 @@
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
     <string name="model_not_downloaded_fallback">മോഡൽ ഡൗൺലോഡ് ചെയ്തിട്ടില്ല, ഡിഫോൾട്ട് മോഡലിലേക്ക് മടങ്ങുന്നു</string>
 
-    <string name="no_internet_connection">ഇന്റർനെറ്റ് ബന്ധം ലഭ്യമല്ല</string>
+    <string name="no_internet_connection">ഇന്റർനെറ്റ് കണക്ഷൻ ഇല്ല</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">ടെക്സ്റ്റ് ഇൻപുട്ട്</string>
+    <string name="enter_text">ടെക്സ്റ്റ് നൽകുക</string>
+    <string name="type_to_transliterate">ലിപ്യന്തരണത്തിനായി ഇവിടെ ടെക്സ്റ്റ് ടൈപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ഒട്ടിക്കുക…</string>
+    <string name="characters">അക്ഷരങ്ങൾ</string>
+    <string name="auto_detect">ഓട്ടോ-ഡിറ്റെക്ട്</string>
+
+    <!-- History Screen -->
+    <string name="history">ചരിത്രം</string>
+    <string name="all">എല്ലാം</string>
+    <string name="favorites">പ്രിയപ്പെട്ടവ</string>
+    <string name="no_history">ഇതുവരെ ചരിത്രമില്ല</string>
+    <string name="no_history_hint">നിങ്ങളുടെ ലിപ്യന്തരണ ചരിത്രം ഇവിടെ കാണിക്കും</string>
+    <string name="no_favorites">ഇതുവരെ പ്രിയപ്പെട്ടവയില്ല</string>
+    <string name="no_favorites_hint">പ്രിയപ്പെട്ടവയിലേക്ക് ചേർക്കാൻ ഐറ്റങ്ങൾ അമർത്തിപ്പിടിക്കുക</string>
+    <string name="clear_history">ചരിത്രം മായ്ക്കുക</string>
+    <string name="clear_history_confirmation">നിങ്ങളുടെ ചരിത്രം മായ്ക്കാൻ ആഗ്രഹിക്കുന്നുവോ?</string>
+    <string name="clear_keep_favorites">മായ്ക്കുക (പ്രിയപ്പെട്ടവ നിലനിർത്തുക)</string>
+    <string name="delete">ഇല്ലാതാക്കുക</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">ഉപയോക്തൃ അനുഭവം</string>
+    <string name="text_display_size">ടെക്സ്റ്റ് പ്രദർശന വലുപ്പം</string>
+    <string name="text_size_small">ചെറുത്</string>
+    <string name="text_size_normal">സാധാരണ</string>
+    <string name="text_size_large">വലുത്</string>
+    <string name="text_size_extra_large">വളരെ വലുത്</string>
+    <string name="haptic_feedback">ഹാപ്റ്റിക് ഫീഡ്‌ബാക്ക്</string>
+    <string name="haptic_feedback_hint">ബട്ടൺ ടാപ്പുകളിലും പ്രവർത്തനങ്ങളിലും വൈബ്രേഷൻ</string>
+    <string name="auto_copy">ഫലങ്ങൾ ഓട്ടോ-കോപ്പി</string>
+    <string name="auto_copy_hint">ലിപ്യന്തരണം ചെയ്ത ടെക്സ്റ്റ് സ്വയമേവ ക്ലിപ്പ്‌ബോർഡിലേക്ക് പകർത്തുക</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">ടെക്സ്റ്റ്-ടു-സ്പീച്ച്</string>
+    <string name="enable_tts">TTS പ്രവർത്തനക്ഷമമാക്കുക</string>
+    <string name="enable_tts_hint">ലിപ്യന്തരണം ചെയ്ത ടെക്സ്റ്റ് ഉച്ചത്തിൽ വായിക്കുക</string>
+    <string name="tts_auto_speak">ഫലങ്ങൾ ഓട്ടോ-സ്പീക്ക്</string>
+    <string name="tts_auto_speak_hint">ലിപ്യന്തരണത്തിന് ശേഷം സ്വയമേവ സംസാരിക്കുക</string>
 </resources>

@@ -1,177 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ವರ್ಣಮಾಲೆ</string>
-
-    <string name="stop">ನಿಲ್ಲಿಸಿ</string>
-    <string name="start">ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="app_name">ವರ್ಣಮಾಲಾ</string>
 
     <string name="dark_mode">ಡಾರ್ಕ್ ಮೋಡ್</string>
     <string name="language">ಭಾಷೆ</string>
     <string name="terms_of_service">ಸೇವಾ ನಿಯಮಗಳು</string>
-    <string name="privacy_policy">ಗೋಪ್ಯತಾ ನೀತಿ</string>
+    <string name="privacy_policy">ಗೌಪ್ಯತಾ ನೀತಿ</string>
+    <string name="rate_app">ಆಪ್ ರೇಟ್ ಮಾಡಿ</string>
 
     <string name="grant_permission">ಅನುಮತಿ ನೀಡಿ</string>
     <string name="open_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ</string>
-    <string name="camera_permission_required">ಕ್ಯಾಮೆರಾ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
-    <string name="camera_permission_description">ನೈಜ ಸಮಯದಲ್ಲಿ ಪಠ್ಯವನ್ನು ಪತ್ತೆಹಚ್ಚಲು ನಿಮ್ಮ ಕ್ಯಾಮೆರಾಕ್ಕೆ ಪ್ರವೇಶ ಅಗತ್ಯವಿದೆ.</string>
+    <string name="camera_permission_required">ಕ್ಯಾಮೆರಾ ಅನುಮತಿ ಅಗತ್ಯ</string>
+    <string name="camera_permission_description">ನೈಜ-ಸಮಯದಲ್ಲಿ ಪಠ್ಯವನ್ನು ಪತ್ತೆಹಚ್ಚಲು ನಿಮ್ಮ ಕ್ಯಾಮೆರಾಗೆ ಪ್ರವೇಶ ಅಗತ್ಯ.</string>
     <string name="camera_permission_denied_description">ಕ್ಯಾಮೆರಾ ಅನುಮತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
-    <string name="camera_permission_allow_hint">ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
-    <string name="media_permission_required">ಮಾಧ್ಯಮ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
-    <string name="media_permission_description">ಗ್ಯಾಲರಿಯಲ್ಲಿ ಚಿತ್ರಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಿಮ್ಮ ಚಿತ್ರಗಳಿಗೆ ಪ್ರವೇಶ ಅಗತ್ಯವಿದೆ.</string>
-    <string name="media_permission_denied_description">ಮಾಧ್ಯಮ ಅನುಮತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
-    <string name="media_permission_allow_hint">ಮುಂದುವರಿಸಲು ಸಿಸ್ಟಂ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಅನುಮತಿಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
-    <string name="overlay_permission_required">ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಪ್ರದರ್ಶನ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</string>
-    <string name="overlay_permission_description">ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಓವರ್‌ಲೇ ವಿಂಡೋಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಮಗೆ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ.</string>
-    <string name="overlay_permission_denied_description">ಅಪ್ಲಿಕೇಶನ್‌ಗಳ ಮೇಲೆ ಪ್ರದರ್ಶನ ಅನುಮತಿಯನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
-    <string name="overlay_permission_allow_hint">ಈ ವೈಶಿಷ್ಟ್ಯವನ್ನು ಬಳಸಲು ದಯವಿಟ್ಟು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
+    <string name="camera_permission_allow_hint">ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
+    <string name="media_permission_required">ಮೀಡಿಯಾ ಅನುಮತಿ ಅಗತ್ಯ</string>
+    <string name="media_permission_description">ಗ್ಯಾಲರಿಯಲ್ಲಿ ಚಿತ್ರಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಿಮ್ಮ ಚಿತ್ರಗಳಿಗೆ ಪ್ರವೇಶ ಅಗತ್ಯ.</string>
+    <string name="media_permission_denied_description">ಮೀಡಿಯಾ ಅನುಮತಿಯನ್ನು ಶಾಶ್ವತವಾಗಿ ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
+    <string name="media_permission_allow_hint">ಮುಂದುವರಿಸಲು ಸಿಸ್ಟಮ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಅನುಮತಿಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
+    <string name="overlay_permission_required">ಆಪ್‌ಗಳ ಮೇಲೆ ಪ್ರದರ್ಶನ ಅನುಮತಿ ಅಗತ್ಯ</string>
+    <string name="overlay_permission_description">ಇತರ ಆಪ್‌ಗಳ ಮೇಲೆ ಓವರ್‌ಲೇ ವಿಂಡೋಗಳನ್ನು ಪ್ರದರ್ಶಿಸಲು ನಮಗೆ ಅನುಮತಿ ಅಗತ್ಯ.</string>
+    <string name="overlay_permission_denied_description">ಆಪ್‌ಗಳ ಮೇಲೆ ಪ್ರದರ್ಶನ ಅನುಮತಿಯನ್ನು ನಿರಾಕರಿಸಲಾಗಿದೆ.</string>
+    <string name="overlay_permission_allow_hint">ಈ ವೈಶಿಷ್ಟ್ಯವನ್ನು ಬಳಸಲು ದಯವಿಟ್ಟು ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಸಕ್ರಿಯಗೊಳಿಸಿ.</string>
 
     <string name="clear_cache">ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ</string>
     <string name="gallery">ಗ್ಯಾಲರಿ</string>
     <string name="done">ಮುಗಿದಿದೆ</string>
+
+    <!-- Tutorial / walkthrough -->
+    <string name="tutorial_next">ಮುಂದೆ</string>
+    <string name="tutorial_skip">ಬಿಟ್ಟುಹಾಕಿ</string>
+    <string name="tutorial_settings_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="tutorial_settings_message">ಥೀಮ್ ಬದಲಾಯಿಸಿ, OCR ಆಯ್ಕೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ ಮತ್ತು ಆಪ್ ಕಾನ್ಫಿಗರ್ ಮಾಡಿ.</string>
+    <string name="tutorial_languages_title">ಭಾಷೆಗಳು</string>
+    <string name="tutorial_languages_message">OCR ಭಾಷೆ (ಎಡ) ಮತ್ತು ಲಿಪ್ಯಂತರಣ ಭಾಷೆ (ಬಲ) ಆಯ್ಕೆಮಾಡಿ.</string>
+    <string name="tutorial_flash_title">ಫ್ಲ್ಯಾಶ್</string>
+    <string name="tutorial_flash_message">ಕಡಿಮೆ ಬೆಳಕಿನಲ್ಲಿ ಕ್ಯಾಮೆರಾ ಫ್ಲ್ಯಾಶ್ ಟಾಗಲ್ ಮಾಡಿ.</string>
+    <string name="tutorial_capture_title">ಕ್ಯಾಪ್ಚರ್ / ಸ್ಕ್ಯಾನ್</string>
+    <string name="tutorial_capture_message">ಫೋಟೋ ತೆಗೆಯಲು ಟ್ಯಾಪ್ ಮಾಡಿ, ಅಥವಾ ನಿರಂತರ ಸ್ಕ್ಯಾನ್‌ಗೆ ಒತ್ತಿ ಹಿಡಿಯಿರಿ.</string>
+    <string name="tutorial_gallery_title">ಗ್ಯಾಲರಿ</string>
+    <string name="tutorial_gallery_message">ಉಳಿಸಿದ ಚಿತ್ರಗಳನ್ನು ತೆರೆಯಿರಿ ಮತ್ತು OCR ಫಲಿತಾಂಶಗಳನ್ನು ನೋಡಿ.</string>
     
     <!-- Common UI actions -->
     <string name="confirm">ದೃಢೀಕರಿಸಿ</string>
     <string name="cancel">ರದ್ದುಮಾಡಿ</string>
     <string name="close">ಮುಚ್ಚಿ</string>
-    <string name="retry">ಮರುಪ್ರಯತ್ನಿಸಿ</string>
     <string name="copy">ನಕಲಿಸಿ</string>
-    <string name="hide">ಮರೆಮಾಡಿ</string>
-    <string name="show">ತೋರಿಸಿ</string>
-    <string name="both_text_panels_hidden">ಎರಡೂ ಪಠ್ಯ ಫಲಕಗಳನ್ನು ಮರೆಮಾಡಲಾಗಿದೆ</string>
-    <string name="share">ಹಂಚಿಕೊಳ್ಳಿ</string>
-    <string name="refresh">ರಿಫ್ರೆಶ್ ಮಾಡಿ</string>
     <string name="clear">ತೆರವುಗೊಳಿಸಿ</string>
     
     <!-- OCR related -->
     <string name="ocr_text">OCR ಪಠ್ಯ</string>
     <string name="clear_all_ocr_cache">ಎಲ್ಲಾ OCR ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ</string>
-    <string name="clear_cache_confirmation">ಇದು ಎಲ್ಲಾ ಚಿತ್ರಗಳಿಗೆ ಕ್ಯಾಶ್ ಮಾಡಿದ OCR ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ. ಮುಂದುವರಿಸುವುದೇ?</string>
-    <string name="clear_cache_confirmation_settings">ನೀವು ಖಚಿತವಾಗಿ ಎಲ್ಲಾ ಕ್ಯಾಶ್ ಮಾಡಿದ OCR ಡೇಟಾವನ್ನು ತೆರವುಗೊಳಿಸಲು ಬಯಸುವಿರಾ? ಈ ಕ್ರಿಯೆಯನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುವುದಿಲ್ಲ.</string>
-    <string name="detect_again">ಮತ್ತೆ ಪತ್ತೆಹಚ್ಚಿ</string>
+    <string name="clear_cache_confirmation">ಇದು ಎಲ್ಲಾ ಚಿತ್ರಗಳಿಗೆ ಕ್ಯಾಶ್ ಮಾಡಿದ OCR ಅನ್ನು ತೆಗೆದುಹಾಕುತ್ತದೆ. ಮುಂದುವರಿಸಬೇಕೇ?</string>
+    <string name="clear_cache_confirmation_settings">ಎಲ್ಲಾ ಕ್ಯಾಶ್ ಮಾಡಿದ OCR ಡೇಟಾವನ್ನು ತೆರವುಗೊಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ? ಈ ಕ್ರಿಯೆಯನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುವುದಿಲ್ಲ.</string>
+    <string name="detect_again">ಮತ್ತೆ ಪತ್ತೆಮಾಡಿ</string>
     <string name="clear_all">ಎಲ್ಲವನ್ನೂ ತೆರವುಗೊಳಿಸಿ</string>
-    <string name="language_detection">ಭಾಷೆ ಪತ್ತೆ</string>
+    <string name="language_detection">ಭಾಷಾ ಪತ್ತೆ</string>
     <string name="ocr_actions">OCR ಕ್ರಿಯೆಗಳು</string>
     
     <!-- Display options -->
-    <string name="show_bounding_boxes">ಗಡಿ ಪೆಟ್ಟಿಗೆಗಳನ್ನು ತೋರಿಸಿ</string>
+    <string name="show_bounding_boxes">ಬೌಂಡಿಂಗ್ ಬಾಕ್ಸ್‌ಗಳನ್ನು ತೋರಿಸಿ</string>
     <string name="text_blocks">ಪಠ್ಯ ಬ್ಲಾಕ್‌ಗಳು</string>
     <string name="text_lines">ಪಠ್ಯ ಸಾಲುಗಳು</string>
     <string name="words">ಪದಗಳು</string>
-    <string name="bounding_box_width">ಗಡಿ ಪೆಟ್ಟಿಗೆ ಅಗಲ: %dpx</string>
+    <string name="bounding_box_width">ಬೌಂಡಿಂಗ್ ಬಾಕ್ಸ್ ಅಗಲ: %dpx</string>
     <string name="show_text_overlay">ಪಠ್ಯ ಓವರ್‌ಲೇ ತೋರಿಸಿ</string>
     <string name="text_background_opacity">ಪಠ್ಯ ಹಿನ್ನೆಲೆ ಅಪಾರದರ್ಶಕತೆ: %d%%</string>
-    <string name="enable_cache_storage">ಕ್ಯಾಶ್ ಸಂಗ್ರಹಣೆಯನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
-    <string name="enable_cache_storage_hint">ವೇಗದ ಲೋಡಿಂಗ್‌ಗಾಗಿ OCR ಪತ್ತೆ ಫಲಿತಾಂಶಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ</string>
-    
-    <!-- Camera screen -->
-    <string name="scanner_settings">ಸ್ಕ್ಯಾನರ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
-    <string name="detection_interval">ಪತ್ತೆ ಮಧ್ಯಂತರ</string>
-    <string name="reading_time_per_word">ಪ್ರತಿ ಪದಕ್ಕೆ ಓದುವ ಸಮಯ</string>
-    
-    <!-- Other screens -->
-    <string name="ocr_screen">OCR ಪರದೆ</string>
-    <string name="browse_gallery">ಗ್ಯಾಲರಿ ಬ್ರೌಸ್ ಮಾಡಿ</string>
+    <string name="enable_cache_storage">ಕ್ಯಾಶ್ ಸ್ಟೋರೇಜ್ ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
+    <string name="enable_cache_storage_hint">ವೇಗವಾದ ಲೋಡಿಂಗ್‌ಗಾಗಿ OCR ಪತ್ತೆ ಫಲಿತಾಂಶಗಳನ್ನು ಸಂಗ್ರಹಿಸಿ</string>
+
+    <!-- Camera OCR settings -->
+    <string name="camera_ocr_settings">ಕ್ಯಾಮೆರಾ OCR ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="camera_ocr_detection_interval">ಪತ್ತೆ ಮಧ್ಯಂತರ</string>
+    <string name="camera_ocr_reading_ms_per_word">ಪ್ರತಿ ಪದಕ್ಕೆ ಓದುವ ಸಮಯ</string>
+    <string name="camera_ocr_max_extra_delay_ms">ಗರಿಷ್ಠ ಹೆಚ್ಚುವರಿ ವಿಳಂಬ</string>
+    <string name="camera_ocr_skip_frames">ಫ್ರೇಮ್‌ಗಳನ್ನು ಬಿಟ್ಟುಹಾಕಿ</string>
+    <string name="ms_value">%d ms</string>
+    <string name="frames_value">%d ಫ್ರೇಮ್‌ಗಳು</string>
     
     <!-- Content descriptions -->
-    <string name="zoom_out">ಜೂಮ್ ಔಟ್</string>
-    <string name="zoom_in">ಜೂಮ್ ಇನ್</string>
-    <string name="rotate_90">90° ತಿರುಗಿಸಿ</string>
-    <string name="reset_view">ವೀಕ್ಷಣೆ ಮರುಹೊಂದಿಸಿ</string>
     <string name="copied">ನಕಲಿಸಲಾಗಿದೆ</string>
-    <string name="select_language">ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="select_language">ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
     <string name="selected">ಆಯ್ಕೆಮಾಡಲಾಗಿದೆ</string>
     <string name="back">ಹಿಂದೆ</string>
-    <string name="captured_image">ಸೆರೆಹಿಡಿದ ಚಿತ್ರ</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">ಚಿತ್ರ ವಿವರಗಳು</string>
     <string name="ocr_result">OCR ಫಲಿತಾಂಶ</string>
     <string name="original">ಮೂಲ</string>
-    <string name="transliterated">ಲಿಪ್ಯಂತರಿತ</string>
+    <string name="transliterated">ಲಿಪ್ಯಂತರಿಸಲಾಗಿದೆ</string>
     <string name="display_options">ಪ್ರದರ್ಶನ ಆಯ್ಕೆಗಳು</string>
     <string name="detection_options">ಪತ್ತೆ ಆಯ್ಕೆಗಳು</string>
-    <string name="ocr_status">OCR ಸ್ಥಿತಿ</string>
     <string name="ocr_results">OCR ಫಲಿತಾಂಶಗಳು</string>
-    <string name="no_text_detected">ಚಿತ್ರದಲ್ಲಿ ಯಾವುದೇ ಪಠ್ಯ ಕಂಡುಬಂದಿಲ್ಲ</string>
+    <string name="hide">ಮರೆಮಾಡಿ</string>
+    <string name="show">ತೋರಿಸಿ</string>
+    <string name="both_text_panels_hidden">ಎರಡೂ ಪಠ್ಯ ಪ್ಯಾನೆಲ್‌ಗಳನ್ನು ಮರೆಮಾಡಲಾಗಿದೆ</string>
+    <string name="no_text_detected">ಚಿತ್ರದಲ್ಲಿ ಪಠ್ಯ ಪತ್ತೆಯಾಗಿಲ್ಲ</string>
     
     <!-- Language change message -->
-    <string name="language_changed_restart">ಭಾಷೆ ಬದಲಾಯಿಸಲಾಗಿದೆ. ಬದಲಾವಣೆಗಳನ್ನು ನೋಡಲು ದಯವಿಟ್ಟು ಅಪ್ಲಿಕೇಶನ್ ಮರುಪ್ರಾರಂಭಿಸಿ.</string>
+    <string name="language_changed_restart">ಭಾಷೆ ಬದಲಾಗಿದೆ. ಬದಲಾವಣೆಗಳನ್ನು ನೋಡಲು ದಯವಿಟ್ಟು ಆಪ್ ಮರುಪ್ರಾರಂಭಿಸಿ.</string>
     
     <!-- Overlay settings -->
-    <string name="overlay_settings">ಓವರ್ಲೇ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
-    <string name="enable_overlay">ಸ್ಕ್ರೀನ್ ಓವರ್ಲೇ OCR</string>
-    <string name="overlay_enabled">ತೇಲುವ ಬಟನ್ ಸಕ್ರಿಯ</string>
-    <string name="overlay_disabled">ತೇಲುವ ಬಟನ್ ಸಕ್ರಿಯಗೊಳಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ</string>
-    <string name="overlay_feature_description">ಈ ವೈಶಿಷ್ಟ್ಯವು ನಿಮ್ಮ ಪರದೆಯನ್ನು ಸೆರೆಹಿಡಿಯುವ ಮತ್ತು OCR ಪಠ್ಯ ಮತ್ತು ಬೌಂಡಿಂಗ್ ಬಾಕ್ಸ್‌ಗಳನ್ನು ಓವರ್ಲೇ ಆಗಿ ತೋರಿಸುವ ತೇಲುವ ಬಟನ್ ಅನ್ನು ಸೇರಿಸುತ್ತದೆ.</string>
-    <string name="overlay_permission_hint">ನೀವು ಪರದೆ ಸೆರೆಹಿಡಿಯುವಿಕೆ ಮತ್ತು ಓವರ್ಲೇ ಅನುಮತಿಗಳನ್ನು ನೀಡಬೇಕಾಗುತ್ತದೆ.</string>
-    <string name="overlay_permission_denied">ಪರದೆ ಸೆರೆಹಿಡಿಯುವಿಕೆ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ</string>
+    <string name="overlay_settings">ಓವರ್‌ಲೇ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="enable_overlay">ಸ್ಕ್ರೀನ್ ಓವರ್‌ಲೇ OCR</string>
+    <string name="overlay_enabled">ಫ್ಲೋಟಿಂಗ್ ಬಟನ್ ಸಕ್ರಿಯ</string>
+    <string name="overlay_disabled">ಫ್ಲೋಟಿಂಗ್ ಬಟನ್ ಸಕ್ರಿಯಗೊಳಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ</string>
+    <string name="overlay_feature_description">ಈ ವೈಶಿಷ್ಟ್ಯವು ನಿಮ್ಮ ಸ್ಕ್ರೀನ್ ಅನ್ನು ಸೆರೆಹಿಡಿದು OCR ಪಠ್ಯ ಮತ್ತು ಬೌಂಡಿಂಗ್ ಬಾಕ್ಸ್‌ಗಳನ್ನು ಓವರ್‌ಲೇಯಾಗಿ ತೋರಿಸುವ ಫ್ಲೋಟಿಂಗ್ ಬಟನ್ ಅನ್ನು ಸೇರಿಸುತ್ತದೆ.</string>
+    <string name="overlay_permission_hint">ನೀವು ಸ್ಕ್ರೀನ್ ಕ್ಯಾಪ್ಚರ್ ಮತ್ತು ಓವರ್‌ಲೇ ಅನುಮತಿಗಳನ್ನು ನೀಡಬೇಕಾಗುತ್ತದೆ.</string>
+    <string name="overlay_permission_denied">ಸ್ಕ್ರೀನ್ ಕ್ಯಾಪ್ಚರ್ ಅನುಮತಿ ನಿರಾಕರಿಸಲಾಗಿದೆ</string>
     <string name="enable">ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
-    <string name="start_overlay">ಓವರ್ಲೇ ಪ್ರಾರಂಭಿಸಿ</string>
-    <string name="stop_overlay">ಓವರ್ಲೇ ನಿಲ್ಲಿಸಿ</string>
+    <string name="start_overlay">ಓವರ್‌ಲೇ ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="stop_overlay">ಓವರ್‌ಲೇ ನಿಲ್ಲಿಸಿ</string>
     
     <!-- Settings categories -->
     <string name="appearance">ನೋಟ</string>
     <string name="ocr_features">OCR ವೈಶಿಷ್ಟ್ಯಗಳು</string>
-    <string name="data_storage">ಡೇಟಾ ಮತ್ತು ಸಂಗ್ರಹಣೆ</string>
+    <string name="data_storage">ಡೇಟಾ ಮತ್ತು ಸ್ಟೋರೇಜ್</string>
     <string name="legal">ಕಾನೂನು</string>
 
-    <string name="rate_app">ಆಪ್ ಅನ್ನು ರೇಟ್ ಮಾಡಿ</string>
-    <string name="camera_ocr_settings">ಕ್ಯಾಮೆರಾ OCR ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
-    <string name="camera_ocr_detection_interval">ಪತ್ತೆಹಚ್ಚುವ ಅಂತರ</string>
-    <string name="camera_ocr_reading_ms_per_word">ಪ್ರತಿ ಪದ ಓದುವ ಸಮಯ</string>
-    <string name="camera_ocr_max_extra_delay_ms">ಗರಿಷ್ಠ ಹೆಚ್ಚುವರಿ ವಿಳಂಬ</string>
-    <string name="camera_ocr_skip_frames">ಫ್ರೇಮ್‌ಗಳನ್ನು ಬಿಟ್ಟುಹೋಗಿ</string>
-    <string name="ms_value">%d ms</string>
-    <string name="frames_value">%d ಫ್ರೇಮ್‌ಗಳು</string>
+    <!-- Onboarding language selection -->
+    <string name="choose_language">ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="choose_language_hint">ನೀವು ಇದನ್ನು ನಂತರ ಸೆಟ್ಟಿಂಗ್‌ಗಳಲ್ಲಿ ಬದಲಾಯಿಸಬಹುದು</string>
 
-    <string name="unable_to_open_link">ಲಿಂಕ್ ತೆರೆಯಲಾಗಲಿಲ್ಲ.</string>
-
-    <!-- Onboarding / tutorial -->
-    <string name="choose_language">ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
-    <string name="choose_language_hint">ಮುಂದುವರಿಸಲು ನಿಮ್ಮ ಇಷ್ಟದ ಆಪ್ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.</string>
-    <string name="default_mlkit">ಡೀಫಾಲ್ಟ್ (ML Kit)</string>
-
-    <string name="detect">ಗುರುತಿಸಿ</string>
+    <!-- Language selection -->
+    <string name="detect">ಪತ್ತೆಮಾಡಿ</string>
     <string name="to">ಗೆ</string>
-    <string name="transliterate">ಲಿಪ್ಯಂತರಣೆ</string>
+    <string name="transliterate">ಲಿಪ್ಯಂತರಣ</string>
     <string name="select_ocr_language">OCR ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
-    <string name="select_transliteration_language">ಲಿಪ್ಯಂತರಣೆ ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
-    <string name="transliterate_to">ಗೆ ಲಿಪ್ಯಂತರಣೆ ಮಾಡಿ</string>
+    <string name="select_transliteration_language">ಲಿಪ್ಯಂತರಣ ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ</string>
+    <string name="transliterate_to">ಲಿಪ್ಯಂತರಿಸಿ</string>
 
+    <!-- OCR engine selection -->
     <string name="select_ocr_engine">OCR ಎಂಜಿನ್ ಆಯ್ಕೆಮಾಡಿ</string>
-    <string name="ocr_engine_mlkit_description">ವೇಗವಾದ, ಆನ್‌ಲೈನ್, ಅನೇಕ ಭಾಷೆಗಳಿಗೆ ಬೆಂಬಲ</string>
+    <string name="ocr_engine_mlkit_description">ವೇಗವಾದ, ಆನ್‌ಲೈನ್, ಬಹು ಭಾಷೆಗಳನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ</string>
     <string name="ocr_engine_tesseract_name">Tesseract</string>
     <string name="ocr_engine_tesseract_description">ಆಫ್‌ಲೈನ್, ಭಾಷಾ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಅಗತ್ಯ</string>
 
-    <string name="tutorial_next">ಮುಂದಿನದು</string>
-    <string name="tutorial_skip">ಬಿಟ್ಟುಹೋಗಿ</string>
+    <!-- Transliteration selection -->
+    <string name="default_mlkit">ಡೀಫಾಲ್ಟ್ (ML Kit)</string>
 
-    <string name="tutorial_settings_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
-    <string name="tutorial_settings_message">ಇಲ್ಲಿ OCR ಮತ್ತು ಆಪ್ ಆದ್ಯತೆಗಳನ್ನು ಹೊಂದಿಸಿ.</string>
-
-    <string name="tutorial_languages_title">ಭಾಷೆಗಳು</string>
-    <string name="tutorial_languages_message">ಪಠ್ಯ ಗುರುತಿಸುವಿಕೆ ಮತ್ತು ಲಿಪ್ಯಂತರಣಕ್ಕಾಗಿ ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ.</string>
-
-    <string name="tutorial_flash_title">ಫ್ಲ್ಯಾಶ್</string>
-    <string name="tutorial_flash_message">ಉತ್ತಮ ದೃಶ್ಯತೆಗೆ ಫ್ಲ್ಯಾಶ್ ಅನ್ನು ಆನ್/ಆಫ್ ಮಾಡಿ.</string>
-
-    <string name="tutorial_capture_title">ಕ್ಯಾಪ್ಚರ್</string>
-    <string name="tutorial_capture_message">ಪಠ್ಯ ಗುರುತಿಸಲು ಫೋಟೋ ತೆಗೆಯಿರಿ.</string>
-
-    <string name="tutorial_gallery_title">ಗ್ಯಾಲರಿ</string>
-    <string name="tutorial_gallery_message">ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಲು ಗ್ಯಾಲರಿ ತೆರೆಯಿರಿ.</string>
+    <string name="unable_to_open_link">ಲಿಂಕ್ ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ.</string>
 
     <!-- Model downloads -->
-    <string name="models">ಭಾಷಾ ಮಾದರಿಗಳು</string>
-    <string name="manage_models">ಡೌನ್‌ಲೋಡ್ ಮಾಡಿದ OCR ಮಾದರಿಗಳನ್ನು ನಿರ್ವಹಿಸಿ</string>
-    <string name="download_models_hint">ಬೇಡಿಕೆಯಂತೆ ಆಫ್‌ಲೈನ್ Tesseract ಭಾಷಾ ಮಾದರಿಗಳನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
-    <string name="model_download">ಮಾದರಿಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
-    <string name="model_downloaded">ಡೌನ್‌ಲೋಡ್ ಆಯಿತು</string>
+    <string name="models">ಭಾಷಾ ಮಾಡೆಲ್‌ಗಳು</string>
+    <string name="manage_models">ಡೌನ್‌ಲೋಡ್ ಮಾಡಿದ OCR ಮಾಡೆಲ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ</string>
+    <string name="download_models_hint">ಅಗತ್ಯಕ್ಕೆ ತಕ್ಕಂತೆ ಆಫ್‌ಲೈನ್ Tesseract ಭಾಷಾ ಮಾಡೆಲ್‌ಗಳನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="model_download">ಮಾಡೆಲ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ</string>
+    <string name="model_downloaded">ಡೌನ್‌ಲೋಡ್ ಆಗಿದೆ</string>
 
-    <string name="model_download_notification_channel_name">ಮಾದರಿ ಡೌನ್‌ಲೋಡ್‌ಗಳು</string>
-    <string name="model_download_notification_title">ಭಾಷಾ ಮಾದರಿ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ</string>
+    <string name="model_download_notification_channel_name">ಮಾಡೆಲ್ ಡೌನ್‌ಲೋಡ್‌ಗಳು</string>
+    <string name="model_download_notification_title">ಭಾಷಾ ಮಾಡೆಲ್ ಡೌನ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">ಮಾದರಿ ಡೌನ್‌ಲೋಡ್ ಆಗಿಲ್ಲ, ಡಿಫಾಲ್ಟ್ ಮಾದರಿಗೆ ಹಿಂತಿರುಗುತ್ತಿದೆ</string>
+    <string name="model_not_downloaded_fallback">ಮಾಡೆಲ್ ಡೌನ್‌ಲೋಡ್ ಆಗಿಲ್ಲ, ಡೀಫಾಲ್ಟ್ ಮಾಡೆಲ್‌ಗೆ ಹೋಗುತ್ತಿದೆ</string>
 
-    <string name="no_internet_connection">ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಲಭ್ಯವಿಲ್ಲ</string>
+    <string name="no_internet_connection">ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಇಲ್ಲ</string>
+
+    <!-- Text Input Screen -->
+    <string name="text_input">ಪಠ್ಯ ಇನ್‌ಪುಟ್</string>
+    <string name="enter_text">ಪಠ್ಯ ನಮೂದಿಸಿ</string>
+    <string name="type_to_transliterate">ಲಿಪ್ಯಂತರಿಸಲು ಇಲ್ಲಿ ಪಠ್ಯ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಅಂಟಿಸಿ…</string>
+    <string name="characters">ಅಕ್ಷರಗಳು</string>
+    <string name="auto_detect">ಸ್ವಯಂ-ಪತ್ತೆ</string>
+
+    <!-- History Screen -->
+    <string name="history">ಇತಿಹಾಸ</string>
+    <string name="all">ಎಲ್ಲಾ</string>
+    <string name="favorites">ಮೆಚ್ಚಿನವು</string>
+    <string name="no_history">ಇನ್ನೂ ಇತಿಹಾಸ ಇಲ್ಲ</string>
+    <string name="no_history_hint">ನಿಮ್ಮ ಲಿಪ್ಯಂತರಣ ಇತಿಹಾಸ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ</string>
+    <string name="no_favorites">ಇನ್ನೂ ಮೆಚ್ಚಿನವು ಇಲ್ಲ</string>
+    <string name="no_favorites_hint">ಮೆಚ್ಚಿನವುಗಳಿಗೆ ಸೇರಿಸಲು ಐಟಂಗಳನ್ನು ಒತ್ತಿ ಹಿಡಿಯಿರಿ</string>
+    <string name="clear_history">ಇತಿಹಾಸ ತೆರವುಗೊಳಿಸಿ</string>
+    <string name="clear_history_confirmation">ನಿಮ್ಮ ಇತಿಹಾಸವನ್ನು ತೆರವುಗೊಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?</string>
+    <string name="clear_keep_favorites">ತೆರವುಗೊಳಿಸಿ (ಮೆಚ್ಚಿನವು ಇಡಿ)</string>
+    <string name="delete">ಅಳಿಸಿ</string>
+
+    <!-- User Preferences -->
+    <string name="user_experience">ಬಳಕೆದಾರ ಅನುಭವ</string>
+    <string name="text_display_size">ಪಠ್ಯ ಪ್ರದರ್ಶನ ಗಾತ್ರ</string>
+    <string name="text_size_small">ಚಿಕ್ಕ</string>
+    <string name="text_size_normal">ಸಾಮಾನ್ಯ</string>
+    <string name="text_size_large">ದೊಡ್ಡ</string>
+    <string name="text_size_extra_large">ಹೆಚ್ಚು ದೊಡ್ಡ</string>
+    <string name="haptic_feedback">ಹ್ಯಾಪ್ಟಿಕ್ ಪ್ರತಿಕ್ರಿಯೆ</string>
+    <string name="haptic_feedback_hint">ಬಟನ್ ಟ್ಯಾಪ್‌ಗಳು ಮತ್ತು ಕ್ರಿಯೆಗಳಲ್ಲಿ ಕಂಪನ</string>
+    <string name="auto_copy">ಫಲಿತಾಂಶಗಳನ್ನು ಸ್ವಯಂ-ನಕಲಿಸಿ</string>
+    <string name="auto_copy_hint">ಲಿಪ್ಯಂತರಿಸಿದ ಪಠ್ಯವನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಿ</string>
+
+    <!-- Text-to-Speech -->
+    <string name="text_to_speech">ಪಠ್ಯ-ರಿಂದ-ಧ್ವನಿ</string>
+    <string name="enable_tts">TTS ಸಕ್ರಿಯಗೊಳಿಸಿ</string>
+    <string name="enable_tts_hint">ಲಿಪ್ಯಂತರಿಸಿದ ಪಠ್ಯವನ್ನು ಜೋರಾಗಿ ಓದಿ</string>
+    <string name="tts_auto_speak">ಫಲಿತಾಂಶಗಳನ್ನು ಸ್ವಯಂ-ಮಾತನಾಡಿ</string>
+    <string name="tts_auto_speak_hint">ಲಿಪ್ಯಂತರಣದ ನಂತರ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮಾತನಾಡಿ</string>
 </resources>
