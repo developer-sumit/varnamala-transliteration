@@ -213,34 +213,50 @@ jobs:
           if-no-files-found: error
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.authorize.outputs.tag_name }}
-          files: app/build/outputs/apk/release/*.apk
-          generate_release_notes: true
-          draft: false
-          prerelease: ${{ contains(needs.authorize.outputs.tag_name, 'alpha') || contains(needs.authorize.outputs.tag_name, 'beta') || contains(needs.authorize.outputs.tag_name, 'rc') }}
-          body: |
-            ## Varnamala ${{ needs.authorize.outputs.tag_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ needs.authorize.outputs.tag_name }}"
+          VERSION="${TAG#v}"
 
-            ### 📱 APK Downloads
+          # Check if it's a prerelease
+          PRERELEASE_FLAG=""
+          if [[ "$TAG" == *"alpha"* ]] || [[ "$TAG" == *"beta"* ]] || [[ "$TAG" == *"rc"* ]]; then
+            PRERELEASE_FLAG="--prerelease"
+          fi
 
-            | ABI | Recommended For |
-            |-----|-----------------|
-            | **arm64-v8a** | Modern 64-bit ARM phones (2017+) - **Recommended** |
-            | **armeabi-v7a** | Older 32-bit ARM phones |
-            | **x86_64** | 64-bit x86 devices (some tablets, Chromebooks) |
-            | **x86** | 32-bit x86 devices |
-            | **universal** | All devices (larger file size) |
+          # Create release notes
+          cat > release_notes.md << 'EOF'
+          ## Varnamala ${{ needs.authorize.outputs.tag_name }}
 
-            ### 💡 Which one should I download?
-            **Most users should download the `arm64-v8a` version.**
+          ### 📱 APK Downloads
 
-            ---
-            *Built by @${{ github.actor }}*
+          | ABI | Recommended For |
+          |-----|-----------------|
+          | **arm64-v8a** | Modern 64-bit ARM phones (2017+) - **Recommended** |
+          | **armeabi-v7a** | Older 32-bit ARM phones |
+          | **x86_64** | 64-bit x86 devices (some tablets, Chromebooks) |
+          | **x86** | 32-bit x86 devices |
+          | **universal** | All devices (larger file size) |
+
+          ### 💡 Which one should I download?
+          **Most users should download the `arm64-v8a` version.**
+
+          ---
+          *Built by @${{ github.actor }}*
+          EOF
+
+          # Create the release with GitHub CLI
+          gh release create "$TAG" \
+            --title "Varnamala $TAG" \
+            --notes-file release_notes.md \
+            $PRERELEASE_FLAG \
+            app/build/outputs/apk/release/*.apk
+
+          echo "✅ GitHub Release created successfully!"
 
       - name: Cleanup sensitive files
         if: always()
         run: |
-          rm -f keystore.jks key.properties
+          rm -f keystore.jks key.properties release_notes.md
           echo "✅ Cleaned up sensitive files"
