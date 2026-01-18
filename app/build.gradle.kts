@@ -53,12 +53,21 @@ android {
         }
     }
 
+    val isBundleTask = gradle.startParameter.taskNames.any { it.contains("bundle", ignoreCase = true) }
+    val enableApkSplits = !isBundleTask
+
     splits {
         abi {
-            isEnable = true
+            isEnable = enableApkSplits
             reset()
             include("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
             isUniversalApk = true
+        }
+    }
+
+    bundle {
+        abi {
+            enableSplit = true
         }
     }
 
@@ -73,9 +82,11 @@ android {
         onVariants { variant ->
             variant.outputs.forEach { output ->
                 val abiFilter = output.filters.find { it.filterType == com.android.build.api.variant.FilterConfiguration.FilterType.ABI }
-                val abiCode = abiCodes[abiFilter?.identifier] ?: 0
-                // Universal APK gets version code * 10, ABI-specific APKs get version code * 10 + abiCode
-                output.versionCode.set((output.versionCode.get() ?: 1) * 10 + abiCode)
+                if (enableApkSplits && abiFilter != null) {
+                    val abiCode = abiCodes[abiFilter.identifier] ?: 0
+                    // Universal APK gets version code * 10, ABI-specific APKs get version code * 10 + abiCode
+                    output.versionCode.set((output.versionCode.get() ?: 1) * 10 + abiCode)
+                }
             }
         }
     }
