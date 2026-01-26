@@ -284,7 +284,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         // Auto-copy if enabled
                         if (autoCopyEnabled) {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText("Transliterated Text", transliteratedText))
+                            clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), transliteratedText))
                             Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
                         }
                     }

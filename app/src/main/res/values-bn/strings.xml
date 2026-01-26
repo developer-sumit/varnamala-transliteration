@@ -48,6 +48,27 @@
     <string name="copy">কপি করুন</string>
     <string name="clear">সাফ করুন</string>
     
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">ক্যামেরা</string>
+    <string name="bottom_nav_text">টেক্সট</string>
+    <string name="bottom_nav_gallery">গ্যালারি</string>
+    
+    <!-- Model Management -->
+    <string name="delete_model">মডেল মুছুন</string>
+    <string name="delete_model_confirmation">আপনি কি %s মডেলটি মুছতে চান?</string>
+    <string name="model_deleted_successfully">মডেল সফলভাবে মুছে ফেলা হয়েছে</string>
+    <string name="failed_to_delete_model">মডেল মুছতে ব্যর্থ</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">ক্যামেরা পরিবর্তন করুন</string>
+    <string name="tutorial_switch_camera_message">সামনে এবং পিছনের ক্যামেরার মধ্যে পরিবর্তন করুন।</string>
+    <string name="camera_info_title">ক্যামেরা স্ক্রিন</string>
+    <string name="camera_info_message">ফটো তুলতে ট্যাপ করুন বা ক্রমাগত স্ক্যান করতে ধরে রাখুন।</string>
+    <string name="gallery_info_title">গ্যালারি স্ক্রিন</string>
+    <string name="gallery_info_message">সংরক্ষিত ছবিগুলি খুলুন এবং OCR ফলাফল দেখুন।</string>
+    <string name="text_input_info_title">টেক্সট ইনপুট স্ক্রিন</string>
+    <string name="text_input_info_message">টেক্সট টাইপ করুন এবং এটিকে লিপ্যন্তরণ করুন।</string>
+    
     <!-- OCR related -->
     <string name="ocr_text">OCR টেক্সট</string>
     <string name="clear_all_ocr_cache">সমস্ত OCR ক্যাশ সাফ করুন</string>
@@ -193,4 +214,15 @@
     <string name="enable_tts_hint">প্রতিবর্ণীকৃত টেক্সট জোরে পড়ুন</string>
     <string name="tts_auto_speak">ফলাফল অটো-স্পিক</string>
     <string name="tts_auto_speak_hint">প্রতিবর্ণীকরণের পর স্বয়ংক্রিয়ভাবে বলুন</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">বর্ণমালা ওভারলে সক্রিয়</string>
+    <string name="overlay_notification_text">স্ক্রীন টেক্সট বিশ্লেষণ করতে ক্যাপচার বোতাম ব্যবহার করুন</string>
+    <string name="overlay_notification_stop_action">ওভারলে বন্ধ করুন</string>
+    <string name="overlay_copied_to_clipboard">ক্লিপবোর্ডে কপি করা হয়েছে</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR টেক্সট</string>
+    <string name="clipboard_label_transliterated_text">প্রতিবর্ণীকৃত টেক্সট</string>
+    <string name="clipboard_label_text">টেক্সট</string>
 </resources>

@@ -46,8 +46,27 @@
     <string name="cancel">ரத்து செய்</string>
     <string name="close">மூடு</string>
     <string name="copy">நகலெடு</string>
-    <string name="clear">அழி</string>
+    <string name="clear">அழி</string>    
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">கேமரா</string>
+    <string name="bottom_nav_text">உரை</string>
+    <string name="bottom_nav_gallery">கேலரி</string>
     
+    <!-- Model Management -->
+    <string name="delete_model">மாதிரியை நீக்கு</string>
+    <string name="delete_model_confirmation">%s மாதிரியை நீக்க விரும்புகிறீர்களா?</string>
+    <string name="model_deleted_successfully">மாதிரி வெற்றிகரமாக நீக்கப்பட்டது</string>
+    <string name="failed_to_delete_model">மாதிரியை நீக்குவதில் தோல்வி</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">கேமராவை மாற்று</string>
+    <string name="tutorial_switch_camera_message">முன் மற்றும் பின் கேமராக்களுக்கு இடையே மாற்றவும்.</string>
+    <string name="camera_info_title">கேமரா திரை</string>
+    <string name="camera_info_message">புகைப்படம் எடுக்க தட்டவும் அல்லது தொடர்ந்து ஸ்கேன் செய்ய பிடிக்கவும்.</string>
+    <string name="gallery_info_title">கேலரி திரை</string>
+    <string name="gallery_info_message">சேமித்த படங்களைத் திறந்து OCR முடிவுகளைக் காணவும்.</string>
+    <string name="text_input_info_title">உரை உள்ளீட்டு திரை</string>
+    <string name="text_input_info_message">உரையை தட்டச்சு செய்து அதை எழுத்துப்பெயர்ப்பு செய்யவும்.</string>    
     <!-- OCR related -->
     <string name="ocr_text">OCR உரை</string>
     <string name="clear_all_ocr_cache">அனைத்து OCR கேச் அழி</string>
@@ -193,4 +212,15 @@
     <string name="enable_tts_hint">எழுத்துப்பெயர்க்கப்பட்ட உரையை சத்தமாகப் படி</string>
     <string name="tts_auto_speak">முடிவுகள் தானியங்கி-பேசு</string>
     <string name="tts_auto_speak_hint">எழுத்துப்பெயர்ப்புக்குப் பிறகு தானாகப் பேசு</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">வர்ணமாலா ஓவர்லே செயலில் உள்ளது</string>
+    <string name="overlay_notification_text">திரை உரையை பகுப்பாய்வு செய்ய கேப்சர் பொத்தானைப் பயன்படுத்தவும்</string>
+    <string name="overlay_notification_stop_action">ஓவர்லே நிறுத்து</string>
+    <string name="overlay_copied_to_clipboard">கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR உரை</string>
+    <string name="clipboard_label_transliterated_text">எழுத்துப்பெயர்க்கப்பட்ட உரை</string>
+    <string name="clipboard_label_text">உரை</string>
 </resources>

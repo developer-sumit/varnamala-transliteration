@@ -309,28 +309,28 @@ private fun ModelRow(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Model") },
+            title = { Text(stringResource(R.string.delete_model)) },
             text = { 
-                Text("Are you sure you want to delete the $name language model? You can download it again later if needed.")
+                Text(stringResource(R.string.delete_model_confirmation, name))
             },
             confirmButton = {
                 TextButton(
                     onClick = {
                         val deleted = TesseractModelStore.deleteModel(context, tessCode)
                         if (deleted) {
-                            Toast.makeText(context, "Model deleted successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.model_deleted_successfully), Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(context, "Failed to delete model", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.failed_to_delete_model), Toast.LENGTH_SHORT).show()
                         }
                         showDeleteDialog = false
                     }
                 ) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )

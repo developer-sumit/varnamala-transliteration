@@ -48,6 +48,27 @@
     <string name="copy">कॉपी करा</string>
     <string name="clear">साफ करा</string>
     
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">कॅमेरा</string>
+    <string name="bottom_nav_text">मजकूर</string>
+    <string name="bottom_nav_gallery">गॅलरी</string>
+    
+    <!-- Model Management -->
+    <string name="delete_model">मॉडेल हटवा</string>
+    <string name="delete_model_confirmation">तुम्हाला %s मॉडेल हटवायचे आहे का?</string>
+    <string name="model_deleted_successfully">मॉडेल यशस्वीरित्या हटवले</string>
+    <string name="failed_to_delete_model">मॉडेल हटवण्यात अयशस्वी</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">कॅमेरा बदला</string>
+    <string name="tutorial_switch_camera_message">समोर आणि मागील कॅमेऱ्यांमध्ये बदला.</string>
+    <string name="camera_info_title">कॅमेरा स्क्रीन</string>
+    <string name="camera_info_message">फोटो घेण्यासाठी टॅप करा किंवा सतत स्कॅन करण्यासाठी धरून ठेवा.</string>
+    <string name="gallery_info_title">गॅलरी स्क्रीन</string>
+    <string name="gallery_info_message">जतन केलेली प्रतिमा उघडा आणि OCR परिणाम पहा.</string>
+    <string name="text_input_info_title">मजकूर इनपुट स्क्रीन</string>
+    <string name="text_input_info_message">मजकूर टाइप करा आणि त्याचे लिप्यंतरण करा.</string>
+    
     <!-- OCR related -->
     <string name="ocr_text">OCR मजकूर</string>
     <string name="clear_all_ocr_cache">सर्व OCR कॅश साफ करा</string>
@@ -193,4 +214,15 @@
     <string name="enable_tts_hint">लिप्यंतरित मजकूर मोठ्याने वाचा</string>
     <string name="tts_auto_speak">निकाल ऑटो-बोला</string>
     <string name="tts_auto_speak_hint">लिप्यंतरणानंतर आपोआप बोला</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">वर्णमाला ओव्हरले सक्रिय</string>
+    <string name="overlay_notification_text">स्क्रीन मजकूर विश्लेषित करण्यासाठी कॅप्चर बटण वापरा</string>
+    <string name="overlay_notification_stop_action">ओव्हरले थांबवा</string>
+    <string name="overlay_copied_to_clipboard">क्लिपबोर्डवर कॉपी केले</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR मजकूर</string>
+    <string name="clipboard_label_transliterated_text">लिप्यंतरित मजकूर</string>
+    <string name="clipboard_label_text">मजकूर</string>
 </resources>

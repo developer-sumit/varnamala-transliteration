@@ -48,6 +48,27 @@
     <string name="copy">പകർത്തുക</string>
     <string name="clear">മായ്ക്കുക</string>
     
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">ക്യാമറ</string>
+    <string name="bottom_nav_text">ടെക്സ്റ്റ്</string>
+    <string name="bottom_nav_gallery">ഗാലറി</string>
+    
+    <!-- Model Management -->
+    <string name="delete_model">മോഡൽ ഇല്ലാതാക്കുക</string>
+    <string name="delete_model_confirmation">നിങ്ങൾ %s മോഡൽ ഇല്ലാതാക്കാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?</string>
+    <string name="model_deleted_successfully">മോഡൽ വിജയകരമായി ഇല്ലാതാക്കി</string>
+    <string name="failed_to_delete_model">മോഡൽ ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">ക്യാമറ മാറ്റുക</string>
+    <string name="tutorial_switch_camera_message">മുന്നിലും പിന്നിലുമുള്ള ക്യാമറകൾക്കിടയിൽ മാറുക.</string>
+    <string name="camera_info_title">ക്യാമറ സ്ക്രീൻ</string>
+    <string name="camera_info_message">ഫോട്ടോ എടുക്കാൻ ടാപ്പ് ചെയ്യുക അല്ലെങ്കിൽ തുടർച്ചയായി സ്കാൻ ചെയ്യാൻ പിടിച്ചുനിർത്തുക.</string>
+    <string name="gallery_info_title">ഗാലറി സ്ക്രീൻ</string>
+    <string name="gallery_info_message">സംരക്ഷിച്ച ചിത്രങ്ങൾ തുറന്ന് OCR ഫലങ്ങൾ കാണുക.</string>
+    <string name="text_input_info_title">ടെക്സ്റ്റ് ഇൻപുട്ട് സ്ക്രീൻ</string>
+    <string name="text_input_info_message">ടെക്സ്റ്റ് ടൈപ്പ് ചെയ്ത് അത് ലിപ്യന്തരണം ചെയ്യുക.</string>
+    
     <!-- OCR related -->
     <string name="ocr_text">OCR വാചകം</string>
     <string name="clear_all_ocr_cache">എല്ലാ OCR കാഷെയും മായ്ക്കുക</string>
@@ -193,4 +214,15 @@
     <string name="enable_tts_hint">ലിപ്യന്തരണം ചെയ്ത ടെക്സ്റ്റ് ഉച്ചത്തിൽ വായിക്കുക</string>
     <string name="tts_auto_speak">ഫലങ്ങൾ ഓട്ടോ-സ്പീക്ക്</string>
     <string name="tts_auto_speak_hint">ലിപ്യന്തരണത്തിന് ശേഷം സ്വയമേവ സംസാരിക്കുക</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">വർണമാല ഓവർലേ സജീവം</string>
+    <string name="overlay_notification_text">സ്ക്രീൻ വാചകം വിശകലനം ചെയ്യാൻ ക്യാപ്ചർ ബട്ടൺ ഉപയോഗിക്കുക</string>
+    <string name="overlay_notification_stop_action">ഓവർലേ നിർത്തുക</string>
+    <string name="overlay_copied_to_clipboard">ക്ലിപ്പ്‌ബോർഡിലേക്ക് പകർത്തി</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR വാചകം</string>
+    <string name="clipboard_label_transliterated_text">ലിപ്യന്തരണം ചെയ്ത വാചകം</string>
+    <string name="clipboard_label_text">വാചകം</string>
 </resources>

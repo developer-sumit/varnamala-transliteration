@@ -351,7 +351,7 @@ fun CameraScreen(navController: NavController) {
                                 context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                             clipboard.setPrimaryClip(
                                 ClipData.newPlainText(
-                                    "Transliterated Text",
+                                    context.getString(R.string.clipboard_label_transliterated_text),
                                     transliteratedText
                                 )
                             )

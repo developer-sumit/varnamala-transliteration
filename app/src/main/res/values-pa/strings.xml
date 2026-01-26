@@ -48,6 +48,27 @@
     <string name="copy">ਕਾਪੀ ਕਰੋ</string>
     <string name="clear">ਸਾਫ਼ ਕਰੋ</string>
     
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">ਕੈਮਰਾ</string>
+    <string name="bottom_nav_text">ਟੈਕਸਟ</string>
+    <string name="bottom_nav_gallery">ਗੈਲਰੀ</string>
+    
+    <!-- Model Management -->
+    <string name="delete_model">ਮਾਡਲ ਮਿਟਾਓ</string>
+    <string name="delete_model_confirmation">ਕੀ ਤੁਸੀਂ %s ਮਾਡਲ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
+    <string name="model_deleted_successfully">ਮਾਡਲ ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ</string>
+    <string name="failed_to_delete_model">ਮਾਡਲ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">ਕੈਮਰਾ ਬਦਲੋ</string>
+    <string name="tutorial_switch_camera_message">ਅੱਗੇ ਅਤੇ ਪਿੱਛੇ ਦੇ ਕੈਮਰਿਆਂ ਵਿਚਕਾਰ ਬਦਲੋ।</string>
+    <string name="camera_info_title">ਕੈਮਰਾ ਸਕਰੀਨ</string>
+    <string name="camera_info_message">ਫੋਟੋ ਲੈਣ ਲਈ ਟੈਪ ਕਰੋ ਜਾਂ ਲਗਾਤਾਰ ਸਕੈਨ ਕਰਨ ਲਈ ਦਬਾਏ ਰੱਖੋ।</string>
+    <string name="gallery_info_title">ਗੈਲਰੀ ਸਕਰੀਨ</string>
+    <string name="gallery_info_message">ਸੇਵ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ ਖੋਲ੍ਹੋ ਅਤੇ OCR ਨਤੀਜੇ ਦੇਖੋ।</string>
+    <string name="text_input_info_title">ਟੈਕਸਟ ਇਨਪੁੱਟ ਸਕਰੀਨ</string>
+    <string name="text_input_info_message">ਟੈਕਸਟ ਟਾਈਪ ਕਰੋ ਅਤੇ ਇਸ ਦਾ ਲਿਪੀਅੰਤਰਨ ਕਰੋ।</string>
+    
     <!-- OCR related -->
     <string name="ocr_text">OCR ਟੈਕਸਟ</string>
     <string name="clear_all_ocr_cache">ਸਾਰੀ OCR ਕੈਸ਼ ਸਾਫ਼ ਕਰੋ</string>
@@ -193,4 +214,15 @@
     <string name="enable_tts_hint">ਲਿਪੀਅੰਤਰਿਤ ਟੈਕਸਟ ਉੱਚੀ ਆਵਾਜ਼ ਵਿੱਚ ਪੜ੍ਹੋ</string>
     <string name="tts_auto_speak">ਨਤੀਜੇ ਆਟੋ-ਬੋਲੋ</string>
     <string name="tts_auto_speak_hint">ਲਿਪੀਅੰਤਰਨ ਤੋਂ ਬਾਅਦ ਆਟੋਮੈਟਿਕ ਬੋਲੋ</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">ਵਰਨਮਾਲਾ ਓਵਰਲੇ ਸਰਗਰਮ</string>
+    <string name="overlay_notification_text">ਸਕ੍ਰੀਨ ਟੈਕਸਟ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰਨ ਲਈ ਕੈਪਚਰ ਬਟਨ ਵਰਤੋਂ</string>
+    <string name="overlay_notification_stop_action">ਓਵਰਲੇ ਬੰਦ ਕਰੋ</string>
+    <string name="overlay_copied_to_clipboard">ਕਲਿੱਪਬੋਰਡ ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ</string>
+    
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR ਟੈਕਸਟ</string>
+    <string name="clipboard_label_transliterated_text">ਲਿਪੀਅੰਤਰਿਤ ਟੈਕਸਟ</string>
+    <string name="clipboard_label_text">ਟੈਕਸਟ</string>
 </resources>

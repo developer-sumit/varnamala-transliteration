@@ -48,6 +48,27 @@
     <string name="copy">କପି କରନ୍ତୁ</string>
     <string name="clear">ସଫା କରନ୍ତୁ</string>
     
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">କ୍ୟାମେରା</string>
+    <string name="bottom_nav_text">ଟେକ୍ସଟ</string>
+    <string name="bottom_nav_gallery">ଗ୍ୟାଲେରୀ</string>
+    
+    <!-- Model Management -->
+    <string name="delete_model">ମଡେଲ ଡିଲିଟ କରନ୍ତୁ</string>
+    <string name="delete_model_confirmation">ଆପଣ %s ମଡେଲକୁ ଡିଲିଟ କରିବାକୁ ଚାହୁଁଛନ୍ତି କି?</string>
+    <string name="model_deleted_successfully">ମଡେଲ ସଫଳତାର ସହ ଡିଲିଟ ହୋଇଛି</string>
+    <string name="failed_to_delete_model">ମଡେଲ ଡିଲିଟ କରିବାରେ ବିଫଳ</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">କ୍ୟାମେରା ବଦଳାନ୍ତୁ</string>
+    <string name="tutorial_switch_camera_message">ଆଗ ଏବଂ ପଛ କ୍ୟାମେରା ମଧ୍ୟରେ ବଦଳାନ୍ତୁ।</string>
+    <string name="camera_info_title">କ୍ୟାମେରା ସ୍କ୍ରିନ</string>
+    <string name="camera_info_message">ଫଟୋ ଉଠାଇବାକୁ ଟ୍ୟାପ କରନ୍ତୁ କିମ୍ବା କ୍ରମାଗତ ସ୍କ୍ୟାନ କରିବାକୁ ଧରି ରଖନ୍ତୁ।</string>
+    <string name="gallery_info_title">ଗ୍ୟାଲେରୀ ସ୍କ୍ରିନ</string>
+    <string name="gallery_info_message">ସେଭ କରାଯାଇଥିବା ଚିତ୍ରଗୁଡ଼ିକୁ ଖୋଲନ୍ତୁ ଏବଂ OCR ଫଳାଫଳ ଦେଖନ୍ତୁ।</string>
+    <string name="text_input_info_title">ଟେକ୍ସଟ ଇନପୁଟ ସ୍କ୍ରିନ</string>
+    <string name="text_input_info_message">ଟେକ୍ସଟ ଟାଇପ କରନ୍ତୁ ଏବଂ ଏହାକୁ ଲିପ୍ୟନ୍ତରଣ କରନ୍ତୁ।</string>
+    
     <!-- OCR related -->
     <string name="ocr_text">OCR ଟେକ୍ସଟ୍</string>
     <string name="clear_all_ocr_cache">ସମସ୍ତ OCR କ୍ୟାସ୍ ସଫା କରନ୍ତୁ</string>
@@ -193,4 +214,15 @@
     <string name="enable_tts_hint">ଲିପ୍ୟନ୍ତରିତ ଟେକ୍ସଟ୍ ଜୋରରେ ପଢନ୍ତୁ</string>
     <string name="tts_auto_speak">ଫଳାଫଳ ଅଟୋ-ବୋଲନ୍ତୁ</string>
     <string name="tts_auto_speak_hint">ଲିପ୍ୟନ୍ତରଣ ପରେ ସ୍ୱୟଂଚାଳିତ ଭାବରେ ବୋଲନ୍ତୁ</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">ବର୍ଣ୍ଣମାଳା ଓଭରଲେ ସକ୍ରିୟ</string>
+    <string name="overlay_notification_text">ସ୍କ୍ରିନ୍ ଟେକ୍ସଟ୍ ବିଶ୍ଳେଷଣ କରିବାକୁ କ୍ୟାପଚର୍ ବଟନ୍ ବ୍ୟବହାର କରନ୍ତୁ</string>
+    <string name="overlay_notification_stop_action">ଓଭରଲେ ବନ୍ଦ କରନ୍ତୁ</string>
+    <string name="overlay_copied_to_clipboard">କ୍ଲିପବୋର୍ଡରେ କପି ହୋଇଛି</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR ଟେକ୍ସଟ୍</string>
+    <string name="clipboard_label_transliterated_text">ଲିପ୍ୟନ୍ତରିତ ଟେକ୍ସଟ୍</string>
+    <string name="clipboard_label_text">ଟେକ୍ସଟ୍</string>
 </resources>

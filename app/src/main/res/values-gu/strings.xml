@@ -46,8 +46,27 @@
     <string name="cancel">રદ કરો</string>
     <string name="close">બંધ કરો</string>
     <string name="copy">કોપી કરો</string>
-    <string name="clear">સાફ કરો</string>
+    <string name="clear">સાફ કરો</string>    
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">કૅમેરા</string>
+    <string name="bottom_nav_text">ટેક્સ્ટ</string>
+    <string name="bottom_nav_gallery">ગૅલેરી</string>
     
+    <!-- Model Management -->
+    <string name="delete_model">મોડેલ ડિલીટ કરો</string>
+    <string name="delete_model_confirmation">શું તમે %s મોડેલને ડિલીટ કરવા માંગો છો?</string>
+    <string name="model_deleted_successfully">મોડેલ સફળતાપૂર્વક ડિલીટ થયું</string>
+    <string name="failed_to_delete_model">મોડેલ ડિલીટ કરવામાં નિષ્ફળ</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">કૅમેરા બદલો</string>
+    <string name="tutorial_switch_camera_message">આગળ અને પાછળના કૅમેરા વચ્ચે બદલો.</string>
+    <string name="camera_info_title">કૅમેરા સ્ક્રીન</string>
+    <string name="camera_info_message">ફોટો લેવા માટે ટૅપ કરો અથવા સતત સ્કૅન કરવા માટે દબાવી રાખો.</string>
+    <string name="gallery_info_title">ગૅલેરી સ્ક્રીન</string>
+    <string name="gallery_info_message">સાચવેલી છબીઓ ખોલો અને OCR પરિણામો જુઓ.</string>
+    <string name="text_input_info_title">ટેક્સ્ટ ઇનપુટ સ્ક્રીન</string>
+    <string name="text_input_info_message">ટેક્સ્ટ ટાઇપ કરો અને તેનું લિપ્યંતરણ કરો.</string>    
     <!-- OCR related -->
     <string name="ocr_text">OCR ટેક્સ્ટ</string>
     <string name="clear_all_ocr_cache">બધી OCR કેશ સાફ કરો</string>
@@ -193,4 +212,15 @@
     <string name="enable_tts_hint">લિપ્યંતરિત ટેક્સ્ટ મોટેથી વાંચો</string>
     <string name="tts_auto_speak">પરિણામો ઓટો-બોલો</string>
     <string name="tts_auto_speak_hint">લિપ્યંતરણ પછી આપમેળે બોલો</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">વર્ણમાળા ઓવરલે સક્રિય</string>
+    <string name="overlay_notification_text">સ્ક્રીન ટેક્સ્ટનું વિશ્લેષણ કરવા કેપ્ચર બટન વાપરો</string>
+    <string name="overlay_notification_stop_action">ઓવરલે બંધ કરો</string>
+    <string name="overlay_copied_to_clipboard">ક્લિપબોર્ડ પર કોપી કર્યું</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR ટેક્સ્ટ</string>
+    <string name="clipboard_label_transliterated_text">લિપ્યંતરિત ટેક્સ્ટ</string>
+    <string name="clipboard_label_text">ટેક્સ્ટ</string>
 </resources>

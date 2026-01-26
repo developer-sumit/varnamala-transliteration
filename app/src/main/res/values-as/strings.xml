@@ -46,8 +46,27 @@
     <string name="cancel">বাতিল কৰক</string>
     <string name="close">বন্ধ কৰক</string>
     <string name="copy">কপি কৰক</string>
-    <string name="clear">পৰিষ্কাৰ কৰক</string>
+    <string name="clear">পৰিষ্কাৰ কৰক</string>    
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">কেমেৰা</string>
+    <string name="bottom_nav_text">পাঠ্য</string>
+    <string name="bottom_nav_gallery">গেলাৰী</string>
     
+    <!-- Model Management -->
+    <string name="delete_model">মডেল মচক</string>
+    <string name="delete_model_confirmation">আপুনি %s মডেলটো মচিব বিচাৰে নেকি?</string>
+    <string name="model_deleted_successfully">মডেল সফলতাৰে মচা হ\'ল</string>
+    <string name="failed_to_delete_model">মডেল মচাত ব্যৰ্থ</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">কেমেৰা সলনি কৰক</string>
+    <string name="tutorial_switch_camera_message">আগ আৰু পিছফালৰ কেমেৰাৰ মাজত সলনি কৰক।</string>
+    <string name="camera_info_title">কেমেৰা পৰ্দা</string>
+    <string name="camera_info_message">ফটো তুলিবলৈ টেপ কৰক বা একেৰাহে স্কেন কৰিবলৈ ধৰি ৰাখক।</string>
+    <string name="gallery_info_title">গেলাৰী পৰ্দা</string>
+    <string name="gallery_info_message">সংৰক্ষিত চিত্ৰসমূহ খোলক আৰু OCR ফলাফল চাওক।</string>
+    <string name="text_input_info_title">পাঠ্য ইনপুট পৰ্দা</string>
+    <string name="text_input_info_message">পাঠ্য টাইপ কৰক আৰু ইয়াক লিপ্যন্তৰণ কৰক।</string>    
     <!-- OCR related -->
     <string name="ocr_text">OCR টেক্সট</string>
     <string name="clear_all_ocr_cache">সকলো OCR কেশ্ব পৰিষ্কাৰ কৰক</string>
@@ -193,4 +212,15 @@
     <string name="enable_tts_hint">লিপ্যন্তৰিত টেক্সট জোৰেৰে পঢ়ক</string>
     <string name="tts_auto_speak">ফলাফল অটো-কওক</string>
     <string name="tts_auto_speak_hint">লিপ্যন্তৰণৰ পিছত স্বয়ংক্ৰিয়ভাৱে কওক</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">বৰ্ণমালা অভাৰলে সক্ৰিয়</string>
+    <string name="overlay_notification_text">পৰ্দা টেক্সট বিশ্লেষণ কৰিবলৈ কেপচাৰ বুটাম ব্যৱহাৰ কৰক</string>
+    <string name="overlay_notification_stop_action">অভাৰলে বন্ধ কৰক</string>
+    <string name="overlay_copied_to_clipboard">ক্লিপবোৰ্ডলৈ কপি কৰা হ\'ল</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR টেক্সট</string>
+    <string name="clipboard_label_transliterated_text">লিপ্যন্তৰিত টেক্সট</string>
+    <string name="clipboard_label_text">টেক্সট</string>
 </resources>

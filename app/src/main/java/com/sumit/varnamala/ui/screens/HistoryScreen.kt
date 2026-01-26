@@ -185,7 +185,7 @@ fun HistoryScreen(navController: NavController) {
                         },
                         onCopy = {
                             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText("Text", entry.transliteratedText))
+                            clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_text), entry.transliteratedText))
                             Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
                         },
                         onToggleFavorite = {

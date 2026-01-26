@@ -48,6 +48,27 @@
     <string name="copy">ನಕಲಿಸಿ</string>
     <string name="clear">ತೆರವುಗೊಳಿಸಿ</string>
     
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">ಕ್ಯಾಮೆರಾ</string>
+    <string name="bottom_nav_text">ಪಠ್ಯ</string>
+    <string name="bottom_nav_gallery">ಗ್ಯಾಲರಿ</string>
+    
+    <!-- Model Management -->
+    <string name="delete_model">ಮಾದರಿಯನ್ನು ಅಳಿಸಿ</string>
+    <string name="delete_model_confirmation">ನೀವು %s ಮಾದರಿಯನ್ನು ಅಳಿಸಲು ಬಯಸುವಿರಾ?</string>
+    <string name="model_deleted_successfully">ಮಾದರಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಅಳಿಸಲಾಗಿದೆ</string>
+    <string name="failed_to_delete_model">ಮಾದರಿಯನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">ಕ್ಯಾಮೆರಾವನ್ನು ಬದಲಿಸಿ</string>
+    <string name="tutorial_switch_camera_message">ಮುಂಭಾಗ ಮತ್ತು ಹಿಂಭಾಗದ ಕ್ಯಾಮೆರಾಗಳ ನಡುವೆ ಬದಲಿಸಿ.</string>
+    <string name="camera_info_title">ಕ್ಯಾಮೆರಾ ಪರದೆ</string>
+    <string name="camera_info_message">ಫೋಟೋ ತೆಗೆಯಲು ಟ್ಯಾಪ್ ಮಾಡಿ ಅಥವಾ ನಿರಂತರವಾಗಿ ಸ್ಕ್ಯಾನ್ ಮಾಡಲು ಹಿಡಿದುಕೊಳ್ಳಿ.</string>
+    <string name="gallery_info_title">ಗ್ಯಾಲರಿ ಪರದೆ</string>
+    <string name="gallery_info_message">ಉಳಿಸಿದ ಚಿತ್ರಗಳನ್ನು ತೆರೆಯಿರಿ ಮತ್ತು OCR ಫಲಿತಾಂಶಗಳನ್ನು ವೀಕ್ಷಿಸಿ.</string>
+    <string name="text_input_info_title">ಪಠ್ಯ ಇನ್‌ಪುಟ್ ಪರದೆ</string>
+    <string name="text_input_info_message">ಪಠ್ಯವನ್ನು ಟೈಪ್ ಮಾಡಿ ಮತ್ತು ಅದನ್ನು ಲಿಪ್ಯಂತರಿಸಿ.</string>
+    
     <!-- OCR related -->
     <string name="ocr_text">OCR ಪಠ್ಯ</string>
     <string name="clear_all_ocr_cache">ಎಲ್ಲಾ OCR ಕ್ಯಾಶ್ ತೆರವುಗೊಳಿಸಿ</string>
@@ -193,4 +214,15 @@
     <string name="enable_tts_hint">ಲಿಪ್ಯಂತರಿಸಿದ ಪಠ್ಯವನ್ನು ಜೋರಾಗಿ ಓದಿ</string>
     <string name="tts_auto_speak">ಫಲಿತಾಂಶಗಳನ್ನು ಸ್ವಯಂ-ಮಾತನಾಡಿ</string>
     <string name="tts_auto_speak_hint">ಲಿಪ್ಯಂತರಣದ ನಂತರ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಮಾತನಾಡಿ</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">ವರ್ಣಮಾಲಾ ಓವರ್‌ಲೇ ಸಕ್ರಿಯವಾಗಿದೆ</string>
+    <string name="overlay_notification_text">ಪರದೆಯ ಪಠ್ಯವನ್ನು ವಿಶ್ಲೇಷಿಸಲು ಕ್ಯಾಪ್ಚರ್ ಬಟನ್ ಬಳಸಿ</string>
+    <string name="overlay_notification_stop_action">ಓವರ್‌ಲೇ ನಿಲ್ಲಿಸಿ</string>
+    <string name="overlay_copied_to_clipboard">ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ</string>
+
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR ಪಠ್ಯ</string>
+    <string name="clipboard_label_transliterated_text">ಲಿಪ್ಯಂತರಿಸಿದ ಪಠ್ಯ</string>
+    <string name="clipboard_label_text">ಪಠ್ಯ</string>
 </resources>

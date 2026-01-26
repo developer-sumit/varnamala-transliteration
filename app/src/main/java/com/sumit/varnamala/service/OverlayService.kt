@@ -158,14 +158,14 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Varnamala Overlay Active")
-            .setContentText("Use the capture button to analyze screen text")
+            .setContentTitle(getString(R.string.overlay_notification_title))
+            .setContentText(getString(R.string.overlay_notification_text))
             .setSmallIcon(R.drawable.ic_image_outline)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
             .addAction(
                 R.drawable.ic_delete_outline,
-                "Stop Overlay",
+                getString(R.string.overlay_notification_stop_action),
                 stopPendingIntent
             )
             .build()
@@ -389,14 +389,14 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                                     val clipboard =
                                         getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
                                     val clip = android.content.ClipData.newPlainText(
-                                        "OCR Text",
+                                        getString(R.string.clipboard_label_ocr_text),
                                         transliteratedText.value
                                     )
                                     clipboard.setPrimaryClip(clip)
                                     serviceScope.launch(Dispatchers.Main) {
                                         Toast.makeText(
                                             this@OverlayService,
-                                            "Copied to clipboard",
+                                            getString(R.string.overlay_copied_to_clipboard),
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     }

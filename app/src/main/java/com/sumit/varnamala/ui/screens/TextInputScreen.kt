@@ -152,7 +152,7 @@ fun TextInputScreen(navController: NavController) {
             // Auto-copy if enabled
             if (autoCopyEnabled && transliteratedText.isNotBlank()) {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText("Transliterated Text", transliteratedText))
+                clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), transliteratedText))
             }
             
             // Save to history
@@ -174,7 +174,7 @@ fun TextInputScreen(navController: NavController) {
     fun copyToClipboard(text: String) {
         performHapticFeedback()
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText("Transliterated Text", text))
+        clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), text))
         Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
     }
     

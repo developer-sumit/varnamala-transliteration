@@ -46,8 +46,27 @@
     <string name="cancel">రద్దు చేయి</string>
     <string name="close">మూసివేయి</string>
     <string name="copy">కాపీ చేయి</string>
-    <string name="clear">క్లియర్ చేయి</string>
+    <string name="clear">క్లియర్ చేయి</string>    
+    <!-- Bottom Navigation -->
+    <string name="bottom_nav_camera">కెమెరా</string>
+    <string name="bottom_nav_text">టెక్స్ట్</string>
+    <string name="bottom_nav_gallery">గ్యాలరీ</string>
     
+    <!-- Model Management -->
+    <string name="delete_model">మోడల్‌ను తొలగించు</string>
+    <string name="delete_model_confirmation">మీరు %s మోడల్‌ను తొలగించాలనుకుంటున్నారా?</string>
+    <string name="model_deleted_successfully">మోడల్ విజయవంతంగా తొలగించబడింది</string>
+    <string name="failed_to_delete_model">మోడల్‌ను తొలగించడంలో విఫలమైంది</string>
+    
+    <!-- Tutorial / Info Messages -->
+    <string name="tutorial_switch_camera_title">కెమెరా మార్చండి</string>
+    <string name="tutorial_switch_camera_message">ముందు మరియు వెనుక కెమెరాల మధ్య మార్చండి.</string>
+    <string name="camera_info_title">కెమెరా స్క్రీన్</string>
+    <string name="camera_info_message">ఫోటో తీయడానికి ట్యాప్ చేయండి లేదా నిరంతరం స్కాన్ చేయడానికి హోల్డ్ చేయండి.</string>
+    <string name="gallery_info_title">గ్యాలరీ స్క్రీన్</string>
+    <string name="gallery_info_message">సేవ్ చేసిన చిత్రాలను తెరవండి మరియు OCR ఫలితాలను వీక్షించండి.</string>
+    <string name="text_input_info_title">టెక్స్ట్ ఇన్‌పుట్ స్క్రీన్</string>
+    <string name="text_input_info_message">టెక్స్ట్ టైప్ చేయండి మరియు దానిని లిప్యంతరీకరణ చేయండి.</string>    
     <!-- OCR related -->
     <string name="ocr_text">OCR టెక్స్ట్</string>
     <string name="clear_all_ocr_cache">అన్ని OCR క్యాష్ క్లియర్ చేయండి</string>
@@ -193,4 +212,15 @@
     <string name="enable_tts_hint">లిప్యంతరీకరించిన టెక్స్ట్‌ను బిగ్గరగా చదవండి</string>
     <string name="tts_auto_speak">ఫలితాలు ఆటో-స్పీక్</string>
     <string name="tts_auto_speak_hint">లిప్యంతరీకరణ తర్వాత ఆటోమేటిక్‌గా మాట్లాడండి</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">వర్ణమాల ఓవర్‌లే ద్రువంలో ఉంది</string>
+    <string name="overlay_notification_text">స్క్రీన్ టెక్స్ట్‌ని విశ్లేషించడానికి క్యాప్చర్ బటన్‌ను ఉపయోగించండి</string>
+    <string name="overlay_notification_stop_action">ఓవర్‌లేను ఆపండి</string>
+    <string name="overlay_copied_to_clipboard">క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది</string>
+    
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR టెక్స్ట్</string>
+    <string name="clipboard_label_transliterated_text">లిప్యంతరీకరణ చేసిన టెక్స్ట్</string>
+    <string name="clipboard_label_text">టెక్స్ట్</string>
 </resources>

@@ -193,4 +193,34 @@
     <string name="enable_tts_hint">लिप्यंतरित टेक्स्ट को ज़ोर से पढ़ें</string>
     <string name="tts_auto_speak">परिणाम ऑटो-स्पीक</string>
     <string name="tts_auto_speak_hint">लिप्यंतरण के बाद स्वचालित रूप से बोलें</string>
+
+    <!-- Model Delete Dialog -->
+    <string name="delete_model">मॉडल हटाएं</string>
+    <string name="delete_model_confirmation">क्या आप वाकई %s भाषा मॉडल हटाना चाहते हैं? आप इसे बाद में फिर से डाउनलोड कर सकते हैं।</string>
+    <string name="model_deleted_successfully">मॉडल सफलतापूर्वक हटाया गया</string>
+    <string name="failed_to_delete_model">मॉडल हटाने में विफल</string>
+
+    <!-- Missing tutorial and info messages -->
+    <string name="tutorial_switch_camera_title">कैमरा स्विच करें</string>
+    <string name="tutorial_switch_camera_message">फ्रंट और रियर कैमरे के बीच स्विच करें।</string>
+    <string name="camera_info_title">कैमरा</string>
+    <string name="camera_info_message">कैमरे को टेक्स्ट की ओर इंगित करें। फोटो कैप्चर करने के लिए टैप करें, या लगातार स्कैन करने के लिए दबाकर रखें। सटीकता बढ़ाने के लिए फ्लैश और भाषा विकल्पों का उपयोग करें।</string>
+    <string name="gallery_info_title">गैलरी</string>
+    <string name="gallery_info_message">अपने डिवाइस पर हाल की छवियां ब्राउज़ करें। OCR परिणाम और विवरण देखने के लिए किसी भी छवि पर टैप करें।</string>
+    <string name="text_input_info_title">टेक्स्ट इनपुट</string>
+    <string name="text_input_info_message">किसी भी भाषा में टेक्स्ट टाइप या पेस्ट करें और इसे अपनी चुनी हुई भाषा में लिप्यंतरित करें। ऊपर दिए गए बटन का उपयोग करके भाषाएं चुनें।</string>
+    <string name="bottom_nav_camera">कैमरा</string>
+    <string name="bottom_nav_text">टेक्स्ट</string>
+    <string name="bottom_nav_gallery">गैलरी</string>
+
+    <!-- Overlay Service -->
+    <string name="overlay_notification_title">वर्णमाला ओवरले सक्रिय</string>
+    <string name="overlay_notification_text">स्क्रीन टेक्स्ट का विश्लेषण करने के लिए कैप्चर बटन का उपयोग करें</string>
+    <string name="overlay_notification_stop_action">ओवरले बंद करें</string>
+    <string name="overlay_copied_to_clipboard">क्लिपबोर्ड पर कॉपी किया गया</string>
+    
+    <!-- Clipboard Labels -->
+    <string name="clipboard_label_ocr_text">OCR टेक्स्ट</string>
+    <string name="clipboard_label_transliterated_text">लिप्यंतरित टेक्स्ट</string>
+    <string name="clipboard_label_text">टेक्स्ट</string>
 </resources>
