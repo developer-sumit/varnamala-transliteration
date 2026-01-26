@@ -11,15 +11,18 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,7 +47,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryScreen(navController: NavController) {
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
@@ -261,6 +263,10 @@ private fun HistoryEntryCard(
 ) {
     val favoriteScale by animateFloatAsState(
         targetValue = if (entry.isFavorite) 1.1f else 1.0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMedium
+        ),
         label = "favoriteScale"
     )
     val favoriteColor by animateColorAsState(
@@ -268,15 +274,27 @@ private fun HistoryEntryCard(
         label = "favoriteColor"
     )
     
+    var isPressed by remember { mutableStateOf(false) }
+    val cardScale by animateFloatAsState(
+        targetValue = if (isPressed) 0.98f else 1.0f,
+        animationSpec = tween(durationMillis = 100),
+        label = "cardScale"
+    )
+    
     val dateFormat = remember { SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()) }
     
     Surface(
         modifier = modifier
             .fillMaxWidth()
+            .scale(cardScale)
             .clip(RoundedCornerShape(16.dp))
             .combinedClickable(
                 onClick = onClick,
-                onLongClick = onCopy
+                onLongClick = onCopy,
+                onClickLabel = null,
+                onLongClickLabel = null,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
             ),
         color = MaterialTheme.colorScheme.surface,
         tonalElevation = if (isExpanded) 4.dp else 1.dp

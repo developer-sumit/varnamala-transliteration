@@ -84,6 +84,7 @@ fun TextInputScreen(navController: NavController) {
     var targetLanguage by remember { mutableStateOf(supportedLanguages.find { it.code == "hi" }) }
     var showSourceLanguageDialog by remember { mutableStateOf(false) }
     var showTargetLanguageDialog by remember { mutableStateOf(false) }
+    var showTextInputInfoDialog by remember { mutableStateOf(false) }
     
     val focusRequester = remember { FocusRequester() }
     
@@ -221,8 +222,10 @@ fun TextInputScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlassButton(
-                icon = painterResource(R.drawable.ic_chevron_left),
-                onClick = { navController.popBackStack() }
+                icon = painterResource(R.drawable.ic_info),
+                size = 45.dp,
+                background = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                onClick = { showTextInputInfoDialog = true }
             )
             Text(
                 text = stringResource(R.string.text_input),
@@ -487,6 +490,20 @@ fun TextInputScreen(navController: NavController) {
             
             Spacer(modifier = Modifier.height(16.dp))
         }
+    }
+
+     // Info Dialog
+    if (showTextInputInfoDialog) {
+        AlertDialog(
+            onDismissRequest = { showTextInputInfoDialog = false },
+            confirmButton = {
+                TextButton(onClick = { showTextInputInfoDialog = false }) {
+                    Text(text = stringResource(R.string.close))
+                }
+            },
+            title = { Text(text = stringResource(R.string.text_input_info_title)) },
+            text = { Text(text = stringResource(R.string.text_input_info_message)) }
+        )
     }
     
     // Language Selection Dialogs

@@ -13,6 +13,8 @@ import android.os.Bundle
 import android.os.Build
 import android.provider.MediaStore
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -27,6 +29,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.Surface
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +64,7 @@ fun GalleryScreen(navController: NavController) {
 
     var isLoading by remember { mutableStateOf(false) }
     var images by remember { mutableStateOf<List<GalleryImage>>(emptyList()) }
+    var showGalleryInfoDialog by remember { mutableStateOf(false) }
 
     suspend fun loadImages() {
         isLoading = true
@@ -158,8 +163,8 @@ fun GalleryScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlassButton(
-                icon = painterResource(R.drawable.ic_chevron_left),
-                onClick = { navController.popBackStack() })
+                icon = painterResource(R.drawable.ic_info),
+                onClick = { showGalleryInfoDialog = true })
             Text(
                 text = stringResource(R.string.gallery),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
@@ -197,6 +202,16 @@ fun GalleryScreen(navController: NavController) {
                                 tonalElevation = 2.dp,
                                 shape = RoundedCornerShape(20.dp),
                                 modifier = Modifier
+                                    .animateItem(
+                                        fadeInSpec = spring(
+                                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                                            stiffness = Spring.StiffnessMediumLow
+                                        ),
+                                        placementSpec = spring(
+                                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                                            stiffness = Spring.StiffnessMediumLow
+                                        )
+                                    )
                                     .fillMaxWidth()
                                     .border(
                                         color = MaterialTheme.colorScheme.onSurface,
@@ -237,5 +252,18 @@ fun GalleryScreen(navController: NavController) {
                     }
                 }
             })
+    }
+
+    if (showGalleryInfoDialog) {
+        AlertDialog(
+            onDismissRequest = { showGalleryInfoDialog = false },
+            confirmButton = {
+                TextButton(onClick = { showGalleryInfoDialog = false }) {
+                    Text(text = stringResource(R.string.close))
+                }
+            },
+            title = { Text(text = stringResource(R.string.gallery_info_title)) },
+            text = { Text(text = stringResource(R.string.gallery_info_message)) }
+        )
     }
 }

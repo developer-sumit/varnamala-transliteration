@@ -6,6 +6,8 @@ import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository as AppLanguagePrefsRepository
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -93,7 +95,10 @@ fun LanguageScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 20.dp)
             ) {
-                items(availableLanguages) { language ->
+                items(
+                    items = availableLanguages,
+                    key = { it.localeCode }
+                ) { language ->
                     LanguageItem(
                         language = language,
                         isSelected = currentLanguage == language.localeCode,
@@ -102,7 +107,17 @@ fun LanguageScreen(navController: NavController) {
                                 languageRepository.setAppLanguage(language.localeCode)
                                 navController.popBackStack()
                             }
-                        }
+                        },
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            ),
+                            placementSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
                     )
                 }
             }
@@ -114,11 +129,12 @@ fun LanguageScreen(navController: NavController) {
 private fun LanguageItem(
     language: Language,
     isSelected: Boolean,
-    onLanguageSelected: () -> Unit
+    onLanguageSelected: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .background(

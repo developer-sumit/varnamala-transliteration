@@ -12,8 +12,12 @@ import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
 import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -847,6 +851,15 @@ fun SettingItem(
     isLastItem: Boolean = false,
     showDivider: Boolean = false
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed && onClick != null) 0.98f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        label = "settingItemScale"
+    )
+    
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -854,7 +867,11 @@ fun SettingItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(enabled = onClick != null) {
+                .clickable(
+                    enabled = onClick != null,
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
                     onClick?.invoke()
                 }
                 .heightIn(min = 64.dp)

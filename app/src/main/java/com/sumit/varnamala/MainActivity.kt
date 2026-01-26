@@ -16,6 +16,7 @@ import com.sumit.varnamala.data.preferences.OnboardingRepository
 import com.sumit.varnamala.ui.theme.VarnamalaTheme
 import com.sumit.varnamala.service.OverlayManager
 import com.sumit.varnamala.utils.ScreenCaptureHelper
+import com.sumit.varnamala.ui.components.BottomNavBar
 
 import android.app.Activity
 import android.content.Intent
@@ -32,6 +33,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import java.util.Locale
@@ -40,6 +42,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -75,22 +78,24 @@ class MainActivity : ComponentActivity() {
 
                 resources.updateConfiguration(config, resources.displayMetrics)
                 applicationContext.resources.updateConfiguration(
-                    config,
-                    applicationContext.resources.displayMetrics
+                    config, applicationContext.resources.displayMetrics
                 )
             }
 
             val isDarkTheme by themeSettingsRepository.isDarkTheme.collectAsState(initial = true)
 
-            val hasSelectedAppLanguage by onboardingRepository.hasSelectedAppLanguageLoaded.collectAsState(initial = null)
-            val hasExplicitAppLanguage by languageRepository.hasExplicitAppLanguageLoaded.collectAsState(initial = null)
+            val hasSelectedAppLanguage by onboardingRepository.hasSelectedAppLanguageLoaded.collectAsState(
+                initial = null
+            )
+            val hasExplicitAppLanguage by languageRepository.hasExplicitAppLanguageLoaded.collectAsState(
+                initial = null
+            )
 
             LaunchedEffect(isDarkTheme) {
                 WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-                
+
                 val windowInsetsController = WindowInsetsControllerCompat(
-                    activity.window, 
-                    activity.window.decorView
+                    activity.window, activity.window.decorView
                 )
 
                 windowInsetsController.isAppearanceLightStatusBars = !isDarkTheme
@@ -107,13 +112,129 @@ class MainActivity : ComponentActivity() {
                 if (startDestination == null) {
                     Box(modifier = Modifier.fillMaxSize())
                 } else {
-                    NavHost(
-                        navController = navController,
-                        startDestination = startDestination,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentRoute = navBackStackEntry?.destination?.route
+                    val bottomBarRoutes = setOf(
+                        Screen.Home.route, Screen.TextInput.route, Screen.Gallery.route
+                    )
+                    val showBottomBar = currentRoute in bottomBarRoutes
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = startDestination,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            composable(Screen.OnboardingLanguage.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                OnboardingLanguageScreen(navController)
+                            }
+                            composable(Screen.Home.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                CameraScreen(navController)
+                            }
+                            composable(Screen.Gallery.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                GalleryScreen(navController)
+                            }
+                            composable(Screen.Settings.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                SettingsScreen(
+                                    navController = navController,
+                                    themeRepository = themeSettingsRepository
+                                )
+                            }
+                            composable(Screen.Language.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                LanguageScreen(navController)
+                            }
+                            composable(Screen.Models.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                ModelsScreen(navController)
+                            }
+                            composable(Screen.TextInput.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                TextInputScreen(navController)
+                            }
+                            composable(Screen.History.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                HistoryScreen(navController)
+                            }
                             composable(
-                                Screen.OnboardingLanguage.route,
+                                route = Screen.ImageDetail.route,
+                                arguments = listOf(navArgument("id") { type = NavType.LongType }),
                                 enterTransition = {
                                     slideIntoContainer(
                                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
@@ -125,164 +246,36 @@ class MainActivity : ComponentActivity() {
                                         towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
                                         animationSpec = tween(300)
                                     )
-                                }
+                                }) { backStackEntry ->
+                                val imageId = backStackEntry.arguments?.getLong("id") ?: -1L
+                                ImageDetailScreen(
+                                    navController = navController, imageId = imageId
+                                )
+                            }
+                        }
+
+                        // Bottom Navigation Bar
+                        if (showBottomBar) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
                             ) {
-                                OnboardingLanguageScreen(navController)
-                            }
-                        composable(
-                            Screen.Home.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
+                                BottomNavBar(
+                                    navController = navController,
+                                    currentRoute = currentRoute
                                 )
                             }
-                        ) {
-                            CameraScreen(navController)
-                        }
-                        composable(
-                            Screen.Gallery.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) {
-                            GalleryScreen(navController)
-                        }
-                        composable(
-                            Screen.Settings.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) {
-                            SettingsScreen(
-                                navController = navController,
-                                themeRepository = themeSettingsRepository
-                            )
-                        }
-                        composable(
-                            Screen.Language.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) {
-                            LanguageScreen(navController)
-                        }
-                        composable(
-                            Screen.Models.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) {
-                            ModelsScreen(navController)
-                        }
-                        composable(
-                            Screen.TextInput.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) {
-                            TextInputScreen(navController)
-                        }
-                        composable(
-                            Screen.History.route,
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) {
-                            HistoryScreen(navController)
-                        }
-                        composable(
-                            route = Screen.ImageDetail.route,
-                            arguments = listOf(navArgument("id") { type = NavType.LongType }),
-                            enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            },
-                            exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }
-                        ) { backStackEntry ->
-                            val imageId = backStackEntry.arguments?.getLong("id") ?: -1L
-                            ImageDetailScreen(
-                                navController = navController,
-                                imageId = imageId
-                            )
                         }
                     }
                 }
             }
         }
     }
-    
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        
+
         if (requestCode == ScreenCaptureHelper.REQUEST_MEDIA_PROJECTION) {
             if (resultCode == RESULT_OK && data != null) {
                 // Screen capture permission granted, start overlay service

@@ -25,6 +25,9 @@
     <string name="clear_cache">Clear Cache</string>
     <string name="gallery">Gallery</string>
     <string name="done">Done</string>
+    <string name="bottom_nav_camera">Camera</string>
+    <string name="bottom_nav_text">Text</string>
+    <string name="bottom_nav_gallery">Gallery</string>
 
     <!-- Tutorial / walkthrough -->
     <string name="tutorial_next">Next</string>
@@ -39,6 +42,8 @@
     <string name="tutorial_capture_message">Tap to capture a photo, or press and hold to scan continuously.</string>
     <string name="tutorial_gallery_title">Gallery</string>
     <string name="tutorial_gallery_message">Open saved images and view OCR results.</string>
+    <string name="tutorial_switch_camera_title">Switch Camera</string>
+    <string name="tutorial_switch_camera_message">Switch between front and rear cameras.</string>
     
     <!-- Common UI actions -->
     <string name="confirm">Confirm</string>
@@ -82,6 +87,12 @@
     <string name="select_language">Select language</string>
     <string name="selected">Selected</string>
     <string name="back">Back</string>
+    <string name="camera_info_title">Camera</string>
+    <string name="camera_info_message">Point the camera at text. Tap to capture a photo, or press and hold to scan continuously. Use flash and language options to improve accuracy.</string>
+    <string name="gallery_info_title">Gallery</string>
+    <string name="gallery_info_message">Browse recent images on your device. Tap any image to view OCR results and details.</string>
+    <string name="text_input_info_title">Text Input</string>
+    <string name="text_input_info_message">Type or paste text in any language and transliterate it to your chosen language. Select languages using the buttons above.</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">Image Details</string>

@@ -29,6 +29,8 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.speech.tts.TextToSpeech
 import android.widget.Toast
+import androidx.camera.core.CameraSelector
+import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.compose.foundation.background
@@ -50,6 +52,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -63,25 +66,50 @@ fun CameraScreen(navController: NavController) {
     val tutorialScope = rememberCoroutineScope()
     val tutorialTargets = remember { mutableStateMapOf<String, Rect>() }
     var cameraPermissionGranted by remember { mutableStateOf(false) }
+    var showCameraInfoDialog by remember { mutableStateOf(false) }
+
+    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
+    var hasBackCamera by remember { mutableStateOf<Boolean?>(null) }
+    var hasFrontCamera by remember { mutableStateOf<Boolean?>(null) }
+    var lensFacing by remember { mutableStateOf(CameraSelector.LENS_FACING_BACK) }
+
+    LaunchedEffect(cameraProviderFuture) {
+        cameraProviderFuture.addListener(
+            {
+                val provider = cameraProviderFuture.get()
+                hasBackCamera = provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA)
+                hasFrontCamera = provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA)
+            },
+            ContextCompat.getMainExecutor(context)
+        )
+    }
+
+    LaunchedEffect(hasBackCamera, hasFrontCamera) {
+        if (hasBackCamera == false && hasFrontCamera == true) {
+            lensFacing = CameraSelector.LENS_FACING_FRONT
+        }
+    }
 
     val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
     val userPrefsRepository = remember { UserPreferencesRepository(context) }
     val historyRepository = remember { TransliterationHistoryRepository(context) }
-    
-    val detectionIntervalMs by ocrSettingsRepository.cameraDetectionIntervalMs.collectAsState(initial = 1000L)
+
+    val detectionIntervalMs by ocrSettingsRepository.cameraDetectionIntervalMs.collectAsState(
+        initial = 1000L
+    )
     val readingMsPerWord by ocrSettingsRepository.cameraReadingMsPerWord.collectAsState(initial = 300)
     val maxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
     val skipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
-    
+
     // User preferences
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
     val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
     val ttsAutoSpeak by userPrefsRepository.ttsAutoSpeak.collectAsState(initial = false)
-    
+
     // TTS
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
     var ttsReady by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(ttsEnabled) {
         if (ttsEnabled) {
             tts = TextToSpeech(context) { status ->
@@ -93,7 +121,7 @@ fun CameraScreen(navController: NavController) {
             ttsReady = false
         }
     }
-    
+
     DisposableEffect(Unit) {
         onDispose {
             tts?.shutdown()
@@ -163,6 +191,7 @@ fun CameraScreen(navController: NavController) {
                         modifier = Modifier.fillMaxSize(),
                         isDetectionRunning = detectionRunning,
                         flashEnabled = flashEnabled,
+                        lensFacing = lensFacing,
                         preferredLanguage = null,
                         detectionIntervalMs = detectionIntervalMs,
                         readingMsPerWord = readingMsPerWord,
@@ -259,13 +288,13 @@ fun CameraScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left side - Text Input button
+            // Left side - Info button
             GlassButton(
-                icon = painterResource(R.drawable.ic_keyboard),
+                icon = painterResource(R.drawable.ic_info),
                 background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                onClick = { navController.navigate(Screen.TextInput.route) }
+                onClick = { showCameraInfoDialog = true }
             )
-            
+
             // Right side - History and Settings
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 GlassButton(
@@ -289,7 +318,7 @@ fun CameraScreen(navController: NavController) {
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .padding(bottom = topInset),
+                .padding(bottom = topInset + 74.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // OCR Result Card
@@ -302,7 +331,7 @@ fun CameraScreen(navController: NavController) {
                         targetLanguage = targetLang.localeCode
                     )
                 } else rawOcrText
-                
+
                 LaunchedEffect(rawOcrText, transliteratedText) {
                     if (rawOcrText.isNotBlank() && transliteratedText.isNotBlank() && transliteratedText != rawOcrText) {
                         // Save to history
@@ -315,14 +344,24 @@ fun CameraScreen(navController: NavController) {
                                 source = "camera"
                             )
                         )
-                        
+
                         // Auto-copy if enabled
                         if (autoCopyEnabled) {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText("Transliterated Text", transliteratedText))
-                            Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                            val clipboard =
+                                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(
+                                ClipData.newPlainText(
+                                    "Transliterated Text",
+                                    transliteratedText
+                                )
+                            )
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                        
+
                         // Auto-speak if enabled
                         if (ttsEnabled && ttsAutoSpeak && targetLang != null) {
                             speakText(transliteratedText, targetLang.localeCode)
@@ -343,7 +382,11 @@ fun CameraScreen(navController: NavController) {
                             transliteratedText
                         )
                         clipboard.setPrimaryClip(clip)
-                        Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.copied),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
                 )
@@ -426,23 +469,30 @@ fun CameraScreen(navController: NavController) {
                     }
                 )
 
-                // Gallery button
+                // Camera Switch button
                 GlassButton(
-                    modifier = Modifier.captureBounds("gallery") { key, rect ->
+                    modifier = Modifier.captureBounds("switch_camera") { key, rect ->
                         tutorialTargets[key] = rect
                     },
-                    icon = painterResource(R.drawable.ic_image_outline),
+                    icon = painterResource(R.drawable.ic_switch_camera),
                     size = 60.dp,
-                    onClick = { navController.navigate(Screen.Gallery.route) }
+                    enabled = hasBackCamera == true && hasFrontCamera == true,
+                    onClick = {
+                        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                            CameraSelector.LENS_FACING_FRONT
+                        } else {
+                            CameraSelector.LENS_FACING_BACK
+                        }
+                    }
                 )
             }
         }
 
         val shouldShowTutorial =
             cameraPermissionGranted &&
-                capturedBitmap == null &&
-                hasSeenTutorial != null &&
-                (hasSeenTutorial == false)
+                    capturedBitmap == null &&
+                    hasSeenTutorial != null &&
+                    (hasSeenTutorial == false)
         if (shouldShowTutorial) {
             val steps = listOf(
                 CoachMarkStep(
@@ -466,9 +516,9 @@ fun CameraScreen(navController: NavController) {
                     message = stringResource(R.string.tutorial_capture_message)
                 ),
                 CoachMarkStep(
-                    targetKey = "gallery",
-                    title = stringResource(R.string.tutorial_gallery_title),
-                    message = stringResource(R.string.tutorial_gallery_message)
+                    targetKey = "switch_camera",
+                    title = stringResource(R.string.tutorial_switch_camera_title),
+                    message = stringResource(R.string.tutorial_switch_camera_message)
                 ),
             )
 
@@ -557,7 +607,11 @@ fun CameraScreen(navController: NavController) {
                                     transliteratedText
                                 )
                                 clipboard.setPrimaryClip(clip)
-                                Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.copied),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             },
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                         )
@@ -609,14 +663,34 @@ fun CameraScreen(navController: NavController) {
                             }
                         )
 
-                        // Gallery button
+                        // Switch camera button
                         GlassButton(
-                            icon = painterResource(R.drawable.ic_image_outline),
-                            onClick = { navController.navigate(Screen.Gallery.route) }
+                            icon = painterResource(R.drawable.ic_switch_camera),
+                            enabled = hasBackCamera == true && hasFrontCamera == true,
+                            onClick = {
+                                lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                                    CameraSelector.LENS_FACING_FRONT
+                                } else {
+                                    CameraSelector.LENS_FACING_BACK
+                                }
+                            }
                         )
                     }
                 }
             }
+        }
+
+        if (showCameraInfoDialog) {
+            AlertDialog(
+                onDismissRequest = { showCameraInfoDialog = false },
+                confirmButton = {
+                    TextButton(onClick = { showCameraInfoDialog = false }) {
+                        Text(text = stringResource(R.string.close))
+                    }
+                },
+                title = { Text(text = stringResource(R.string.camera_info_title)) },
+                text = { Text(text = stringResource(R.string.camera_info_message)) }
+            )
         }
 
         // Language Selection Dialogs

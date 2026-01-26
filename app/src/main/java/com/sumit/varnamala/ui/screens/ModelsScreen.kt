@@ -9,6 +9,8 @@ import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.models.modeldownload.ModelDownloadManager
 import com.sumit.varnamala.models.modeldownload.ModelDownloadWorker
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,16 +30,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -125,7 +131,10 @@ fun ModelsScreen(navController: NavController) {
                     )
                 }
 
-                items(tesseractLanguages) { row ->
+                items(
+                    items = tesseractLanguages,
+                    key = { it.tessCode }
+                ) { row ->
                     val tag = ModelDownloadManager.tagForLanguage(row.tessCode)
                     val workInfosFlow = remember(tag) { workManager.getWorkInfosByTagFlow(tag) }
                     val workInfos by workInfosFlow.collectAsState(initial = emptyList())
@@ -157,7 +166,17 @@ fun ModelsScreen(navController: NavController) {
                                     .makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
                                     .show()
                             }
-                        }
+                        },
+                        modifier = Modifier.animateItem(
+                            fadeInSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            ),
+                            placementSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
                     )
                 }
             }
@@ -182,11 +201,15 @@ private fun ModelRow(
     downloaded: Boolean,
     percent: Int?,
     sizeBytes: Long?,
-    onDownload: () -> Unit
+    onDownload: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.surface)
@@ -234,12 +257,25 @@ private fun ModelRow(
 
         when {
             downloaded -> {
-                Icon(
-                    painter = painterResource(R.drawable.ic_check),
-                    contentDescription = stringResource(R.string.model_downloaded),
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(24.dp)
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_check),
+                        contentDescription = stringResource(R.string.model_downloaded),
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    IconButton(onClick = { showDeleteDialog = true }) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_delete_outline),
+                            contentDescription = "Delete model",
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
             }
 
             percent != null -> {
@@ -267,6 +303,37 @@ private fun ModelRow(
                 }
             }
         }
+    }
+    
+    // Delete confirmation dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Model") },
+            text = { 
+                Text("Are you sure you want to delete the $name language model? You can download it again later if needed.")
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        val deleted = TesseractModelStore.deleteModel(context, tessCode)
+                        if (deleted) {
+                            Toast.makeText(context, "Model deleted successfully", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(context, "Failed to delete model", Toast.LENGTH_SHORT).show()
+                        }
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }
 

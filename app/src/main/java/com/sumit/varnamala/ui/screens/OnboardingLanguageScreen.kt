@@ -6,6 +6,8 @@ import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.data.preferences.AppLanguageRepository as AppLanguagePrefsRepository
 import com.sumit.varnamala.data.preferences.OnboardingRepository
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -99,10 +101,23 @@ fun OnboardingLanguageScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 20.dp)
             ) {
-                items(availableLanguages) { language ->
+                items(
+                    items = availableLanguages,
+                    key = { it.localeCode }
+                ) { language ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
+                            .animateItem(
+                                fadeInSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMediumLow
+                                ),
+                                placementSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMediumLow
+                                )
+                            )
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(24.dp))
                             .background(MaterialTheme.colorScheme.surface)

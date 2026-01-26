@@ -38,6 +38,7 @@ fun OCRCameraPreview(
     modifier: Modifier = Modifier,
     isDetectionRunning: Boolean = false,
     flashEnabled: Boolean = false,
+    lensFacing: Int = CameraSelector.LENS_FACING_BACK,
     preferredLanguage: String? = null,
     // time-based sampling (milliseconds)
     detectionIntervalMs: Long = 1000L,
@@ -101,6 +102,7 @@ fun OCRCameraPreview(
                         context = context,
                         lifecycleOwner = lifecycleOwner,
                         previewView = currentPreviewView,
+                        lensFacing = lensFacing,
                         onCameraProviderReady = { provider, cam, prev, imgCapture ->
                             cameraProvider = provider
                             camera = cam
@@ -128,7 +130,7 @@ fun OCRCameraPreview(
             modifier = Modifier.fillMaxSize()
         )
 
-        LaunchedEffect(isDetectionRunning) {
+        LaunchedEffect(isDetectionRunning, lensFacing) {
             cameraProvider?.let { provider ->
                 val wrappedOnOCR: (OCRResult) -> Unit = { result ->
                     lastOCRResult = result
@@ -140,6 +142,7 @@ fun OCRCameraPreview(
                     lifecycleOwner = lifecycleOwner,
                     preview = preview,
                     imageCapture = imageCapture,
+                    lensFacing = lensFacing,
                     isDetectionRunning = isDetectionRunning,
                     cameraExecutor = cameraExecutor,
                     skipFrames = skipFrames,
@@ -240,6 +243,7 @@ private fun setupCameraOnce(
     context: Context,
     lifecycleOwner: LifecycleOwner,
     previewView: PreviewView,
+    lensFacing: Int,
     onCameraProviderReady: (ProcessCameraProvider, Camera, Preview, ImageCapture) -> Unit,
     onError: (String) -> Unit
 ) {
@@ -255,7 +259,7 @@ private fun setupCameraOnce(
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
             
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+            val cameraSelector = selectCameraSelector(cameraProvider, lensFacing)
             cameraProvider.unbindAll()
             val camera = cameraProvider.bindToLifecycle(
                 lifecycleOwner, 
@@ -277,6 +281,7 @@ private fun updateAnalysisUseCase(
     lifecycleOwner: LifecycleOwner,
     preview: Preview?,
     imageCapture: ImageCapture?,
+    lensFacing: Int,
     isDetectionRunning: Boolean,
     cameraExecutor: ExecutorService,
     skipFrames: Int,
@@ -294,7 +299,7 @@ private fun updateAnalysisUseCase(
     suppressDuplicateDurationMs: Long = 2000L
 ) {
     try {
-        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        val cameraSelector = selectCameraSelector(cameraProvider, lensFacing)
 
         if (isDetectionRunning) {
             val imageAnalyzer = ImageAnalysis.Builder()
@@ -383,6 +388,21 @@ private fun updateAnalysisUseCase(
     } catch (exc: Exception) {
         Log.e("OCRCameraPreview", "Analysis update failed", exc)
         onError("Camera analysis update failed: ${exc.message}")
+    }
+}
+
+private fun selectCameraSelector(
+    cameraProvider: ProcessCameraProvider,
+    lensFacing: Int
+): CameraSelector {
+    val desired = CameraSelector.Builder()
+        .requireLensFacing(lensFacing)
+        .build()
+    return when {
+        cameraProvider.hasCamera(desired) -> desired
+        cameraProvider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) -> CameraSelector.DEFAULT_BACK_CAMERA
+        cameraProvider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) -> CameraSelector.DEFAULT_FRONT_CAMERA
+        else -> desired
     }
 }
 
