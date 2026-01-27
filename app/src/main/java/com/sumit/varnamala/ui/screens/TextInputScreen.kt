@@ -26,15 +26,44 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,21 +92,21 @@ fun TextInputScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val scrollState = rememberScrollState()
-    
+
     val historyRepository = remember { TransliterationHistoryRepository(context) }
     val userPrefsRepository = remember { UserPreferencesRepository(context) }
-    
+
     // User preferences
     val textDisplaySize by userPrefsRepository.textDisplaySize.collectAsState(initial = 1.0f)
     val hapticEnabled by userPrefsRepository.hapticFeedbackEnabled.collectAsState(initial = true)
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
     val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
-    
+
     // Input state
     var inputText by remember { mutableStateOf("") }
     var transliteratedText by remember { mutableStateOf("") }
     var isTransliterating by remember { mutableStateOf(false) }
-    
+
     // Language selection
     val supportedLanguages = remember { AppLanguageRepository.getSupportedLanguages() }
     var sourceLanguage by remember { mutableStateOf<Language?>(null) }
@@ -85,13 +114,13 @@ fun TextInputScreen(navController: NavController) {
     var showSourceLanguageDialog by remember { mutableStateOf(false) }
     var showTargetLanguageDialog by remember { mutableStateOf(false) }
     var showTextInputInfoDialog by remember { mutableStateOf(false) }
-    
+
     val focusRequester = remember { FocusRequester() }
-    
+
     // TTS
     var tts by remember { mutableStateOf<TextToSpeech?>(null) }
     var ttsReady by remember { mutableStateOf(false) }
-    
+
     LaunchedEffect(ttsEnabled) {
         if (ttsEnabled) {
             tts = TextToSpeech(context) { status ->
@@ -103,13 +132,13 @@ fun TextInputScreen(navController: NavController) {
             ttsReady = false
         }
     }
-    
+
     DisposableEffect(Unit) {
         onDispose {
             tts?.shutdown()
         }
     }
-    
+
     // Haptic feedback helper
     fun performHapticFeedback() {
         if (!hapticEnabled) return
@@ -120,7 +149,7 @@ fun TextInputScreen(navController: NavController) {
             @Suppress("DEPRECATION")
             context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
@@ -128,33 +157,39 @@ fun TextInputScreen(navController: NavController) {
             vibrator.vibrate(30)
         }
     }
-    
+
     // Transliterate function
     fun transliterate() {
         if (inputText.isBlank()) {
             transliteratedText = ""
             return
         }
-        
+
         scope.launch {
             isTransliterating = true
             performHapticFeedback()
-            
+
             delay(100) // Small delay for UX
-            
+
             val srcLang = sourceLanguage?.localeCode ?: "en"
             val tgtLang = targetLanguage?.localeCode ?: "hi"
-            
+
             transliteratedText = Transliterator.transliterate(inputText, srcLang, tgtLang)
-            
+
             isTransliterating = false
-            
+
             // Auto-copy if enabled
             if (autoCopyEnabled && transliteratedText.isNotBlank()) {
-                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), transliteratedText))
+                val clipboard =
+                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(
+                    ClipData.newPlainText(
+                        context.getString(R.string.clipboard_label_transliterated_text),
+                        transliteratedText
+                    )
+                )
             }
-            
+
             // Save to history
             if (transliteratedText.isNotBlank() && transliteratedText != inputText) {
                 historyRepository.addEntry(
@@ -169,15 +204,20 @@ fun TextInputScreen(navController: NavController) {
             }
         }
     }
-    
+
     // Copy to clipboard
     fun copyToClipboard(text: String) {
         performHapticFeedback()
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), text))
+        clipboard.setPrimaryClip(
+            ClipData.newPlainText(
+                context.getString(R.string.clipboard_label_transliterated_text),
+                text
+            )
+        )
         Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
     }
-    
+
     // Speak text
     fun speakText(text: String) {
         if (ttsReady && tts != null) {
@@ -200,13 +240,13 @@ fun TextInputScreen(navController: NavController) {
             Toast.makeText(context, "TTS not available", Toast.LENGTH_SHORT).show()
         }
     }
-    
+
     // Auto-focus input on launch
     LaunchedEffect(Unit) {
         delay(300)
         focusRequester.requestFocus()
     }
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -237,7 +277,7 @@ fun TextInputScreen(navController: NavController) {
                 onClick = { navController.navigate("settings") }
             )
         }
-        
+
         Column(
             modifier = Modifier
                 .weight(1f)
@@ -260,13 +300,13 @@ fun TextInputScreen(navController: NavController) {
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = sourceLanguage?.let { "${it.flagEmoji} ${it.name}" } 
+                        text = sourceLanguage?.let { "${it.flagEmoji} ${it.name}" }
                             ?: stringResource(R.string.auto_detect),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium
                     )
                 }
-                
+
                 // Swap Button
                 IconButton(
                     onClick = {
@@ -285,21 +325,21 @@ fun TextInputScreen(navController: NavController) {
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
-                
+
                 // Target Language
                 TextButton(
                     onClick = { showTargetLanguageDialog = true },
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = targetLanguage?.let { "${it.flagEmoji} ${it.name}" } 
+                        text = targetLanguage?.let { "${it.flagEmoji} ${it.name}" }
                             ?: stringResource(R.string.select_language),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Medium
                     )
                 }
             }
-            
+
             // Input Text Area
             Column(
                 modifier = Modifier
@@ -325,7 +365,7 @@ fun TextInputScreen(navController: NavController) {
                     )
                     if (inputText.isNotBlank()) {
                         TextButton(
-                            onClick = { 
+                            onClick = {
                                 inputText = ""
                                 transliteratedText = ""
                                 performHapticFeedback()
@@ -339,9 +379,9 @@ fun TextInputScreen(navController: NavController) {
                         }
                     }
                 }
-                
+
                 Spacer(modifier = Modifier.height(8.dp))
-                
+
                 BasicTextField(
                     value = inputText,
                     onValueChange = { inputText = it },
@@ -376,7 +416,7 @@ fun TextInputScreen(navController: NavController) {
                         }
                     }
                 )
-                
+
                 // Character count
                 Text(
                     text = "${inputText.length} ${stringResource(R.string.characters)}",
@@ -388,7 +428,7 @@ fun TextInputScreen(navController: NavController) {
                     textAlign = TextAlign.End
                 )
             }
-            
+
             // Transliterate Button
             Button(
                 onClick = {
@@ -415,7 +455,7 @@ fun TextInputScreen(navController: NavController) {
                     )
                 }
             }
-            
+
             // Result Area
             AnimatedVisibility(
                 visible = transliteratedText.isNotBlank(),
@@ -445,7 +485,7 @@ fun TextInputScreen(navController: NavController) {
                             color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
-                        
+
                         Row {
                             // Copy button
                             IconButton(
@@ -458,7 +498,7 @@ fun TextInputScreen(navController: NavController) {
                                     modifier = Modifier.size(20.dp)
                                 )
                             }
-                            
+
                             // TTS button (if enabled)
                             if (ttsEnabled) {
                                 IconButton(
@@ -474,9 +514,9 @@ fun TextInputScreen(navController: NavController) {
                             }
                         }
                     }
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Text(
                         text = transliteratedText,
                         style = TextStyle(
@@ -487,12 +527,12 @@ fun TextInputScreen(navController: NavController) {
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
-     // Info Dialog
+    // Info Dialog
     if (showTextInputInfoDialog) {
         AlertDialog(
             onDismissRequest = { showTextInputInfoDialog = false },
@@ -505,13 +545,13 @@ fun TextInputScreen(navController: NavController) {
             text = { Text(text = stringResource(R.string.text_input_info_message)) }
         )
     }
-    
+
     // Language Selection Dialogs
     if (showSourceLanguageDialog) {
         LanguageSelectionDialog(
             title = stringResource(R.string.select_ocr_language),
             currentLanguage = sourceLanguage,
-            onLanguageSelected = { 
+            onLanguageSelected = {
                 sourceLanguage = it
                 showSourceLanguageDialog = false
             },
@@ -525,12 +565,12 @@ fun TextInputScreen(navController: NavController) {
             showDownloadOption = false  // No download needed for text transliteration
         )
     }
-    
+
     if (showTargetLanguageDialog) {
         LanguageSelectionDialog(
             title = stringResource(R.string.select_transliteration_language),
             currentLanguage = targetLanguage,
-            onLanguageSelected = { 
+            onLanguageSelected = {
                 targetLanguage = it
                 showTargetLanguageDialog = false
             },

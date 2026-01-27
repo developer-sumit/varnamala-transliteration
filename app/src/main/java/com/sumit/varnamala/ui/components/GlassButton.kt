@@ -42,14 +42,14 @@ fun GlassButton(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    
+
     // Animate scale when pressed
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.92f else 1f,
         animationSpec = tween(durationMillis = 100),
         label = "buttonScale"
     )
-    
+
     Box(
         modifier = modifier
             .size(size)

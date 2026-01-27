@@ -1,12 +1,25 @@
 package com.sumit.varnamala.ui.components
 
 import com.sumit.varnamala.R
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -54,7 +67,7 @@ fun DisplayOptionsDialog(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     // Bounding Boxes Section
                     Row(
@@ -65,7 +78,10 @@ fun DisplayOptionsDialog(
                             checked = showBoundingBoxes,
                             onCheckedChange = onShowBoundingBoxesChange
                         )
-                        Text(stringResource(R.string.show_bounding_boxes), fontWeight = FontWeight.Medium)
+                        Text(
+                            stringResource(R.string.show_bounding_boxes),
+                            fontWeight = FontWeight.Medium
+                        )
                     }
 
                     if (showBoundingBoxes) {
@@ -81,7 +97,10 @@ fun DisplayOptionsDialog(
                                     checked = showBlockBoundingBoxes,
                                     onCheckedChange = onShowBlockBoundingBoxesChange
                                 )
-                                Text(stringResource(R.string.text_blocks), style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    stringResource(R.string.text_blocks),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                             }
 
                             Row(
@@ -92,7 +111,10 @@ fun DisplayOptionsDialog(
                                     checked = showLineBoundingBoxes,
                                     onCheckedChange = onShowLineBoundingBoxesChange
                                 )
-                                Text(stringResource(R.string.text_lines), style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    stringResource(R.string.text_lines),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                             }
 
                             Row(
@@ -103,14 +125,23 @@ fun DisplayOptionsDialog(
                                     checked = showWordBoundingBoxes,
                                     onCheckedChange = onShowWordBoundingBoxesChange
                                 )
-                                Text(stringResource(R.string.words), style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    stringResource(R.string.words),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                             }
                         }
-                        
+
                         // Stroke width slider
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(stringResource(R.string.bounding_box_width, boundingBoxStrokeWidth.toInt()), 
-                             style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                        Text(
+                            stringResource(
+                                R.string.bounding_box_width,
+                                boundingBoxStrokeWidth.toInt()
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium
+                        )
                         Slider(
                             value = boundingBoxStrokeWidth,
                             onValueChange = onBoundingBoxStrokeWidthChange,
@@ -131,13 +162,22 @@ fun DisplayOptionsDialog(
                             checked = showTextOverlay,
                             onCheckedChange = onShowTextOverlayChange
                         )
-                        Text(stringResource(R.string.show_text_overlay), fontWeight = FontWeight.Medium)
+                        Text(
+                            stringResource(R.string.show_text_overlay),
+                            fontWeight = FontWeight.Medium
+                        )
                     }
 
                     if (showTextOverlay) {
                         // Text background opacity slider
-                        Text(stringResource(R.string.text_background_opacity, (textBackgroundOpacity * 100).toInt()), 
-                             style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                        Text(
+                            stringResource(
+                                R.string.text_background_opacity,
+                                (textBackgroundOpacity * 100).toInt()
+                            ),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium
+                        )
                         Slider(
                             value = textBackgroundOpacity,
                             onValueChange = onTextBackgroundOpacityChange,

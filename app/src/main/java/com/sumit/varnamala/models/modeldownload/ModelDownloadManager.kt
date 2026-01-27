@@ -26,15 +26,20 @@ object ModelDownloadManager {
 
         // One download per language at a time.
         WorkManager.getInstance(context)
-            .enqueueUniqueWork(uniqueWorkName(tesseractLanguageCode), ExistingWorkPolicy.KEEP, request)
+            .enqueueUniqueWork(
+                uniqueWorkName(tesseractLanguageCode),
+                ExistingWorkPolicy.KEEP,
+                request
+            )
 
         return true
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {
         return try {
-            val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-                ?: return false
+            val connectivityManager =
+                context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+                    ?: return false
             val network = connectivityManager.activeNetwork ?: return false
             val caps = connectivityManager.getNetworkCapabilities(network) ?: return false
             caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
@@ -43,7 +48,8 @@ object ModelDownloadManager {
         }
     }
 
-    fun uniqueWorkName(tesseractLanguageCode: String): String = "download_model_$tesseractLanguageCode"
+    fun uniqueWorkName(tesseractLanguageCode: String): String =
+        "download_model_$tesseractLanguageCode"
 
     fun tagForLanguage(tesseractLanguageCode: String): String = "model_$tesseractLanguageCode"
 }

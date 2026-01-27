@@ -1,5 +1,6 @@
 package com.sumit.varnamala.ui.screens
 
+
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.GlassButton
@@ -853,13 +854,13 @@ fun SettingItem(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
-    
+
     val scale by animateFloatAsState(
         targetValue = if (isPressed && onClick != null) 0.98f else 1f,
         animationSpec = tween(durationMillis = 100),
         label = "settingItemScale"
     )
-    
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {

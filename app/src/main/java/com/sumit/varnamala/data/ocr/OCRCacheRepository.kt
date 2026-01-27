@@ -132,9 +132,4 @@ class OCRCacheRepository(private val context: Context) {
             }
         }
     }
-
-    suspend fun getAllCachedImageIds(): List<Long> = withContext(Dispatchers.IO) {
-        val prefs = context.ocrDataStore.data.first()
-        (prefs[indexKey] ?: emptySet()).mapNotNull { it.toLongOrNull() }
-    }
 }

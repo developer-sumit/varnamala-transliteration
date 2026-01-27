@@ -99,23 +99,23 @@ class TransliterationHistoryRepository(private val context: Context) {
         context.historyDataStore.edit { preferences ->
             val currentJson = preferences[PreferencesKeys.HISTORY_JSON] ?: "[]"
             val currentEntries = parseHistoryJson(currentJson).toMutableList()
-            
+
             // Remove duplicate if exists (same original text and languages)
-            currentEntries.removeAll { 
-                it.originalText == entry.originalText && 
-                it.sourceLanguage == entry.sourceLanguage &&
-                it.targetLanguage == entry.targetLanguage
+            currentEntries.removeAll {
+                it.originalText == entry.originalText &&
+                        it.sourceLanguage == entry.sourceLanguage &&
+                        it.targetLanguage == entry.targetLanguage
             }
-            
+
             // Add new entry at the beginning
             currentEntries.add(0, entry)
-            
+
             // Trim to max size (keep favorites even if over limit)
             val favorites = currentEntries.filter { it.isFavorite }
             val nonFavorites = currentEntries.filter { !it.isFavorite }
             val trimmedNonFavorites = nonFavorites.take(MAX_HISTORY_SIZE - favorites.size)
             val finalList = (favorites + trimmedNonFavorites).sortedByDescending { it.timestamp }
-            
+
             preferences[PreferencesKeys.HISTORY_JSON] = historyToJson(finalList)
         }
     }
@@ -124,7 +124,7 @@ class TransliterationHistoryRepository(private val context: Context) {
         context.historyDataStore.edit { preferences ->
             val currentJson = preferences[PreferencesKeys.HISTORY_JSON] ?: "[]"
             val currentEntries = parseHistoryJson(currentJson).toMutableList()
-            
+
             val index = currentEntries.indexOfFirst { it.id == entryId }
             if (index != -1) {
                 val entry = currentEntries[index]
@@ -138,7 +138,7 @@ class TransliterationHistoryRepository(private val context: Context) {
         context.historyDataStore.edit { preferences ->
             val currentJson = preferences[PreferencesKeys.HISTORY_JSON] ?: "[]"
             val currentEntries = parseHistoryJson(currentJson).toMutableList()
-            
+
             currentEntries.removeAll { it.id == entryId }
             preferences[PreferencesKeys.HISTORY_JSON] = historyToJson(currentEntries)
         }
@@ -153,16 +153,6 @@ class TransliterationHistoryRepository(private val context: Context) {
             } else {
                 preferences[PreferencesKeys.HISTORY_JSON] = "[]"
             }
-        }
-    }
-
-    suspend fun clearAllFavorites() {
-        context.historyDataStore.edit { preferences ->
-            val currentJson = preferences[PreferencesKeys.HISTORY_JSON] ?: "[]"
-            val currentEntries = parseHistoryJson(currentJson).map { 
-                it.copy(isFavorite = false) 
-            }
-            preferences[PreferencesKeys.HISTORY_JSON] = historyToJson(currentEntries)
         }
     }
 }

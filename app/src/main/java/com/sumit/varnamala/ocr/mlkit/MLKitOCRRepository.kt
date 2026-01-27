@@ -216,28 +216,4 @@ class MLKitOCRRepository(private val context: Context) {
             "latin"
         }
     }
-
-    fun getLanguageDisplayName(languageCode: String): String {
-        return when (languageCode) {
-            "eng" -> "English"
-            "hin" -> "Hindi"
-            "san" -> "Sanskrit"
-            "mar" -> "Marathi"
-            "ben" -> "Bengali"
-            "guj" -> "Gujarati"
-            "kan" -> "Kannada"
-            "mal" -> "Malayalam"
-            "ori" -> "Oriya"
-            "pan" -> "Punjabi"
-            "tam" -> "Tamil"
-            "tel" -> "Telugu"
-            "latin" -> "Latin script"
-            "devanagari" -> "Devanagari script"
-            else -> languageCode
-        }
-    }
-
-    fun getAvailableLanguages(): List<String> {
-        return listOf("auto") + recognizers.keys.toList()
-    }
 }

@@ -10,10 +10,25 @@ import android.content.Context
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -61,10 +76,10 @@ fun OCROverlayCanvas(
     enableTextCopy: Boolean = true
 ) {
     if (result == null || containerSize == IntSize.Zero) return
-    
+
     val context = LocalContext.current
     val density = LocalDensity.current
-    
+
     Box(modifier = modifier) {
         // Bounding boxes overlay
         if (showBoundingBoxes) {
@@ -86,7 +101,7 @@ fun OCROverlayCanvas(
                 )
             }
         }
-        
+
         // Enhanced Text overlay with copy functionality
         if (showTextOverlay) {
             EnhancedOCRTextOverlay(
@@ -119,7 +134,7 @@ private fun drawOCRBoundingBoxes(
     wordColor: Color
 ) {
     if (result.imageWidth == 0 || result.imageHeight == 0) return
-    
+
     val scaleX = containerSize.width.toFloat() / result.imageWidth.toFloat()
     val scaleY = containerSize.height.toFloat() / result.imageHeight.toFloat()
 
@@ -222,14 +237,14 @@ private fun EnhancedOCRTextOverlay(
     modifier: Modifier = Modifier
 ) {
     if (result.imageWidth == 0 || result.imageHeight == 0) return
-    
+
     val context = LocalContext.current
     val density = LocalDensity.current
     val scaleX = containerSize.width.toFloat() / result.imageWidth.toFloat()
     val scaleY = containerSize.height.toFloat() / result.imageHeight.toFloat()
-    
+
     var selectedElement by remember { mutableStateOf<TextElement?>(null) }
-    
+
     Box(modifier = modifier) {
         result.boundingBoxes.forEach { block ->
             block.lines.forEach { line ->
@@ -242,7 +257,7 @@ private fun EnhancedOCRTextOverlay(
                             element.boundingBox.right * scaleX,
                             element.boundingBox.bottom * scaleY
                         )
-                        
+
                         val boundingHeightPx = max(1f, scaledRect.height())
                         val boundingWidthPx = max(1f, scaledRect.width())
 
@@ -266,7 +281,8 @@ private fun EnhancedOCRTextOverlay(
                             val fm = paint.fontMetrics
                             val lineHeight = (fm.descent - fm.ascent) * 1.05f
 
-                            val words = displayText.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+                            val words =
+                                displayText.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
                             if (words.isEmpty()) return false to 1
 
                             var lines = 1
@@ -308,13 +324,13 @@ private fun EnhancedOCRTextOverlay(
                         }
                         val optimalFontSizePx = best
                         val optimalMaxLines = bestLines
-                        
+
                         // Convert pixels to dp for proper positioning
                         val leftDp = with(density) { scaledRect.left.toDp() }
                         val topDp = with(density) { scaledRect.top.toDp() }
                         val widthDp = with(density) { scaledRect.width().toDp() }
                         val heightDp = with(density) { scaledRect.height().toDp() }
-                        
+
                         // Background box that stays within bounding box
                         Box(
                             modifier = Modifier
@@ -324,7 +340,7 @@ private fun EnhancedOCRTextOverlay(
                                 .background(backgroundColor)
                                 .zIndex(1f)
                         )
-                        
+
                         // Text that can extend beyond the background
                         Box(
                             modifier = Modifier
@@ -365,14 +381,14 @@ private fun EnhancedOCRTextOverlay(
                 }
             }
         }
-        
+
         // Show copy confirmation when text is selected
         selectedElement?.let { element ->
             LaunchedEffect(element) {
                 kotlinx.coroutines.delay(1000) // Show for 1 second
                 selectedElement = null
             }
-            
+
             // Copy confirmation overlay
             Box(
                 modifier = Modifier

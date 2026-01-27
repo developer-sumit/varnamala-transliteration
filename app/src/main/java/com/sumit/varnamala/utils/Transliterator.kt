@@ -37,12 +37,16 @@ object Transliterator {
         }
 
         val normalizedTarget = normalizeLanguageCode(targetLanguage)
-        Log.d(TAG, "transliterate: src=$sourceLanguage target=$targetLanguage normalizedTarget=$normalizedTarget")
+        Log.d(
+            TAG,
+            "transliterate: src=$sourceLanguage target=$targetLanguage normalizedTarget=$normalizedTarget"
+        )
 
         // For now, we primarily support Indian script to English
         // and English to Indian scripts
         val source = sourceLanguage.lowercase()
-        val isEnglishLike = source == "en" || source == "english" || source == "unknown" || source.startsWith("mixed_")
+        val isEnglishLike =
+            source == "en" || source == "english" || source == "unknown" || source.startsWith("mixed_")
         if (isEnglishLike) {
             return englishToIndianScript(text, normalizedTarget)
         }
@@ -57,7 +61,7 @@ object Transliterator {
      */
     private fun englishToIndianScript(text: String, targetLang: String): String {
         val normalizedLang = normalizeLanguageCode(targetLang)
-        
+
         // Split text into words and punctuation
         val tokens = tokenize(text)
         val result = StringBuilder()
@@ -75,7 +79,8 @@ object Transliterator {
                 }
                 // Dictionary lookup first (for common signboard words)
                 IndianSignboardDictionary.hasWord(token) -> {
-                    val translation = IndianSignboardDictionary.getTransliteration(token, normalizedLang)
+                    val translation =
+                        IndianSignboardDictionary.getTransliteration(token, normalizedLang)
                     result.append(translation ?: applyTransliterationRules(token, normalizedLang))
                 }
                 // Apply rule-based transliteration
@@ -97,7 +102,7 @@ object Transliterator {
         if (word.any { it.code > 127 && it.isLetter() }) return word
 
         val lowerWord = word.lowercase()
-        
+
         return when (targetLang) {
             "hi", "mr" -> transliterateToDevanagari(lowerWord) // Hindi/Marathi use same script
             "bn", "as" -> transliterateToBengali(lowerWord) // Bengali/Assamese use same script
@@ -214,16 +219,16 @@ object Transliterator {
                     }
 
                     if (matched) break
-                    
+
                     // Check for consonant + vowel (e.g., "kaa", "ki")
                     for (consLen in 4 downTo 1) {
                         if (consLen < len) {
                             val consKey = substr.substring(0, consLen)
                             val vowelKey = substr.substring(consLen)
-                            
+
                             val consonant = TransliterationRules.Hindi.pureConsonants[consKey]
                             val matra = TransliterationRules.Hindi.matras[vowelKey]
-                            
+
                             if (consonant != null && matra != null) {
                                 result.append(consonant).append(matra)
                                 i += len
@@ -232,7 +237,7 @@ object Transliterator {
                             }
                         }
                     }
-                    
+
                     if (matched) break
 
                     // 2) End-of-word / before non-vowel: emit pure consonant + halant.
@@ -254,14 +259,14 @@ object Transliterator {
                     }
 
                     if (matched) break
-                    
+
                     // Check for independent vowel
                     TransliterationRules.Hindi.vowels[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
                 }
             }
@@ -289,16 +294,16 @@ object Transliterator {
             for (len in 4 downTo 1) {
                 if (i + len <= text.length) {
                     val substr = text.substring(i, i + len)
-                    
+
                     // Try consonant + vowel combination
                     for (consLen in 3 downTo 1) {
                         if (consLen < len) {
                             val consKey = substr.substring(0, consLen)
                             val vowelKey = substr.substring(consLen)
-                            
+
                             val consonant = TransliterationRules.Bengali.pureConsonants[consKey]
                             val matra = TransliterationRules.Bengali.matras[vowelKey]
-                            
+
                             if (consonant != null && matra != null) {
                                 result.append(consonant).append(matra)
                                 i += len
@@ -307,23 +312,23 @@ object Transliterator {
                             }
                         }
                     }
-                    
+
                     if (matched) break
-                    
+
                     TransliterationRules.Bengali.consonants[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
-                    
+
                     TransliterationRules.Bengali.vowels[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
                 }
             }
@@ -350,16 +355,16 @@ object Transliterator {
             for (len in 4 downTo 1) {
                 if (i + len <= text.length) {
                     val substr = text.substring(i, i + len)
-                    
+
                     // Try consonant + vowel combination
                     for (consLen in 3 downTo 1) {
                         if (consLen < len) {
                             val consKey = substr.substring(0, consLen)
                             val vowelKey = substr.substring(consLen)
-                            
+
                             val consonant = TransliterationRules.Tamil.pureConsonants[consKey]
                             val matra = TransliterationRules.Tamil.matras[vowelKey]
-                            
+
                             if (consonant != null && matra != null) {
                                 result.append(consonant).append(matra)
                                 i += len
@@ -368,23 +373,23 @@ object Transliterator {
                             }
                         }
                     }
-                    
+
                     if (matched) break
-                    
+
                     TransliterationRules.Tamil.consonants[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
-                    
+
                     TransliterationRules.Tamil.vowels[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
                 }
             }
@@ -411,16 +416,16 @@ object Transliterator {
             for (len in 4 downTo 1) {
                 if (i + len <= text.length) {
                     val substr = text.substring(i, i + len)
-                    
+
                     // Try consonant + vowel combination
                     for (consLen in 3 downTo 1) {
                         if (consLen < len) {
                             val consKey = substr.substring(0, consLen)
                             val vowelKey = substr.substring(consLen)
-                            
+
                             val consonant = TransliterationRules.Telugu.pureConsonants[consKey]
                             val matra = TransliterationRules.Telugu.matras[vowelKey]
-                            
+
                             if (consonant != null && matra != null) {
                                 result.append(consonant).append(matra)
                                 i += len
@@ -429,23 +434,23 @@ object Transliterator {
                             }
                         }
                     }
-                    
+
                     if (matched) break
-                    
+
                     TransliterationRules.Telugu.consonants[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
-                    
+
                     TransliterationRules.Telugu.vowels[substr]?.let {
                         result.append(it)
                         i += len
                         matched = true
                     }
-                    
+
                     if (matched) break
                 }
             }

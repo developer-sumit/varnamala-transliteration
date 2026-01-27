@@ -19,16 +19,44 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,17 +80,17 @@ fun HistoryScreen(navController: NavController) {
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    
+
     val historyRepository = remember { TransliterationHistoryRepository(context) }
     val historyEntries by historyRepository.historyEntries.collectAsState(initial = emptyList())
     val favoriteEntries by historyRepository.favoriteEntries.collectAsState(initial = emptyList())
-    
+
     var showFavoritesOnly by remember { mutableStateOf(false) }
     var showClearDialog by remember { mutableStateOf(false) }
     var selectedEntry by remember { mutableStateOf<HistoryEntry?>(null) }
-    
+
     val displayedEntries = if (showFavoritesOnly) favoriteEntries else historyEntries
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +118,7 @@ fun HistoryScreen(navController: NavController) {
                 onClick = { showClearDialog = true }
             )
         }
-        
+
         // Filter Tabs
         Row(
             modifier = Modifier
@@ -101,16 +129,16 @@ fun HistoryScreen(navController: NavController) {
             FilterChip(
                 selected = !showFavoritesOnly,
                 onClick = { showFavoritesOnly = false },
-                label = { 
+                label = {
                     Text(
                         text = "${stringResource(R.string.all)} (${historyEntries.size})"
-                    ) 
+                    )
                 }
             )
             FilterChip(
                 selected = showFavoritesOnly,
                 onClick = { showFavoritesOnly = true },
-                label = { 
+                label = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             painter = painterResource(R.drawable.ic_heart_filled),
@@ -123,7 +151,7 @@ fun HistoryScreen(navController: NavController) {
                 }
             )
         }
-        
+
         // History List
         if (displayedEntries.isEmpty()) {
             Box(
@@ -138,7 +166,7 @@ fun HistoryScreen(navController: NavController) {
                 ) {
                     Icon(
                         painter = painterResource(
-                            if (showFavoritesOnly) R.drawable.ic_heart_outline 
+                            if (showFavoritesOnly) R.drawable.ic_heart_outline
                             else R.drawable.ic_time
                         ),
                         contentDescription = null,
@@ -147,18 +175,18 @@ fun HistoryScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = if (showFavoritesOnly) 
-                            stringResource(R.string.no_favorites) 
-                        else 
+                        text = if (showFavoritesOnly)
+                            stringResource(R.string.no_favorites)
+                        else
                             stringResource(R.string.no_history),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = if (showFavoritesOnly) 
-                            stringResource(R.string.no_favorites_hint) 
-                        else 
+                        text = if (showFavoritesOnly)
+                            stringResource(R.string.no_favorites_hint)
+                        else
                             stringResource(R.string.no_history_hint),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
@@ -184,9 +212,19 @@ fun HistoryScreen(navController: NavController) {
                             selectedEntry = if (selectedEntry?.id == entry.id) null else entry
                         },
                         onCopy = {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_text), entry.transliteratedText))
-                            Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                            val clipboard =
+                                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.clipboard_label_text),
+                                    entry.transliteratedText
+                                )
+                            )
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         },
                         onToggleFavorite = {
                             scope.launch {
@@ -204,7 +242,7 @@ fun HistoryScreen(navController: NavController) {
             }
         }
     }
-    
+
     // Clear History Dialog
     if (showClearDialog) {
         AlertDialog(
@@ -250,7 +288,6 @@ fun HistoryScreen(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun HistoryEntryCard(
     entry: HistoryEntry,
@@ -270,19 +307,21 @@ private fun HistoryEntryCard(
         label = "favoriteScale"
     )
     val favoriteColor by animateColorAsState(
-        targetValue = if (entry.isFavorite) Color(0xFFE91E63) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+        targetValue = if (entry.isFavorite) Color(0xFFE91E63) else MaterialTheme.colorScheme.onSurface.copy(
+            alpha = 0.4f
+        ),
         label = "favoriteColor"
     )
-    
+
     var isPressed by remember { mutableStateOf(false) }
     val cardScale by animateFloatAsState(
         targetValue = if (isPressed) 0.98f else 1.0f,
         animationSpec = tween(durationMillis = 100),
         label = "cardScale"
     )
-    
+
     val dateFormat = remember { SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()) }
-    
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -317,9 +356,9 @@ private fun HistoryEntryCard(
                         maxLines = if (isExpanded) 3 else 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    
+
                     Spacer(modifier = Modifier.height(4.dp))
-                    
+
                     // Transliterated text
                     Text(
                         text = entry.transliteratedText,
@@ -330,7 +369,7 @@ private fun HistoryEntryCard(
                         overflow = TextOverflow.Ellipsis
                     )
                 }
-                
+
                 // Favorite button
                 IconButton(
                     onClick = onToggleFavorite,
@@ -338,7 +377,7 @@ private fun HistoryEntryCard(
                 ) {
                     Icon(
                         painter = painterResource(
-                            if (entry.isFavorite) R.drawable.ic_heart_filled 
+                            if (entry.isFavorite) R.drawable.ic_heart_filled
                             else R.drawable.ic_heart_outline
                         ),
                         contentDescription = "Favorite",
@@ -347,7 +386,7 @@ private fun HistoryEntryCard(
                     )
                 }
             }
-            
+
             // Metadata Row
             Row(
                 modifier = Modifier
@@ -376,7 +415,7 @@ private fun HistoryEntryCard(
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                     }
-                    
+
                     // Languages
                     Text(
                         text = "${entry.sourceLanguage.uppercase()} → ${entry.targetLanguage.uppercase()}",
@@ -384,7 +423,7 @@ private fun HistoryEntryCard(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
                 }
-                
+
                 // Timestamp
                 Text(
                     text = dateFormat.format(Date(entry.timestamp)),
@@ -392,7 +431,7 @@ private fun HistoryEntryCard(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
                 )
             }
-            
+
             // Expanded Actions
             AnimatedVisibility(
                 visible = isExpanded,
@@ -417,7 +456,7 @@ private fun HistoryEntryCard(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(stringResource(R.string.copy))
                     }
-                    
+
                     OutlinedButton(
                         onClick = onDelete,
                         modifier = Modifier.weight(1f),

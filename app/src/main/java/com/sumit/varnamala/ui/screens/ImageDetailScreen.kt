@@ -33,47 +33,65 @@ import android.content.ClipboardManager
 import kotlinx.coroutines.flow.first
 import android.content.ContentUris
 import android.provider.MediaStore
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import kotlinx.coroutines.launch
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import android.content.ContentResolver
 import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavController
-import androidx.compose.material3.*
-import androidx.compose.runtime.collectAsState
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.material3.Surface
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.HorizontalDivider
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun ImageDetailScreen(navController: NavController, imageId: Long) {
@@ -85,7 +103,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val settingsRepository = remember { OCRSettingsRepository(context) }
     val userPrefsRepository = remember { UserPreferencesRepository(context) }
     val historyRepository = remember { TransliterationHistoryRepository(context) }
-    
+
     // User preferences
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
 
@@ -179,23 +197,24 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     contentScale = ContentScale.Fit
                 )
 
-                val overlayTextOverrides = remember(lastResult, selectedTargetLanguage, detectedLanguage) {
-                    val targetLang = selectedTargetLanguage
-                    if (targetLang == null || lastResult == null) {
-                        null
-                    } else {
-                        lastResult!!.boundingBoxes
-                            .flatMap { it.lines }
-                            .flatMap { it.elements }
-                            .associate { element ->
-                                element.boundingBox to Transliterator.transliterate(
-                                    text = element.text,
-                                    sourceLanguage = detectedLanguage,
-                                    targetLanguage = targetLang.localeCode
-                                )
-                            }
+                val overlayTextOverrides =
+                    remember(lastResult, selectedTargetLanguage, detectedLanguage) {
+                        val targetLang = selectedTargetLanguage
+                        if (targetLang == null || lastResult == null) {
+                            null
+                        } else {
+                            lastResult!!.boundingBoxes
+                                .flatMap { it.lines }
+                                .flatMap { it.elements }
+                                .associate { element ->
+                                    element.boundingBox to Transliterator.transliterate(
+                                        text = element.text,
+                                        sourceLanguage = detectedLanguage,
+                                        targetLanguage = targetLang.localeCode
+                                    )
+                                }
+                        }
                     }
-                }
 
                 OCROverlayCanvas(
                     result = lastResult,
@@ -267,7 +286,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         )
                     } else rawOcrText
                 } ?: rawOcrText
-                
+
                 LaunchedEffect(rawOcrText, transliteratedText) {
                     if (rawOcrText.isNotBlank() && transliteratedText.isNotBlank() && transliteratedText != rawOcrText) {
                         // Save to history
@@ -280,12 +299,22 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                                 source = "gallery"
                             )
                         )
-                        
+
                         // Auto-copy if enabled
                         if (autoCopyEnabled) {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), transliteratedText))
-                            Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                            val clipboard =
+                                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            clipboard.setPrimaryClip(
+                                ClipData.newPlainText(
+                                    context.getString(R.string.clipboard_label_transliterated_text),
+                                    transliteratedText
+                                )
+                            )
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.copied),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }
@@ -302,7 +331,11 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                         )
                         (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
                             .setPrimaryClip(clip)
-                        Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.copied),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                 )
             }

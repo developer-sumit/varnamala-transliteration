@@ -3,12 +3,26 @@ package com.sumit.varnamala.ui.components
 import com.sumit.varnamala.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,14 +44,14 @@ fun DetectionOptionsDialog(
     ocrLoading: Boolean = false
 ) {
     val availableLanguages = listOf(
-        "auto" to "Automatic Detection", 
-        "latin" to "Latin Script", 
+        "auto" to "Automatic Detection",
+        "latin" to "Latin Script",
         "devanagari" to "Devanagari Script",
         "eng" to "English",
         "hin" to "Hindi",
         "san" to "Sanskrit"
     )
-    
+
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             modifier = Modifier
@@ -58,9 +72,13 @@ fun DetectionOptionsDialog(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-                
+
                 // Language Selection Section
-                Text(stringResource(R.string.language_detection), fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(
+                    stringResource(R.string.language_detection),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     availableLanguages.forEach { (code, name) ->
                         Row(
@@ -68,12 +86,12 @@ fun DetectionOptionsDialog(
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(
-                                    if (currentLanguage == code) 
-                                        MaterialTheme.colorScheme.primaryContainer 
-                                    else 
+                                    if (currentLanguage == code)
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    else
                                         Color.Transparent
                                 )
-                                .clickable { 
+                                .clickable {
                                     onLanguageSelected(code)
                                 }
                                 .padding(vertical = 8.dp, horizontal = 4.dp),
@@ -88,8 +106,8 @@ fun DetectionOptionsDialog(
                                 Text(name, style = MaterialTheme.typography.bodyMedium)
                                 if (code == "auto") {
                                     Text(
-                                        "Detects multiple languages automatically", 
-                                        style = MaterialTheme.typography.bodySmall, 
+                                        "Detects multiple languages automatically",
+                                        style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                 }
@@ -101,15 +119,19 @@ fun DetectionOptionsDialog(
                 HorizontalDivider()
 
                 // OCR Actions Section
-                Text(stringResource(R.string.ocr_actions), fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                
+                Text(
+                    stringResource(R.string.ocr_actions),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
+
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(
                         onClick = onDetectAgain,
                         enabled = !ocrLoading,
                         modifier = Modifier.fillMaxWidth()
-                    ) { 
-                        Text(stringResource(R.string.detect_again)) 
+                    ) {
+                        Text(stringResource(R.string.detect_again))
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

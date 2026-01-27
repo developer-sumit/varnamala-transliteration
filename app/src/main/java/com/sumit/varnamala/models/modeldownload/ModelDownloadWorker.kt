@@ -38,14 +38,24 @@ class ModelDownloadWorker(
 
         val outFile = TesseractModelStore.modelFile(applicationContext, model.tesseractLanguageCode)
         val tmpFile = File(outFile.parentFile, outFile.name + ".download")
-        val notificationId = NOTIFICATION_ID_BASE + (model.tesseractLanguageCode.hashCode().absoluteValue % 10000)
+        val notificationId =
+            NOTIFICATION_ID_BASE + (model.tesseractLanguageCode.hashCode().absoluteValue % 10000)
 
         return try {
             ensureChannel()
             postProgressNotification(model.tesseractLanguageCode, 0, notificationId)
-            setProgress(workDataOf(KEY_PROGRESS to 0, KEY_TOTAL_BYTES to -1L, KEY_DOWNLOADED_BYTES to 0L))
+            setProgress(
+                workDataOf(
+                    KEY_PROGRESS to 0,
+                    KEY_TOTAL_BYTES to -1L,
+                    KEY_DOWNLOADED_BYTES to 0L
+                )
+            )
 
-            downloadWithProgress(model.downloadUrl, tmpFile) { percent, downloadedBytes, totalBytes ->
+            downloadWithProgress(
+                model.downloadUrl,
+                tmpFile
+            ) { percent, downloadedBytes, totalBytes ->
                 postProgressNotification(model.tesseractLanguageCode, percent, notificationId)
                 setProgress(
                     workDataOf(
@@ -58,7 +68,13 @@ class ModelDownloadWorker(
             if (outFile.exists()) outFile.delete()
             tmpFile.renameTo(outFile)
             cancelNotification(notificationId)
-            setProgress(workDataOf(KEY_PROGRESS to 100, KEY_TOTAL_BYTES to outFile.length(), KEY_DOWNLOADED_BYTES to outFile.length()))
+            setProgress(
+                workDataOf(
+                    KEY_PROGRESS to 100,
+                    KEY_TOTAL_BYTES to outFile.length(),
+                    KEY_DOWNLOADED_BYTES to outFile.length()
+                )
+            )
             Result.success()
         } catch (_: Exception) {
             tmpFile.delete()
@@ -134,19 +150,22 @@ class ModelDownloadWorker(
             .setProgress(100, percent, false)
             .build()
 
-        val mgr = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val mgr =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mgr.notify(notificationId, notification)
     }
 
     private fun cancelNotification(notificationId: Int) {
-        val mgr = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val mgr =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mgr.cancel(notificationId)
     }
 
     private fun ensureChannel() {
         val channelId = CHANNEL_ID
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val mgr = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val mgr =
+                applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val existing = mgr.getNotificationChannel(channelId)
             if (existing == null) {
                 val channel = NotificationChannel(

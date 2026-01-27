@@ -15,7 +15,7 @@ suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { continuation 
     addOnFailureListener { exception ->
         continuation.resumeWithException(exception)
     }
-    
+
     continuation.invokeOnCancellation {
         // If the coroutine that launched this task is cancelled,
         // we can't directly cancel the task but we don't need to 
@@ -23,7 +23,7 @@ suspend fun <T> Task<T>.await(): T = suspendCancellableCoroutine { continuation 
         if (isComplete || isCanceled) {
             return@invokeOnCancellation
         }
-        
+
         // This doesn't actually cancel the task; the task will still complete
         // but we just won't process the result since the coroutine is cancelled
     }

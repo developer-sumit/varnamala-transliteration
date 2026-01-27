@@ -9,16 +9,30 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Rect
 import android.util.Log
-import androidx.camera.core.*
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.core.UseCase
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -187,10 +201,10 @@ fun OCRCameraPreview(
                                 try {
                                     // Convert ImageProxy to Bitmap
                                     val bitmap = imageProxyToBitmap(imageProxy)
-                                    
+
                                     // Pass bitmap to parent for overlay display
                                     onImageCaptured(bitmap)
-                                    
+
                                     // Process the captured image for OCR
                                     processCapturedImageProxy(
                                         imageProxy = imageProxy,
@@ -214,7 +228,7 @@ fun OCRCameraPreview(
                                     imageProxy.close()
                                 }
                             }
-                            
+
                             override fun onError(exception: ImageCaptureException) {
                                 onError("Image capture failed: ${exception.message}")
                                 onCaptureComplete()
@@ -254,17 +268,17 @@ private fun setupCameraOnce(
             val cameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder().build()
                 .also { it.surfaceProvider = previewView.surfaceProvider }
-            
+
             val imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
                 .build()
-            
+
             val cameraSelector = selectCameraSelector(cameraProvider, lensFacing)
             cameraProvider.unbindAll()
             val camera = cameraProvider.bindToLifecycle(
-                lifecycleOwner, 
-                cameraSelector, 
-                preview, 
+                lifecycleOwner,
+                cameraSelector,
+                preview,
                 imageCapture
             )
             onCameraProviderReady(cameraProvider, camera, preview, imageCapture)
@@ -381,7 +395,11 @@ private fun updateAnalysisUseCase(
             preview?.let { useCases.add(it) }
             imageCapture?.let { useCases.add(it) }
             if (useCases.isNotEmpty()) {
-                cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, *useCases.toTypedArray())
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner,
+                    cameraSelector,
+                    *useCases.toTypedArray()
+                )
             }
             onAnalyzerReady(null)
         }
@@ -547,7 +565,8 @@ private fun processCapturedImageProxy(
     onError: (String) -> Unit
 ) {
     try {
-        val inputImage = InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
+        val inputImage =
+            InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
         val startTime = System.currentTimeMillis()
 
         fun tryLatin() {
@@ -567,7 +586,7 @@ private fun processCapturedImageProxy(
                 .addOnSuccessListener { visionText ->
                     val processingTime = System.currentTimeMillis() - startTime
                     val result = convertToOCRResult(visionText, "devanagari", processingTime)
-                    
+
                     if (result.text.isNotBlank()) {
                         onOCRResult(result)
                     } else {

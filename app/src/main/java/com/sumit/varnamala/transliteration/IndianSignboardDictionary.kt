@@ -26,7 +26,8 @@ object IndianSignboardDictionary {
     }
 
     private fun loadFromAssets(context: Context): Map<String, Map<String, String>> {
-        val jsonText = context.assets.open(ASSET_PATH).bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val jsonText =
+            context.assets.open(ASSET_PATH).bufferedReader(Charsets.UTF_8).use { it.readText() }
         val root = JSONObject(jsonText)
 
         val result = HashMap<String, Map<String, String>>(root.length())

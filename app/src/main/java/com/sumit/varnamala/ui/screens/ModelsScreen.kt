@@ -139,14 +139,20 @@ fun ModelsScreen(navController: NavController) {
                     val workInfosFlow = remember(tag) { workManager.getWorkInfosByTagFlow(tag) }
                     val workInfos by workInfosFlow.collectAsState(initial = emptyList())
 
-                    val activeWork = workInfos.firstOrNull { it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED }
+                    val activeWork =
+                        workInfos.firstOrNull { it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED }
                     val percent = activeWork?.progress?.getInt(ModelDownloadWorker.KEY_PROGRESS, 0)
-                    val remoteSizeBytes by produceState<Long?>(initialValue = null, key1 = row.url) {
+                    val remoteSizeBytes by produceState<Long?>(
+                        initialValue = null,
+                        key1 = row.url
+                    ) {
                         value = ModelSizeFetcher.getRemoteSizeBytes(row.url)
                     }
 
                     val downloaded = TesseractModelStore.isModelDownloaded(context, row.tessCode)
-                    val localSizeBytes = if (downloaded) TesseractModelStore.modelFile(context, row.tessCode).length() else null
+                    val localSizeBytes =
+                        if (downloaded) TesseractModelStore.modelFile(context, row.tessCode)
+                            .length() else null
 
                     ModelRow(
                         name = row.name,
@@ -163,7 +169,11 @@ fun ModelsScreen(navController: NavController) {
 
                             if (!started) {
                                 Toast
-                                    .makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT)
+                                    .makeText(
+                                        context,
+                                        context.getString(R.string.no_internet_connection),
+                                        Toast.LENGTH_SHORT
+                                    )
                                     .show()
                             }
                         },
@@ -206,7 +216,7 @@ private fun ModelRow(
 ) {
     val context = LocalContext.current
     var showDeleteDialog by remember { mutableStateOf(false) }
-    
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -304,13 +314,13 @@ private fun ModelRow(
             }
         }
     }
-    
+
     // Delete confirmation dialog
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             title = { Text(stringResource(R.string.delete_model)) },
-            text = { 
+            text = {
                 Text(stringResource(R.string.delete_model_confirmation, name))
             },
             confirmButton = {
@@ -318,9 +328,17 @@ private fun ModelRow(
                     onClick = {
                         val deleted = TesseractModelStore.deleteModel(context, tessCode)
                         if (deleted) {
-                            Toast.makeText(context, context.getString(R.string.model_deleted_successfully), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.model_deleted_successfully),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-                            Toast.makeText(context, context.getString(R.string.failed_to_delete_model), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.failed_to_delete_model),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                         showDeleteDialog = false
                     }
