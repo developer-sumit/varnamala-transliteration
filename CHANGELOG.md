@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.0] - 2026-01-27
+
+### 🎨 Major UI Overhaul
+
+- **Complete UI Redesign** - Modern, polished interface with improved visual consistency across all screens
+- **Bottom Navigation Bar** - New navigation component for seamless screen transitions
+- **Enhanced Layouts** - Refined spacing, alignment, and visual hierarchy throughout the app
+
+### ✨ Added
+
+- **Information Dialogs** - Helpful tip dialogs across all screens (Camera, Gallery, Text Input, Models, Language, History, Settings)
+- **Micro Animations** - Smooth entry animations for list items providing better visual feedback
+- **New Icons** - Beautiful new drawable resources including camera icons, switch camera, and enhanced keyboard icon
+- **Model Delete Dialog** - Confirmation dialog with option to delete downloaded OCR models
+
+### 🐛 Fixed
+
+- Various bug fixes for improved stability
+- Code optimization for better performance
+- Cleaned up unnecessary code and improved code quality
+
+### 🔧 Technical
+
+- Updated versionCode to 5 and versionName to "1.3.0"
+- Simplified flow mapping for app language and camera tutorial checks
+- Refactored clipboard labels to use string resources consistently
+- Enhanced drawable resources with new vector graphics
+- Extended string resources for dialogs and tutorials in all 12 supported languages
+
+---
+
 ## [1.2.0] - 2026-01-17
 
 ### ✨ Added
@@ -85,6 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                |
 | ------- | ---------- | ----------------------------------------- |
+| 1.3.0   | 2026-01-27 | Complete UI redesign, Info dialogs, Animations |
 | 1.2.0   | 2026-01-17 | Text input, History, TTS, UX improvements |
 | 1.1.0   | 2026-01-10 | Offline Tesseract, Settings, Tutorial     |
 | 1.0.0   | 2026-01-01 | Initial release                           |
