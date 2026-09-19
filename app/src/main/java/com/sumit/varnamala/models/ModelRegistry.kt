@@ -1,42 +1,40 @@
 package com.sumit.varnamala.models
 
 import com.sumit.varnamala.data.Language
+import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
+import com.sumit.varnamala.data.ocr.OcrLanguageModel
 
 /**
  * Central mapping of app languages to downloadable Tesseract traineddata.
  */
 object ModelRegistry {
-    private const val BASE_URL = "https://github.com/tesseract-ocr/tessdata_best/raw/main/"
-
     data class Model(
         val tesseractLanguageCode: String,
         val fileName: String,
-        val downloadUrl: String
+        val downloadUrl: String,
+        val trainedDataPath: String = fileName
     )
 
     /**
      * Maps app/MLKit language codes to Tesseract traineddata codes.
      */
     fun toTesseractLanguageCode(appLanguageCode: String): String? {
-        return when (appLanguageCode) {
-            // App uses 2-letter codes for these.
-            "en" -> "eng"
-            "hi" -> "hin"
-            "asm", "ben", "guj", "kan", "mal", "mar", "ori", "pan", "tam", "tel" -> appLanguageCode
-            "eng", "hin" -> appLanguageCode
-            else -> null
-        }
+        return OcrLanguageCatalog.find(appLanguageCode)?.code
     }
 
     fun forLanguage(language: Language): Model? = forAppLanguageCode(language.code)
 
-    fun forAppLanguageCode(appLanguageCode: String): Model? {
-        val tessCode = toTesseractLanguageCode(appLanguageCode) ?: return null
-        val fileName = "$tessCode.traineddata"
+    fun forOcrLanguage(language: OcrLanguageModel): Model {
         return Model(
-            tesseractLanguageCode = tessCode,
-            fileName = fileName,
-            downloadUrl = BASE_URL + fileName
+            tesseractLanguageCode = language.code,
+            fileName = language.fileName,
+            downloadUrl = language.downloadUrl,
+            trainedDataPath = language.trainedDataPath
         )
+    }
+
+    fun forAppLanguageCode(appLanguageCode: String): Model? {
+        val language = OcrLanguageCatalog.find(appLanguageCode) ?: return null
+        return forOcrLanguage(language)
     }
 }

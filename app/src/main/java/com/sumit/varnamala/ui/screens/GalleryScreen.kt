@@ -3,6 +3,7 @@ package com.sumit.varnamala.ui.screens
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.GlassButton
+import com.sumit.varnamala.ui.components.InfoBottomSheet
 import com.sumit.varnamala.ui.components.MediaPermissionHandler
 
 import android.content.ContentResolver
@@ -36,11 +37,9 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -272,15 +271,10 @@ fun GalleryScreen(navController: NavController) {
     }
 
     if (showGalleryInfoDialog) {
-        AlertDialog(
-            onDismissRequest = { showGalleryInfoDialog = false },
-            confirmButton = {
-                TextButton(onClick = { showGalleryInfoDialog = false }) {
-                    Text(text = stringResource(R.string.close))
-                }
-            },
-            title = { Text(text = stringResource(R.string.gallery_info_title)) },
-            text = { Text(text = stringResource(R.string.gallery_info_message)) }
+        InfoBottomSheet(
+            title = stringResource(R.string.gallery_info_title),
+            message = stringResource(R.string.gallery_info_message),
+            onDismiss = { showGalleryInfoDialog = false }
         )
     }
 }

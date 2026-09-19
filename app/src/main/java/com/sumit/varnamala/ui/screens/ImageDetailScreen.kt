@@ -2,18 +2,21 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.ui.components.OCRInfoCard
+import com.sumit.varnamala.ui.components.AppModalBottomSheet
+import com.sumit.varnamala.ui.components.ConfirmBottomSheet
 import com.sumit.varnamala.ui.components.DisplayOptionsDialog
 import com.sumit.varnamala.ui.components.DetectionOptionsDialog
 import com.sumit.varnamala.ui.components.LanguageSelectionRow
-import com.sumit.varnamala.ui.components.LanguageSelectionDialog
 import com.sumit.varnamala.ui.components.OCREngineSelectionDialog
 import com.sumit.varnamala.data.Language
-import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.HistoryEntry
+import com.sumit.varnamala.data.Screen
+import com.sumit.varnamala.data.TransliterationLanguageCatalog
 import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
 import com.sumit.varnamala.data.ocr.CachedOCRResult
 import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
 import com.sumit.varnamala.data.ocr.TextBlock
 import com.sumit.varnamala.data.ocr.TextLine
 import com.sumit.varnamala.data.ocr.TextElement
@@ -27,6 +30,8 @@ import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.OCROverlayCanvas
 import com.sumit.varnamala.data.ocr.OcrEngine
 import com.sumit.varnamala.ocr.mlkit.MLKitOCRRepository
+import com.sumit.varnamala.ocr.tesseract.TesseractOcrRepository
+import com.sumit.varnamala.models.TesseractModelStore
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -57,7 +62,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -85,7 +89,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -120,12 +123,28 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     var showImageDetailsDialog by remember { mutableStateOf(false) }
 
     // Language selection state
-    var showSourceLanguageDialog by remember { mutableStateOf(false) }
-    var showTargetLanguageDialog by remember { mutableStateOf(false) }
     var showEngineSelectionDialog by remember { mutableStateOf(false) }
-    var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
-    var selectedTargetLanguage by remember {
-        mutableStateOf(AppLanguageRepository.getLanguageByCode("en"))
+    val selectedOcrModelCode by settingsRepository.selectedOcrModelCode.collectAsState(
+        initial = OcrLanguageCatalog.DEFAULT_SOURCE_CODE
+    )
+    val selectedTargetCode by settingsRepository.selectedTargetTransliterationCode.collectAsState(
+        initial = "hi"
+    )
+    val selectedOcrModel = remember(selectedOcrModelCode) {
+        OcrLanguageCatalog.sourceOrDefault(selectedOcrModelCode)
+    }
+    val selectedSourceLanguage = remember(selectedOcrModel) {
+        Language(
+            code = selectedOcrModel.code,
+            name = selectedOcrModel.displayName,
+            nativeName = selectedOcrModel.nativeName,
+            flagEmoji = "",
+            localeCode = selectedOcrModel.code
+        )
+    }
+    val selectedTargetLanguage = remember(selectedTargetCode) {
+        TransliterationLanguageCatalog.find(selectedTargetCode)
+            ?: TransliterationLanguageCatalog.defaultTarget()
     }
 
     // Settings from repository
@@ -136,13 +155,16 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
     val showBlockBoundingBoxes by settingsRepository.showBlockBoundingBoxes.collectAsState(initial = true)
     val textBackgroundOpacity by settingsRepository.textBackgroundOpacity.collectAsState(initial = 0.8f)
     val boundingBoxStrokeWidth by settingsRepository.boundingBoxStrokeWidth.collectAsState(initial = 2f)
+    val visualReplacementMode by settingsRepository.visualReplacementMode.collectAsState(
+        initial = com.sumit.varnamala.data.ocr.OcrVisualReplacementMode.REPLACE_LITE
+    )
 
     // Image display state
     var imageSize by remember { mutableStateOf(IntSize.Zero) }
     var scale by remember { mutableStateOf(1f) }
     var offset by remember { mutableStateOf(Offset.Zero) }
 
-    var selectedEngine by remember { mutableStateOf(OcrEngine.ML_KIT) }
+    val selectedEngine by settingsRepository.selectedOcrEngine.collectAsState(initial = OcrEngine.TESSERACT)
     var mlKitLanguage by remember { mutableStateOf("auto") }
 
     LaunchedEffect(imageId) {
@@ -157,6 +179,24 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             setText = { rawOcrText = it },
             setLang = { newLang -> detectedLanguage = newLang },
             setResult = { lastResult = it })
+    }
+
+    LaunchedEffect(selectedOcrModelCode) {
+        if (meta != null) {
+            runOCRWithCache(
+                repository = cacheRepository,
+                imageId = imageId,
+                context = context,
+                forceRefresh = true,
+                preferredLanguage = selectedOcrModel.code,
+                settingsRepository = settingsRepository,
+                setLoading = { ocrLoading = it },
+                setError = { ocrError = it },
+                setText = { rawOcrText = it },
+                setLang = { newLang -> detectedLanguage = newLang },
+                setResult = { lastResult = it }
+            )
+        }
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -220,6 +260,7 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
                     result = lastResult,
                     textOverride = overlayTextOverrides,
                     containerSize = imageSize,
+                    visualReplacementMode = visualReplacementMode,
                     showBoundingBoxes = showBoundingBoxes,
                     showTextOverlay = showTextOverlay,
                     showWordBoundingBoxes = showWordBoundingBoxes,
@@ -343,8 +384,14 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
             LanguageSelectionRow(
                 sourceLanguage = selectedSourceLanguage,
                 targetLanguage = selectedTargetLanguage,
-                onSourceLanguageClick = { showSourceLanguageDialog = true },
-                onTargetLanguageClick = { showTargetLanguageDialog = true },
+                onSourceLanguageClick = { navController.navigate(Screen.OcrLanguage.route) },
+                onTargetLanguageClick = {
+                    navController.navigate(
+                        Screen.TransliterationLanguage.create(
+                            Screen.TransliterationLanguage.ROLE_TARGET
+                        )
+                    )
+                },
             )
 
 //            GlassButton(
@@ -482,89 +529,23 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
 
     // Clear All confirmation dialog
     if (showClearAllDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearAllDialog = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    showClearAllDialog = false
-                    coroutineScope.launch {
-                        cacheRepository.clearCache(null)
-                        if (!ocrLoading) {
-                            rawOcrText = ""
-                            detectedLanguage = "unknown"
-                            languageConfidence = 0f
-                            lastResult = null
-                        }
+        ConfirmBottomSheet(
+            title = stringResource(R.string.clear_all_ocr_cache),
+            message = stringResource(R.string.clear_cache_confirmation),
+            destructive = true,
+            onDismiss = { showClearAllDialog = false },
+            onConfirm = {
+                showClearAllDialog = false
+                coroutineScope.launch {
+                    cacheRepository.clearCache(null)
+                    if (!ocrLoading) {
+                        rawOcrText = ""
+                        detectedLanguage = "unknown"
+                        languageConfidence = 0f
+                        lastResult = null
                     }
-                }) { Text(stringResource(R.string.confirm)) }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showClearAllDialog = false
-                }) { Text(stringResource(R.string.cancel)) }
-            },
-            title = { Text(stringResource(R.string.clear_all_ocr_cache)) },
-            text = { Text(stringResource(R.string.clear_cache_confirmation)) })
-    }
-
-    // Source Language Selection Dialog
-    if (showSourceLanguageDialog) {
-        LanguageSelectionDialog(
-            title = stringResource(R.string.select_ocr_language),
-            currentLanguage = selectedSourceLanguage,
-            onLanguageSelected = { language ->
-                selectedSourceLanguage = language
-                // Trigger OCR with new language
-                coroutineScope.launch {
-                    runOCRWithCache(
-                        repository = cacheRepository,
-                        imageId = imageId,
-                        context = context,
-                        forceRefresh = true,
-                        preferredLanguage = language.code,
-                        settingsRepository = settingsRepository,
-                        setLoading = { ocrLoading = it },
-                        setError = { ocrError = it },
-                        setText = { rawOcrText = it },
-                        setLang = { newLang -> detectedLanguage = newLang },
-                        setResult = { lastResult = it }
-                    )
-                }
-            },
-            onDismiss = { showSourceLanguageDialog = false },
-            includeDefaultOption = true,
-            defaultOptionLabel = stringResource(R.string.default_mlkit),
-            onDefaultSelected = {
-                selectedSourceLanguage = null
-                coroutineScope.launch {
-                    runOCRWithCache(
-                        repository = cacheRepository,
-                        imageId = imageId,
-                        context = context,
-                        forceRefresh = true,
-                        preferredLanguage = null,
-                        settingsRepository = settingsRepository,
-                        setLoading = { ocrLoading = it },
-                        setError = { ocrError = it },
-                        setText = { rawOcrText = it },
-                        setLang = { newLang -> detectedLanguage = newLang },
-                        setResult = { lastResult = it }
-                    )
                 }
             }
-        )
-    }
-
-    // Target Language Selection Dialog
-    if (showTargetLanguageDialog) {
-        LanguageSelectionDialog(
-            title = stringResource(R.string.transliterate_to),
-            currentLanguage = selectedTargetLanguage,
-            onLanguageSelected = { language ->
-                selectedTargetLanguage = language
-            },
-            onDismiss = { showTargetLanguageDialog = false },
-            showDownloadOption = false  // No download needed for transliteration
         )
     }
 
@@ -573,15 +554,15 @@ fun ImageDetailScreen(navController: NavController, imageId: Long) {
         OCREngineSelectionDialog(
             currentEngine = selectedEngine,
             onEngineSelected = { engine ->
-                selectedEngine = engine
                 // Trigger OCR with new engine
                 coroutineScope.launch {
+                    settingsRepository.setSelectedOcrEngine(engine)
                     runOCRWithCache(
                         repository = cacheRepository,
                         imageId = imageId,
                         context = context,
                         forceRefresh = true,
-                        preferredLanguage = selectedSourceLanguage?.code,
+                        preferredLanguage = selectedSourceLanguage.code,
                         settingsRepository = settingsRepository,
                         setLoading = { ocrLoading = it },
                         setError = { ocrError = it },
@@ -756,7 +737,16 @@ private suspend fun runOCRWithCache(
     setError(null)
     try {
         val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId)
-        val result = runSingleImageOcr(context, uri, preferredLanguage)
+        val selectedEngine = settingsRepository?.selectedOcrEngine?.first() ?: OcrEngine.TESSERACT
+        val modelCode = preferredLanguage
+            ?: settingsRepository?.selectedOcrModelCode?.first()
+            ?: OcrLanguageCatalog.DEFAULT_SOURCE_CODE
+        val result = runSingleImageOcr(
+            context = context,
+            uri = uri,
+            preferredLanguage = modelCode,
+            engine = selectedEngine
+        )
         setText(result.text)
         val lang = LanguageDetector.detectLanguage(result.text)
         setLang(lang)
@@ -798,16 +788,26 @@ private suspend fun runOCRWithCache(
 
 @RequiresApi(Build.VERSION_CODES.P)
 private suspend fun runSingleImageOcr(
-    context: Context, uri: Uri, preferredLanguage: String? = null
+    context: Context,
+    uri: Uri,
+    preferredLanguage: String? = null,
+    engine: OcrEngine = OcrEngine.TESSERACT
 ): OCRResult = withContext(Dispatchers.IO) {
-    // Initialize ML Kit OCR repository
-    val mlKitRepository = MLKitOCRRepository(context)
-
-    // Process the image with ML Kit OCR based on language preference
-    if (preferredLanguage == null || preferredLanguage == "auto") {
-        mlKitRepository.processImageWithAutoDetection(uri)
+    if (engine == OcrEngine.TESSERACT) {
+        val model = OcrLanguageCatalog.sourceOrDefault(preferredLanguage)
+        if (!TesseractModelStore.isModelDownloaded(context, model)) {
+            throw IllegalStateException(
+                context.getString(R.string.model_required_for_ocr, model.displayName)
+            )
+        }
+        TesseractOcrRepository(context).processUri(uri, model)
     } else {
-        mlKitRepository.processImageFromUri(uri, preferredLanguage)
+        val mlKitRepository = MLKitOCRRepository(context)
+        if (preferredLanguage == null || preferredLanguage == "auto") {
+            mlKitRepository.processImageWithAutoDetection(uri)
+        } else {
+            mlKitRepository.processImageFromUri(uri, preferredLanguage)
+        }
     }
 }
 
@@ -821,67 +821,58 @@ private fun ImageDetailsDialog(
     imageId: Long,
     imageMeta: ImageMeta?
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
+    AppModalBottomSheet(onDismiss = onDismiss) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
+                .wrapContentHeight()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.image_details),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
+            Text(
+                text = stringResource(R.string.image_details),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
 
-                HorizontalDivider()
+            HorizontalDivider()
 
-                imageMeta?.let { m ->
-                    InfoRow("ID", imageId.toString())
-                    InfoRow("Display Name", m.displayName ?: "-")
-                    InfoRow("Mime Type", m.mimeType ?: "-")
-                    InfoRow("Width", m.width?.let { "$it px" } ?: "-")
-                    InfoRow("Height", m.height?.let { "$it px" } ?: "-")
-                    InfoRow("Size (KB)", m.size?.let { (it / 1024).toString() } ?: "-")
-                    InfoRow("Date Added", m.dateAdded?.let {
-                        java.text.SimpleDateFormat(
-                            "dd MMM yyyy, hh:mm a",
-                            java.util.Locale.getDefault()
-                        )
-                            .format(java.util.Date(it * 1000))
-                    } ?: "-")
-                    InfoRow("Orientation", m.orientation?.let {
-                        when (it) {
-                            0 -> "Normal (0°)"
-                            90 -> "Rotate 90°"
-                            180 -> "Rotate 180°"
-                            270 -> "Rotate 270°"
-                            else -> "$it°"
-                        }
-                    } ?: "-")
-                } ?: run {
-                    Text(
-                        "Image metadata not available",
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            imageMeta?.let { m ->
+                InfoRow("ID", imageId.toString())
+                InfoRow("Display Name", m.displayName ?: "-")
+                InfoRow("Mime Type", m.mimeType ?: "-")
+                InfoRow("Width", m.width?.let { "$it px" } ?: "-")
+                InfoRow("Height", m.height?.let { "$it px" } ?: "-")
+                InfoRow("Size (KB)", m.size?.let { (it / 1024).toString() } ?: "-")
+                InfoRow("Date Added", m.dateAdded?.let {
+                    java.text.SimpleDateFormat(
+                        "dd MMM yyyy, hh:mm a",
+                        java.util.Locale.getDefault()
                     )
-                }
-
-                // Close button
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.close))
+                        .format(java.util.Date(it * 1000))
+                } ?: "-")
+                InfoRow("Orientation", m.orientation?.let {
+                    when (it) {
+                        0 -> "Normal (0°)"
+                        90 -> "Rotate 90°"
+                        180 -> "Rotate 180°"
+                        270 -> "Rotate 270°"
+                        else -> "$it°"
                     }
+                } ?: "-")
+            } ?: run {
+                Text(
+                    "Image metadata not available",
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.close))
                 }
             }
         }

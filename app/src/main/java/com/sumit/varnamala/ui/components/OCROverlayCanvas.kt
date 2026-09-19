@@ -2,11 +2,13 @@ package com.sumit.varnamala.ui.components
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
 import com.sumit.varnamala.data.ocr.TextElement
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,6 +59,8 @@ fun OCROverlayCanvas(
     result: OCRResult?,
     textOverride: Map<android.graphics.Rect, String>? = null,
     containerSize: IntSize,
+    sourceBitmap: Bitmap? = null,
+    visualReplacementMode: OcrVisualReplacementMode = OcrVisualReplacementMode.REPLACE_LITE,
     modifier: Modifier = Modifier,
     // Display settings
     showBoundingBoxes: Boolean = true,
@@ -108,6 +112,8 @@ fun OCROverlayCanvas(
                 result = result,
                 textOverride = textOverride,
                 containerSize = containerSize,
+                sourceBitmap = sourceBitmap,
+                visualReplacementMode = visualReplacementMode,
                 textColor = textColor,
                 backgroundColor = textBackgroundColor.copy(alpha = textBackgroundOpacity),
                 enableTextCopy = enableTextCopy,
@@ -231,6 +237,8 @@ private fun EnhancedOCRTextOverlay(
     result: OCRResult,
     textOverride: Map<android.graphics.Rect, String>?,
     containerSize: IntSize,
+    sourceBitmap: Bitmap?,
+    visualReplacementMode: OcrVisualReplacementMode,
     textColor: Color,
     backgroundColor: Color,
     enableTextCopy: Boolean,
@@ -331,13 +339,31 @@ private fun EnhancedOCRTextOverlay(
                         val widthDp = with(density) { scaledRect.width().toDp() }
                         val heightDp = with(density) { scaledRect.height().toDp() }
 
-                        // Background box that stays within bounding box
+                        val replacementColor = when (visualReplacementMode) {
+                            OcrVisualReplacementMode.SIMPLE_OVERLAY -> backgroundColor
+                            OcrVisualReplacementMode.REPLACE_LITE,
+                            OcrVisualReplacementMode.PERSPECTIVE_PATCH,
+                            OcrVisualReplacementMode.OPENCV_INPAINT -> {
+                                sourceBitmap?.sampleBackgroundColor(element.boundingBox)
+                                    ?: backgroundColor
+                            }
+                        }
+                        val cornerRadius = when (visualReplacementMode) {
+                            OcrVisualReplacementMode.SIMPLE_OVERLAY -> 3.dp
+                            OcrVisualReplacementMode.REPLACE_LITE -> 2.dp
+                            OcrVisualReplacementMode.PERSPECTIVE_PATCH,
+                            OcrVisualReplacementMode.OPENCV_INPAINT -> 0.dp
+                        }
+
+                        // Replacement patch that stays within the detected text box.
+                        // OpenCV inpainting is reserved for still-image/high-quality mode; when
+                        // OpenCV is unavailable this falls back to the same sampled patch.
                         Box(
                             modifier = Modifier
                                 .offset(x = leftDp, y = topDp)
                                 .size(width = widthDp, height = heightDp)
-                                .clip(RoundedCornerShape(3.dp))
-                                .background(backgroundColor)
+                                .clip(RoundedCornerShape(cornerRadius))
+                                .background(replacementColor)
                                 .zIndex(1f)
                         )
 
@@ -434,4 +460,42 @@ private fun copyTextToClipboard(context: Context, text: String) {
     val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
     val clipData = ClipData.newPlainText(context.getString(R.string.ocr_text), text)
     clipboardManager?.setPrimaryClip(clipData)
+}
+
+private fun Bitmap.sampleBackgroundColor(rect: android.graphics.Rect): Color {
+    val left = rect.left.coerceIn(0, width - 1)
+    val top = rect.top.coerceIn(0, height - 1)
+    val right = rect.right.coerceIn(left + 1, width)
+    val bottom = rect.bottom.coerceIn(top + 1, height)
+    val insetX = max(1, (right - left) / 8)
+    val insetY = max(1, (bottom - top) / 8)
+    val samples = mutableListOf<Int>()
+
+    fun addSample(x: Int, y: Int) {
+        samples.add(getPixel(x.coerceIn(0, width - 1), y.coerceIn(0, height - 1)))
+    }
+
+    val sampleXs = listOf(left, left + insetX, right - insetX, right - 1)
+    val sampleYs = listOf(top, top + insetY, bottom - insetY, bottom - 1)
+    sampleXs.forEach { x ->
+        addSample(x, top)
+        addSample(x, bottom - 1)
+    }
+    sampleYs.forEach { y ->
+        addSample(left, y)
+        addSample(right - 1, y)
+    }
+
+    if (samples.isEmpty()) return Color.Black.copy(alpha = 0.72f)
+
+    var red = 0
+    var green = 0
+    var blue = 0
+    samples.forEach { color ->
+        red += android.graphics.Color.red(color)
+        green += android.graphics.Color.green(color)
+        blue += android.graphics.Color.blue(color)
+    }
+    val count = samples.size
+    return Color(red / count, green / count, blue / count).copy(alpha = 0.94f)
 }

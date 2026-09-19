@@ -9,7 +9,9 @@ import com.sumit.varnamala.ui.screens.SettingsScreen
 import com.sumit.varnamala.ui.screens.LanguageScreen
 import com.sumit.varnamala.ui.screens.ModelsScreen
 import com.sumit.varnamala.ui.screens.OnboardingLanguageScreen
+import com.sumit.varnamala.ui.screens.OcrLanguageScreen
 import com.sumit.varnamala.ui.screens.TextInputScreen
+import com.sumit.varnamala.ui.screens.TransliterationLanguageScreen
 import com.sumit.varnamala.data.preferences.ThemeSettingsRepository
 import com.sumit.varnamala.data.preferences.AppLanguageRepository
 import com.sumit.varnamala.data.preferences.OnboardingRepository
@@ -192,6 +194,41 @@ class MainActivity : ComponentActivity() {
                                 )
                             }) {
                                 LanguageScreen(navController)
+                            }
+                            composable(Screen.OcrLanguage.route, enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(300)
+                                )
+                            }, exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(300)
+                                )
+                            }) {
+                                OcrLanguageScreen(navController)
+                            }
+                            composable(
+                                route = Screen.TransliterationLanguage.route,
+                                arguments = listOf(navArgument("role") { type = NavType.StringType }),
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                        animationSpec = tween(300)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                        animationSpec = tween(300)
+                                    )
+                                }
+                            ) { backStackEntry ->
+                                TransliterationLanguageScreen(
+                                    navController = navController,
+                                    role = backStackEntry.arguments?.getString("role")
+                                        ?: Screen.TransliterationLanguage.ROLE_TARGET
+                                )
                             }
                             composable(Screen.Models.route, enterTransition = {
                                 slideIntoContainer(

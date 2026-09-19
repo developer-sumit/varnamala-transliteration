@@ -5,20 +5,24 @@ import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.OCRInfoCard
 import com.sumit.varnamala.ui.components.CameraPermissionHandler
 import com.sumit.varnamala.ui.components.GlassButton
+import com.sumit.varnamala.ui.components.InfoBottomSheet
 import com.sumit.varnamala.ui.components.OCRCameraPreview
+import com.sumit.varnamala.ui.components.OCROverlayCanvas
 import com.sumit.varnamala.ui.components.CameraCaptureButton
-import com.sumit.varnamala.ui.components.LanguageSelectionDialog
 import com.sumit.varnamala.ui.components.LanguageSelectionRow
 import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.data.ocr.OcrEngine
+import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
 import com.sumit.varnamala.utils.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
-import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.HistoryEntry
+import com.sumit.varnamala.data.TransliterationLanguageCatalog
 import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 import com.sumit.varnamala.data.preferences.OnboardingRepository
 import com.sumit.varnamala.data.preferences.UserPreferencesRepository
+import com.sumit.varnamala.models.TesseractModelStore
 import com.sumit.varnamala.ui.tutorial.CoachMarkStep
 import com.sumit.varnamala.ui.tutorial.CoachMarksOverlay
 import com.sumit.varnamala.ui.tutorial.captureBounds
@@ -45,13 +49,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -70,6 +72,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -125,6 +128,18 @@ fun CameraScreen(navController: NavController) {
     val readingMsPerWord by ocrSettingsRepository.cameraReadingMsPerWord.collectAsState(initial = 300)
     val maxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
     val skipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
+    val selectedOcrEngine by ocrSettingsRepository.selectedOcrEngine.collectAsState(
+        initial = OcrEngine.TESSERACT
+    )
+    val selectedOcrModelCode by ocrSettingsRepository.selectedOcrModelCode.collectAsState(
+        initial = OcrLanguageCatalog.DEFAULT_SOURCE_CODE
+    )
+    val selectedTargetCode by ocrSettingsRepository.selectedTargetTransliterationCode.collectAsState(
+        initial = "hi"
+    )
+    val visualReplacementMode by ocrSettingsRepository.visualReplacementMode.collectAsState(
+        initial = com.sumit.varnamala.data.ocr.OcrVisualReplacementMode.REPLACE_LITE
+    )
 
     // User preferences
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
@@ -188,12 +203,36 @@ fun CameraScreen(navController: NavController) {
     var rawOcrText by remember { mutableStateOf("") }
     var detectedLanguage by remember { mutableStateOf("unknown") }
 
-    // Language selection states
-    var showSourceLanguageDialog by remember { mutableStateOf(false) }
-    var showTargetLanguageDialog by remember { mutableStateOf(false) }
-    val availableLanguages = remember { AppLanguageRepository.getSupportedLanguages() }
-    var selectedSourceLanguage by remember { mutableStateOf<Language?>(null) }
-    var selectedTargetLanguage by remember { mutableStateOf(availableLanguages.firstOrNull { it.code == "hi" }) }
+    val selectedOcrModel = remember(selectedOcrModelCode) {
+        OcrLanguageCatalog.sourceOrDefault(selectedOcrModelCode)
+    }
+    val selectedTargetLanguage = remember(selectedTargetCode) {
+        TransliterationLanguageCatalog.find(selectedTargetCode)
+            ?: TransliterationLanguageCatalog.defaultTarget()
+    }
+    val selectedSourceLanguage = remember(selectedOcrModel) {
+        Language(
+            code = selectedOcrModel.code,
+            name = selectedOcrModel.displayName,
+            nativeName = selectedOcrModel.nativeName,
+            flagEmoji = "",
+            localeCode = selectedOcrModel.code
+        )
+    }
+
+    fun hasRequiredOcrModel(): Boolean {
+        if (selectedOcrEngine != OcrEngine.TESSERACT) return true
+        return TesseractModelStore.isModelDownloaded(context, selectedOcrModel)
+    }
+
+    fun promptModelDownload() {
+        Toast.makeText(
+            context,
+            context.getString(R.string.model_required_for_ocr, selectedOcrModel.displayName),
+            Toast.LENGTH_LONG
+        ).show()
+        navController.navigate(Screen.OcrLanguage.route)
+    }
 
     Box(
         modifier = Modifier
@@ -217,13 +256,15 @@ fun CameraScreen(navController: NavController) {
                         isDetectionRunning = detectionRunning,
                         flashEnabled = flashEnabled,
                         lensFacing = lensFacing,
-                        preferredLanguage = null,
+                        preferredLanguage = selectedOcrModel.code,
+                        ocrEngine = selectedOcrEngine,
+                        tesseractModel = selectedOcrModel.takeIf { selectedOcrEngine == OcrEngine.TESSERACT },
                         detectionIntervalMs = detectionIntervalMs,
                         readingMsPerWord = readingMsPerWord,
                         maxExtraDelayMs = maxExtraDelayMs,
                         skipFrames = skipFrames,
                         showBoundingBoxes = false,
-                        showTextOverlay = false,
+                        showTextOverlay = true,
                         showWordBoundingBoxes = false,
                         showLineBoundingBoxes = false,
                         showBlockBoundingBoxes = false,
@@ -239,6 +280,7 @@ fun CameraScreen(navController: NavController) {
                                     )
                                 }
                         },
+                        visualReplacementMode = visualReplacementMode,
                         // Single capture functionality
                         captureImage = captureImage,
                         onCaptureComplete = {
@@ -420,8 +462,14 @@ fun CameraScreen(navController: NavController) {
             LanguageSelectionRow(
                 sourceLanguage = selectedSourceLanguage,
                 targetLanguage = selectedTargetLanguage,
-                onSourceLanguageClick = { showSourceLanguageDialog = true },
-                onTargetLanguageClick = { showTargetLanguageDialog = true },
+                onSourceLanguageClick = { navController.navigate(Screen.OcrLanguage.route) },
+                onTargetLanguageClick = {
+                    navController.navigate(
+                        Screen.TransliterationLanguage.create(
+                            Screen.TransliterationLanguage.ROLE_TARGET
+                        )
+                    )
+                },
                 modifier = Modifier.captureBounds("languages") { key, rect ->
                     tutorialTargets[key] = rect
                 }
@@ -466,6 +514,10 @@ fun CameraScreen(navController: NavController) {
                     onSingleCapture = {
                         // Tap = capture single image
                         if (!isCapturing && !detectionRunning) {
+                            if (!hasRequiredOcrModel()) {
+                                promptModelDownload()
+                                return@CameraCaptureButton
+                            }
                             // Clear any previous capture
                             capturedBitmap = null
                             rawOcrText = ""
@@ -479,6 +531,10 @@ fun CameraScreen(navController: NavController) {
                     onLongPressStart = {
                         // Hold = start real-time scanning
                         if (!isCapturing) {
+                            if (!hasRequiredOcrModel()) {
+                                promptModelDownload()
+                                return@CameraCaptureButton
+                            }
                             // Clear any captured image
                             capturedBitmap = null
                             rawOcrText = ""
@@ -578,6 +634,34 @@ fun CameraScreen(navController: NavController) {
                     contentScale = ContentScale.Fit
                 )
 
+                lastOCRResult?.let { result ->
+                    val bitmap = capturedBitmap!!
+                    OCROverlayCanvas(
+                        result = result,
+                        textOverride = selectedTargetLanguage?.let { targetLang ->
+                            result.boundingBoxes
+                                .flatMap { it.lines }
+                                .flatMap { it.elements }
+                                .associate { element ->
+                                    element.boundingBox to Transliterator.transliterate(
+                                        text = element.text,
+                                        sourceLanguage = detectedLanguage,
+                                        targetLanguage = targetLang.localeCode
+                                    )
+                                }
+                        },
+                        containerSize = IntSize(bitmap.width, bitmap.height),
+                        sourceBitmap = bitmap,
+                        visualReplacementMode = visualReplacementMode,
+                        showBoundingBoxes = false,
+                        showTextOverlay = true,
+                        enableTextCopy = true,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .align(Alignment.Center)
+                    )
+                }
+
                 // Close button at top right
                 IconButton(
                     onClick = {
@@ -668,6 +752,10 @@ fun CameraScreen(navController: NavController) {
                             isRealTimeMode = false,
                             onSingleCapture = {
                                 // Tap = capture another image
+                                if (!hasRequiredOcrModel()) {
+                                    promptModelDownload()
+                                    return@CameraCaptureButton
+                                }
                                 capturedBitmap = null
                                 rawOcrText = ""
                                 lastOCRResult = null
@@ -677,6 +765,10 @@ fun CameraScreen(navController: NavController) {
                             },
                             onLongPressStart = {
                                 // Hold = start real-time scanning (closes captured image)
+                                if (!hasRequiredOcrModel()) {
+                                    promptModelDownload()
+                                    return@CameraCaptureButton
+                                }
                                 capturedBitmap = null
                                 rawOcrText = ""
                                 lastOCRResult = null
@@ -706,51 +798,11 @@ fun CameraScreen(navController: NavController) {
         }
 
         if (showCameraInfoDialog) {
-            AlertDialog(
-                onDismissRequest = { showCameraInfoDialog = false },
-                confirmButton = {
-                    TextButton(onClick = { showCameraInfoDialog = false }) {
-                        Text(text = stringResource(R.string.close))
-                    }
-                },
-                title = { Text(text = stringResource(R.string.camera_info_title)) },
-                text = { Text(text = stringResource(R.string.camera_info_message)) }
-            )
-        }
-
-        // Language Selection Dialogs
-        if (showSourceLanguageDialog) {
-            LanguageSelectionDialog(
-                title = stringResource(R.string.select_ocr_language),
-                currentLanguage = selectedSourceLanguage,
-                onLanguageSelected = { language ->
-                    selectedSourceLanguage = language
-                    showSourceLanguageDialog = false
-                    // Trigger OCR re-processing if needed
-                },
-                onDismiss = { showSourceLanguageDialog = false },
-                includeDefaultOption = true,
-                defaultOptionLabel = stringResource(R.string.default_mlkit),
-                onDefaultSelected = {
-                    selectedSourceLanguage = null
-                    showSourceLanguageDialog = false
-                }
-            )
-        }
-
-        if (showTargetLanguageDialog) {
-            LanguageSelectionDialog(
-                title = stringResource(R.string.select_transliteration_language),
-                currentLanguage = selectedTargetLanguage,
-                onLanguageSelected = { language ->
-                    selectedTargetLanguage = language
-                    showTargetLanguageDialog = false
-                    // Trigger transliteration update if needed
-                },
-                onDismiss = { showTargetLanguageDialog = false },
-                showDownloadOption = false  // No download needed for transliteration
+            InfoBottomSheet(
+                title = stringResource(R.string.camera_info_title),
+                message = stringResource(R.string.camera_info_message),
+                onDismiss = { showCameraInfoDialog = false }
             )
         }
     }
 }
-

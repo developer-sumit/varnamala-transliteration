@@ -1,5 +1,9 @@
 package com.sumit.varnamala.data.preferences
 
+import com.sumit.varnamala.data.ocr.OcrEngine
+import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
+import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
+
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -8,6 +12,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -29,7 +34,45 @@ class OCRSettingsRepository(private val context: Context) {
         val CAMERA_READING_MS_PER_WORD = intPreferencesKey("camera_reading_ms_per_word")
         val CAMERA_MAX_EXTRA_DELAY_MS = intPreferencesKey("camera_max_extra_delay_ms")
         val CAMERA_SKIP_FRAMES = intPreferencesKey("camera_skip_frames")
+
+        val SELECTED_OCR_ENGINE = stringPreferencesKey("selected_ocr_engine")
+        val SELECTED_OCR_MODEL_CODE = stringPreferencesKey("selected_ocr_model_code")
+        val SELECTED_TARGET_TRANSLITERATION_CODE =
+            stringPreferencesKey("selected_target_transliteration_code")
+        val SELECTED_SOURCE_TRANSLITERATION_CODE =
+            stringPreferencesKey("selected_source_transliteration_code")
+        val VISUAL_REPLACEMENT_MODE = stringPreferencesKey("visual_replacement_mode")
     }
+
+    val selectedOcrEngine: Flow<OcrEngine> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SELECTED_OCR_ENGINE]
+                ?.let { runCatching { OcrEngine.valueOf(it) }.getOrNull() }
+                ?: OcrEngine.TESSERACT
+        }
+
+    val selectedOcrModelCode: Flow<String> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SELECTED_OCR_MODEL_CODE]
+                ?: OcrLanguageCatalog.DEFAULT_SOURCE_CODE
+        }
+
+    val selectedTargetTransliterationCode: Flow<String> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SELECTED_TARGET_TRANSLITERATION_CODE] ?: "hi"
+        }
+
+    val selectedSourceTransliterationCode: Flow<String> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.SELECTED_SOURCE_TRANSLITERATION_CODE] ?: "auto"
+        }
+
+    val visualReplacementMode: Flow<OcrVisualReplacementMode> = context.ocrSettingsDataStore.data
+        .map { preferences ->
+            preferences[PreferencesKeys.VISUAL_REPLACEMENT_MODE]
+                ?.let { runCatching { OcrVisualReplacementMode.valueOf(it) }.getOrNull() }
+                ?: OcrVisualReplacementMode.REPLACE_LITE
+        }
 
     val cameraDetectionIntervalMs: Flow<Long> = context.ocrSettingsDataStore.data
         .map { preferences ->
@@ -160,6 +203,37 @@ class OCRSettingsRepository(private val context: Context) {
     suspend fun setCameraSkipFrames(value: Int) {
         context.ocrSettingsDataStore.edit { preferences ->
             preferences[PreferencesKeys.CAMERA_SKIP_FRAMES] = value
+        }
+    }
+
+    suspend fun setSelectedOcrEngine(value: OcrEngine) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_OCR_ENGINE] = value.name
+        }
+    }
+
+    suspend fun setSelectedOcrModelCode(value: String) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_OCR_MODEL_CODE] =
+                OcrLanguageCatalog.normalizeCode(value)
+        }
+    }
+
+    suspend fun setSelectedTargetTransliterationCode(value: String) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_TARGET_TRANSLITERATION_CODE] = value
+        }
+    }
+
+    suspend fun setSelectedSourceTransliterationCode(value: String) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.SELECTED_SOURCE_TRANSLITERATION_CODE] = value
+        }
+    }
+
+    suspend fun setVisualReplacementMode(value: OcrVisualReplacementMode) {
+        context.ocrSettingsDataStore.edit { preferences ->
+            preferences[PreferencesKeys.VISUAL_REPLACEMENT_MODE] = value.name
         }
     }
 }

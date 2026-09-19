@@ -55,7 +55,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 
@@ -137,11 +136,13 @@ private fun LanguageButton(
         horizontalArrangement = Arrangement.Center
     ) {
         if (language != null) {
-            Text(
-                text = language.flagEmoji,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(end = 6.dp)
-            )
+            if (language.flagEmoji.isNotBlank()) {
+                Text(
+                    text = language.flagEmoji,
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(end = 6.dp)
+                )
+            }
             Text(
                 text = language.name,
                 style = MaterialTheme.typography.bodyMedium,
@@ -175,16 +176,12 @@ fun LanguageSelectionDialog(
     val context = LocalContext.current
     val workManager = remember { WorkManager.getInstance(context) }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
+    AppModalBottomSheet(onDismiss = onDismiss) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.7f),
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
+                .fillMaxHeight(0.7f)
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
                 // Header
                 Text(
                     text = title,
@@ -337,7 +334,6 @@ fun LanguageSelectionDialog(
                 ) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
         }
     }
 }
@@ -434,18 +430,10 @@ fun OCREngineSelectionDialog(
     onEngineSelected: (com.sumit.varnamala.data.ocr.OcrEngine) -> Unit,
     onDismiss: () -> Unit
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            shape = RoundedCornerShape(20.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
+    AppModalBottomSheet(onDismiss = onDismiss) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
                 Text(
                     text = stringResource(R.string.select_ocr_engine),
                     style = MaterialTheme.typography.headlineSmall,
@@ -487,7 +475,6 @@ fun OCREngineSelectionDialog(
                 ) {
                     Text(stringResource(R.string.cancel))
                 }
-            }
         }
     }
 }

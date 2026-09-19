@@ -3,7 +3,11 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
+import com.sumit.varnamala.data.ocr.OcrEngine
+import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
+import com.sumit.varnamala.ui.components.ConfirmBottomSheet
 import com.sumit.varnamala.ui.components.GlassButton
+import com.sumit.varnamala.ui.components.SliderBottomSheet
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
 import com.sumit.varnamala.service.OverlayManager
 import com.sumit.varnamala.utils.OverlayPermissionHelper
@@ -37,10 +41,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -73,7 +75,6 @@ import android.content.Intent
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.widget.Toast
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.core.net.toUri
 
 @Composable
@@ -104,6 +105,10 @@ fun SettingsScreen(
     )
     val cameraMaxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
     val cameraSkipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
+    val selectedOcrEngine by ocrSettingsRepository.selectedOcrEngine.collectAsState(initial = OcrEngine.TESSERACT)
+    val visualReplacementMode by ocrSettingsRepository.visualReplacementMode.collectAsState(
+        initial = OcrVisualReplacementMode.REPLACE_LITE
+    )
     val currentAppLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
     val currentLanguageDisplayName =
         AppLanguageRepository.getLanguageDisplayName(currentAppLanguage)
@@ -332,12 +337,62 @@ fun SettingsScreen(
                     title = stringResource(R.string.camera_ocr_skip_frames),
                     subtitle = stringResource(R.string.frames_value, cameraSkipFrames),
                     icon = painterResource(id = R.drawable.ic_settings_outline),
-                    isLastItem = true,
-                    showDivider = false,
+                    isLastItem = false,
+                    showDivider = true,
                     onClick = { showSkipFramesDialog = true },
                     trailingContent = {
                         Icon(
                             painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                SettingItem(
+                    title = stringResource(R.string.select_ocr_engine),
+                    subtitle = when (selectedOcrEngine) {
+                        OcrEngine.TESSERACT -> stringResource(R.string.ocr_engine_tesseract_name)
+                        OcrEngine.ML_KIT -> stringResource(R.string.default_mlkit)
+                        OcrEngine.CUSTOM -> "Custom"
+                    },
+                    icon = painterResource(id = R.drawable.ic_database),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = {
+                        scope.launch {
+                            ocrSettingsRepository.setSelectedOcrEngine(
+                                if (selectedOcrEngine == OcrEngine.TESSERACT) {
+                                    OcrEngine.ML_KIT
+                                } else {
+                                    OcrEngine.TESSERACT
+                                }
+                            )
+                        }
+                    },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_refresh),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+
+                SettingItem(
+                    title = stringResource(R.string.visual_replacement_mode),
+                    subtitle = visualReplacementMode.displayName(),
+                    icon = painterResource(id = R.drawable.ic_image_outline),
+                    isLastItem = true,
+                    showDivider = false,
+                    onClick = {
+                        val modes = OcrVisualReplacementMode.entries
+                        val next = modes[(modes.indexOf(visualReplacementMode) + 1) % modes.size]
+                        scope.launch { ocrSettingsRepository.setVisualReplacementMode(next) }
+                    },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_refresh),
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurface
                         )
@@ -595,217 +650,98 @@ fun SettingsScreen(
         }
     }
 
-    // Clear Cache Confirmation Dialog
     if (showClearCacheDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearCacheDialog = false },
-            title = { Text(stringResource(R.string.clear_cache)) },
-            text = {
-                Text(stringResource(R.string.clear_cache_confirmation_settings))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            cacheRepository.clearCache()
-                        }
-                        showClearCacheDialog = false
-                    }) {
-                    Text(stringResource(R.string.clear), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { showClearCacheDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            })
+        ConfirmBottomSheet(
+            title = stringResource(R.string.clear_cache),
+            message = stringResource(R.string.clear_cache_confirmation_settings),
+            confirmText = stringResource(R.string.clear),
+            destructive = true,
+            onDismiss = { showClearCacheDialog = false },
+            onConfirm = {
+                scope.launch { cacheRepository.clearCache() }
+                showClearCacheDialog = false
+            }
+        )
     }
 
     if (showDetectionIntervalDialog) {
-        var pending by remember { mutableFloatStateOf(cameraDetectionIntervalMs.toFloat()) }
-        AlertDialog(
-            onDismissRequest = { showDetectionIntervalDialog = false },
-            title = { Text(stringResource(R.string.camera_ocr_detection_interval)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.ms_value, pending.toInt()))
-                    Slider(
-                        value = pending,
-                        onValueChange = { pending = it },
-                        valueRange = 250f..3000f,
-                        steps = 11
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            ocrSettingsRepository.setCameraDetectionIntervalMs(pending.toLong())
-                        }
-                        showDetectionIntervalDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDetectionIntervalDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+        SliderBottomSheet(
+            title = stringResource(R.string.camera_ocr_detection_interval),
+            initialValue = cameraDetectionIntervalMs.toFloat(),
+            valueRange = 250f..3000f,
+            steps = 11,
+            valueLabel = { context.getString(R.string.ms_value, it.toInt()) },
+            onDismiss = { showDetectionIntervalDialog = false },
+            onConfirm = {
+                scope.launch { ocrSettingsRepository.setCameraDetectionIntervalMs(it.toLong()) }
+                showDetectionIntervalDialog = false
             }
         )
     }
 
     if (showReadingMsPerWordDialog) {
-        var pending by remember { mutableFloatStateOf(cameraReadingMsPerWord.toFloat()) }
-        AlertDialog(
-            onDismissRequest = { showReadingMsPerWordDialog = false },
-            title = { Text(stringResource(R.string.camera_ocr_reading_ms_per_word)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.ms_value, pending.toInt()))
-                    Slider(
-                        value = pending,
-                        onValueChange = { pending = it },
-                        valueRange = 100f..800f,
-                        steps = 13
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            ocrSettingsRepository.setCameraReadingMsPerWord(pending.toInt())
-                        }
-                        showReadingMsPerWordDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showReadingMsPerWordDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+        SliderBottomSheet(
+            title = stringResource(R.string.camera_ocr_reading_ms_per_word),
+            initialValue = cameraReadingMsPerWord.toFloat(),
+            valueRange = 100f..800f,
+            steps = 13,
+            valueLabel = { context.getString(R.string.ms_value, it.toInt()) },
+            onDismiss = { showReadingMsPerWordDialog = false },
+            onConfirm = {
+                scope.launch { ocrSettingsRepository.setCameraReadingMsPerWord(it.toInt()) }
+                showReadingMsPerWordDialog = false
             }
         )
     }
 
     if (showMaxExtraDelayDialog) {
-        var pending by remember { mutableFloatStateOf(cameraMaxExtraDelayMs.toFloat()) }
-        AlertDialog(
-            onDismissRequest = { showMaxExtraDelayDialog = false },
-            title = { Text(stringResource(R.string.camera_ocr_max_extra_delay_ms)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.ms_value, pending.toInt()))
-                    Slider(
-                        value = pending,
-                        onValueChange = { pending = it },
-                        valueRange = 1000f..15000f,
-                        steps = 14
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            ocrSettingsRepository.setCameraMaxExtraDelayMs(pending.toInt())
-                        }
-                        showMaxExtraDelayDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showMaxExtraDelayDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+        SliderBottomSheet(
+            title = stringResource(R.string.camera_ocr_max_extra_delay_ms),
+            initialValue = cameraMaxExtraDelayMs.toFloat(),
+            valueRange = 1000f..15000f,
+            steps = 14,
+            valueLabel = { context.getString(R.string.ms_value, it.toInt()) },
+            onDismiss = { showMaxExtraDelayDialog = false },
+            onConfirm = {
+                scope.launch { ocrSettingsRepository.setCameraMaxExtraDelayMs(it.toInt()) }
+                showMaxExtraDelayDialog = false
             }
         )
     }
 
     if (showSkipFramesDialog) {
-        var pending by remember { mutableFloatStateOf(cameraSkipFrames.toFloat()) }
-        AlertDialog(
-            onDismissRequest = { showSkipFramesDialog = false },
-            title = { Text(stringResource(R.string.camera_ocr_skip_frames)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(stringResource(R.string.frames_value, pending.toInt()))
-                    Slider(
-                        value = pending,
-                        onValueChange = { pending = it },
-                        valueRange = 5f..15f,
-                        steps = 9
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            ocrSettingsRepository.setCameraSkipFrames(pending.toInt())
-                        }
-                        showSkipFramesDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showSkipFramesDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+        SliderBottomSheet(
+            title = stringResource(R.string.camera_ocr_skip_frames),
+            initialValue = cameraSkipFrames.toFloat(),
+            valueRange = 5f..15f,
+            steps = 9,
+            valueLabel = { context.getString(R.string.frames_value, it.toInt()) },
+            onDismiss = { showSkipFramesDialog = false },
+            onConfirm = {
+                scope.launch { ocrSettingsRepository.setCameraSkipFrames(it.toInt()) }
+                showSkipFramesDialog = false
             }
         )
     }
 
-    // Text Size Dialog
     if (showTextSizeDialog) {
-        var pending by remember { mutableFloatStateOf(textDisplaySize) }
-        AlertDialog(
-            onDismissRequest = { showTextSizeDialog = false },
-            title = { Text(stringResource(R.string.text_display_size)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        when {
-                            pending <= 0.85f -> stringResource(R.string.text_size_small)
-                            pending <= 1.1f -> stringResource(R.string.text_size_normal)
-                            pending <= 1.35f -> stringResource(R.string.text_size_large)
-                            else -> stringResource(R.string.text_size_extra_large)
-                        }
-                    )
-                    Slider(
-                        value = pending,
-                        onValueChange = { pending = it },
-                        valueRange = 0.8f..1.5f,
-                        steps = 3
-                    )
+        SliderBottomSheet(
+            title = stringResource(R.string.text_display_size),
+            initialValue = textDisplaySize,
+            valueRange = 0.8f..1.5f,
+            steps = 3,
+            valueLabel = {
+                when {
+                    it <= 0.85f -> context.getString(R.string.text_size_small)
+                    it <= 1.1f -> context.getString(R.string.text_size_normal)
+                    it <= 1.35f -> context.getString(R.string.text_size_large)
+                    else -> context.getString(R.string.text_size_extra_large)
                 }
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        scope.launch {
-                            userPrefsRepository.setTextDisplaySize(pending)
-                        }
-                        showTextSizeDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showTextSizeDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+            onDismiss = { showTextSizeDialog = false },
+            onConfirm = {
+                scope.launch { userPrefsRepository.setTextDisplaySize(it) }
+                showTextSizeDialog = false
             }
         )
     }
@@ -926,5 +862,14 @@ fun SettingItem(
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             )
         }
+    }
+}
+
+private fun OcrVisualReplacementMode.displayName(): String {
+    return when (this) {
+        OcrVisualReplacementMode.SIMPLE_OVERLAY -> "Simple Overlay"
+        OcrVisualReplacementMode.REPLACE_LITE -> "Replace Lite"
+        OcrVisualReplacementMode.PERSPECTIVE_PATCH -> "Perspective Patch"
+        OcrVisualReplacementMode.OPENCV_INPAINT -> "OpenCV Inpainting"
     }
 }

@@ -3,6 +3,7 @@ package com.sumit.varnamala.ui.screens
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.HistoryEntry
 import com.sumit.varnamala.data.TransliterationHistoryRepository
+import com.sumit.varnamala.ui.components.AppModalBottomSheet
 import com.sumit.varnamala.ui.components.GlassButton
 
 import android.content.ClipData
@@ -40,7 +41,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -243,13 +243,25 @@ fun HistoryScreen(navController: NavController) {
         }
     }
 
-    // Clear History Dialog
     if (showClearDialog) {
-        AlertDialog(
-            onDismissRequest = { showClearDialog = false },
-            title = { Text(stringResource(R.string.clear_history)) },
-            text = { Text(stringResource(R.string.clear_history_confirmation)) },
-            confirmButton = {
+        AppModalBottomSheet(onDismiss = { showClearDialog = false }) {
+            Text(
+                text = stringResource(R.string.clear_history),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.clear_history_confirmation),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                TextButton(onClick = { showClearDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
                 TextButton(
                     onClick = {
                         scope.launch {
@@ -263,28 +275,21 @@ fun HistoryScreen(navController: NavController) {
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-            },
-            dismissButton = {
-                Row {
-                    TextButton(onClick = { showClearDialog = false }) {
-                        Text(stringResource(R.string.cancel))
-                    }
-                    TextButton(
-                        onClick = {
-                            scope.launch {
-                                historyRepository.clearHistory(keepFavorites = false)
-                            }
-                            showClearDialog = false
+                TextButton(
+                    onClick = {
+                        scope.launch {
+                            historyRepository.clearHistory(keepFavorites = false)
                         }
-                    ) {
-                        Text(
-                            text = stringResource(R.string.clear_all),
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        showClearDialog = false
                     }
+                ) {
+                    Text(
+                        text = stringResource(R.string.clear_all),
+                        color = MaterialTheme.colorScheme.error
+                    )
                 }
             }
-        )
+        }
     }
 }
 

@@ -16,7 +16,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 
 
 @Composable
@@ -47,21 +45,14 @@ fun DisplayOptionsDialog(
     boundingBoxStrokeWidth: Float = 2f,
     onBoundingBoxStrokeWidthChange: (Float) -> Unit = {}
 ) {
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
+    AppModalBottomSheet(onDismiss = onDismiss) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f),
-            shape = RoundedCornerShape(16.dp),
-            color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 6.dp
+                .fillMaxHeight(0.8f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
                 Text(
                     text = stringResource(R.string.display_options),
                     fontSize = 20.sp,
@@ -196,7 +187,6 @@ fun DisplayOptionsDialog(
                         Text(stringResource(R.string.close))
                     }
                 }
-            }
         }
     }
 }

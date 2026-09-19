@@ -1,13 +1,20 @@
 package com.sumit.varnamala.ui.components
 
 import com.sumit.varnamala.data.ocr.OCRResult
+import com.sumit.varnamala.data.ocr.OcrEngine
+import com.sumit.varnamala.data.ocr.OcrLanguageModel
+import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
 import com.sumit.varnamala.data.ocr.TextBlock
 import com.sumit.varnamala.data.ocr.TextElement
 import com.sumit.varnamala.data.ocr.TextLine
+import com.sumit.varnamala.ocr.tesseract.TesseractOcrRepository
+import com.sumit.varnamala.ocr.tesseract.rotatedIfNeeded
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.ImageFormat
 import android.graphics.Rect
+import android.graphics.YuvImage
 import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -42,6 +49,9 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.googlecode.tesseract.android.TessBaseAPI
+import kotlinx.coroutines.runBlocking
+import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -54,6 +64,8 @@ fun OCRCameraPreview(
     flashEnabled: Boolean = false,
     lensFacing: Int = CameraSelector.LENS_FACING_BACK,
     preferredLanguage: String? = null,
+    ocrEngine: OcrEngine = OcrEngine.ML_KIT,
+    tesseractModel: OcrLanguageModel? = null,
     // time-based sampling (milliseconds)
     detectionIntervalMs: Long = 1000L,
     // reading time estimate per word (ms)
@@ -71,6 +83,7 @@ fun OCRCameraPreview(
     boundingBoxStrokeWidth: Float = 2f,
     // Single capture functionality
     textOverride: Map<Rect, String>? = null,
+    visualReplacementMode: OcrVisualReplacementMode = OcrVisualReplacementMode.REPLACE_LITE,
     captureImage: Boolean = false,
     onCaptureComplete: () -> Unit = {},
     onImageCaptured: (android.graphics.Bitmap) -> Unit = {},
@@ -81,6 +94,7 @@ fun OCRCameraPreview(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
+    val tesseractRepository = remember { TesseractOcrRepository(context) }
 
     var camera: Camera? by remember { mutableStateOf(null) }
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
@@ -133,6 +147,7 @@ fun OCRCameraPreview(
             result = lastOCRResult,
             textOverride = textOverride,
             containerSize = previewSize,
+            visualReplacementMode = visualReplacementMode,
             showBoundingBoxes = showBoundingBoxes,
             showTextOverlay = showTextOverlay,
             showWordBoundingBoxes = showWordBoundingBoxes,
@@ -167,6 +182,9 @@ fun OCRCameraPreview(
                     maxExtraDelayMs = maxExtraDelayMs,
                     suppressDuplicateDurationMs = 2000L,
                     preferredLanguage = preferredLanguage,
+                    ocrEngine = ocrEngine,
+                    tesseractModel = tesseractModel,
+                    tesseractRepository = tesseractRepository,
                     onOCRResult = wrappedOnOCR,
                     onManualLanguageRequired = onManualLanguageRequired,
                     onError = onError,
@@ -209,6 +227,9 @@ fun OCRCameraPreview(
                                     processCapturedImageProxy(
                                         imageProxy = imageProxy,
                                         preferredLanguage = preferredLanguage,
+                                        ocrEngine = ocrEngine,
+                                        tesseractModel = tesseractModel,
+                                        tesseractRepository = tesseractRepository,
                                         latinRecognizer = latinRecognizer,
                                         devanagariRecognizer = devanagariRecognizer,
                                         onOCRResult = { result ->
@@ -305,6 +326,9 @@ private fun updateAnalysisUseCase(
     readingMsPerWord: Int,
     maxExtraDelayMs: Int,
     preferredLanguage: String?,
+    ocrEngine: OcrEngine,
+    tesseractModel: OcrLanguageModel?,
+    tesseractRepository: TesseractOcrRepository,
     onOCRResult: (OCRResult) -> Unit,
     onManualLanguageRequired: () -> Unit,
     onError: (String) -> Unit,
@@ -362,6 +386,9 @@ private fun updateAnalysisUseCase(
                                 latinRecognizer = latinRecognizer,
                                 devanagariRecognizer = devanagariRecognizer,
                                 preferredLanguage = preferredLanguage,
+                                ocrEngine = ocrEngine,
+                                tesseractModel = tesseractModel,
+                                tesseractRepository = tesseractRepository,
                                 onOCRResult = sendWrapper,
                                 onManualLanguageRequired = onManualLanguageRequired,
                                 onError = onError
@@ -430,6 +457,9 @@ private fun processImageProxy(
     latinRecognizer: TextRecognizer,
     devanagariRecognizer: TextRecognizer,
     preferredLanguage: String?,
+    ocrEngine: OcrEngine,
+    tesseractModel: OcrLanguageModel?,
+    tesseractRepository: TesseractOcrRepository,
     onOCRResult: (OCRResult) -> Unit,
     onManualLanguageRequired: () -> Unit,
     onError: (String) -> Unit
@@ -440,6 +470,30 @@ private fun processImageProxy(
         if (mediaImage == null) {
             imageProxy.close(); return
         }
+
+        if (ocrEngine == OcrEngine.TESSERACT) {
+            val model = tesseractModel
+            if (model == null) {
+                onError("Select and download an OCR language model before scanning.")
+                imageProxy.close()
+                return
+            }
+            val bitmap = imageProxyToBitmap(imageProxy)
+                .rotatedIfNeeded(imageProxy.imageInfo.rotationDegrees)
+            imageProxy.close()
+            runCatching {
+                runBlocking {
+                    tesseractRepository.processBitmap(
+                        bitmap = bitmap,
+                        model = model,
+                        pageSegMode = TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT
+                    )
+                }
+            }.onSuccess(onOCRResult)
+                .onFailure { onError(it.message ?: "Tesseract OCR failed") }
+            return
+        }
+
         val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
         fun handleNoText() {
@@ -549,9 +603,33 @@ private fun convertToOCRResult(
 }
 
 private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap {
-    val buffer = imageProxy.planes[0].buffer
-    val bytes = ByteArray(buffer.remaining())
-    buffer.get(bytes)
+    val yBuffer = imageProxy.planes[0].buffer.duplicate()
+    val uBuffer = imageProxy.planes[1].buffer.duplicate()
+    val vBuffer = imageProxy.planes[2].buffer.duplicate()
+
+    val ySize = yBuffer.remaining()
+    val uSize = uBuffer.remaining()
+    val vSize = vBuffer.remaining()
+    val nv21 = ByteArray(ySize + uSize + vSize)
+
+    yBuffer.get(nv21, 0, ySize)
+    vBuffer.get(nv21, ySize, vSize)
+    uBuffer.get(nv21, ySize + vSize, uSize)
+
+    val yuvImage = YuvImage(
+        nv21,
+        ImageFormat.NV21,
+        imageProxy.width,
+        imageProxy.height,
+        null
+    )
+    val out = ByteArrayOutputStream()
+    yuvImage.compressToJpeg(
+        Rect(0, 0, imageProxy.width, imageProxy.height),
+        92,
+        out
+    )
+    val bytes = out.toByteArray()
     return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }
 
@@ -559,12 +637,36 @@ private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap 
 private fun processCapturedImageProxy(
     imageProxy: ImageProxy,
     preferredLanguage: String?,
+    ocrEngine: OcrEngine,
+    tesseractModel: OcrLanguageModel?,
+    tesseractRepository: TesseractOcrRepository,
     latinRecognizer: TextRecognizer,
     devanagariRecognizer: TextRecognizer,
     onOCRResult: (OCRResult) -> Unit,
     onError: (String) -> Unit
 ) {
     try {
+        if (ocrEngine == OcrEngine.TESSERACT) {
+            val model = tesseractModel
+            if (model == null) {
+                onError("Select and download an OCR language model before scanning.")
+                return
+            }
+            val bitmap = imageProxyToBitmap(imageProxy)
+                .rotatedIfNeeded(imageProxy.imageInfo.rotationDegrees)
+            runCatching {
+                runBlocking {
+                    tesseractRepository.processBitmap(
+                        bitmap = bitmap,
+                        model = model,
+                        pageSegMode = TessBaseAPI.PageSegMode.PSM_AUTO
+                    )
+                }
+            }.onSuccess(onOCRResult)
+                .onFailure { onError(it.message ?: "Tesseract OCR failed") }
+            return
+        }
+
         val inputImage =
             InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
         val startTime = System.currentTimeMillis()
@@ -607,4 +709,3 @@ private fun processCapturedImageProxy(
         onError("Image processing failed: ${exc.message}")
     }
 }
-

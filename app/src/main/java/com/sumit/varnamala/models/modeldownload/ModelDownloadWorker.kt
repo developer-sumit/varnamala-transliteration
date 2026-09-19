@@ -32,11 +32,15 @@ class ModelDownloadWorker(
             ModelRegistry.Model(
                 tesseractLanguageCode = tessLang,
                 fileName = fileName,
-                downloadUrl = "https://github.com/tesseract-ocr/tessdata_best/raw/main/$fileName"
+                downloadUrl = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/$fileName",
+                trainedDataPath = fileName
             )
         }
 
-        val outFile = TesseractModelStore.modelFile(applicationContext, model.tesseractLanguageCode)
+        val outFile = java.io.File(
+            TesseractModelStore.tessdataDir(applicationContext),
+            model.trainedDataPath
+        )
         val tmpFile = File(outFile.parentFile, outFile.name + ".download")
         val notificationId =
             NOTIFICATION_ID_BASE + (model.tesseractLanguageCode.hashCode().absoluteValue % 10000)

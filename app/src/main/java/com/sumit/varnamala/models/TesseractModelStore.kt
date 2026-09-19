@@ -1,5 +1,6 @@
 package com.sumit.varnamala.models
 
+import com.sumit.varnamala.data.ocr.OcrLanguageModel
 import com.sumit.varnamala.ocr.tesseract.TesseractTrainedDataManager
 
 import java.io.File
@@ -18,6 +19,10 @@ object TesseractModelStore {
 
     fun modelFile(context: Context, tesseractLanguageCode: String): File {
         return File(tessdataDir(context), "$tesseractLanguageCode.traineddata")
+    }
+
+    fun modelFile(context: Context, model: OcrLanguageModel): File {
+        return File(tessdataDir(context), model.trainedDataPath)
     }
 
     private fun legacyModelFile(context: Context, tesseractLanguageCode: String): File {
@@ -41,7 +46,19 @@ object TesseractModelStore {
         return file.exists() && file.length() > 0L
     }
 
+    fun isModelDownloaded(context: Context, model: OcrLanguageModel): Boolean {
+        val current = modelFile(context, model)
+        if (!current.exists() && !model.trainedDataPath.contains('/')) {
+            return isModelDownloaded(context, model.code)
+        }
+        return current.exists() && current.length() > 0L
+    }
+
     fun deleteModel(context: Context, tesseractLanguageCode: String): Boolean {
         return modelFile(context, tesseractLanguageCode).delete()
+    }
+
+    fun deleteModel(context: Context, model: OcrLanguageModel): Boolean {
+        return modelFile(context, model).delete()
     }
 }

@@ -1,10 +1,11 @@
 package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
-import com.sumit.varnamala.data.AppLanguageRepository
+import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
 import com.sumit.varnamala.models.ModelRegistry
 import com.sumit.varnamala.models.ModelSizeFetcher
 import com.sumit.varnamala.models.TesseractModelStore
+import com.sumit.varnamala.ui.components.ConfirmBottomSheet
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.models.modeldownload.ModelDownloadManager
 import com.sumit.varnamala.models.modeldownload.ModelDownloadWorker
@@ -30,7 +31,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,7 +64,7 @@ import android.widget.Toast
 fun ModelsScreen(navController: NavController) {
     val context = LocalContext.current
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
-    val languages = remember { AppLanguageRepository.getSupportedLanguages() }
+    val languages = remember { OcrLanguageCatalog.all }
     val workManager = remember { WorkManager.getInstance(context) }
 
     Box(
@@ -120,12 +120,12 @@ fun ModelsScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(bottom = 20.dp)
             ) {
-                val tesseractLanguages = languages.mapNotNull { lang ->
-                    val model = ModelRegistry.forLanguage(lang) ?: return@mapNotNull null
+                val tesseractLanguages = languages.map { lang ->
+                    val model = ModelRegistry.forOcrLanguage(lang)
                     ModelRowData(
-                        name = lang.name,
+                        name = lang.displayName,
                         nativeName = lang.nativeName,
-                        flagEmoji = lang.flagEmoji,
+                        flagEmoji = "",
                         tessCode = model.tesseractLanguageCode,
                         url = model.downloadUrl
                     )
@@ -315,41 +315,24 @@ private fun ModelRow(
         }
     }
 
-    // Delete confirmation dialog
     if (showDeleteDialog) {
-        AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
-            title = { Text(stringResource(R.string.delete_model)) },
-            text = {
-                Text(stringResource(R.string.delete_model_confirmation, name))
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val deleted = TesseractModelStore.deleteModel(context, tessCode)
-                        if (deleted) {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.model_deleted_successfully),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.failed_to_delete_model),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        showDeleteDialog = false
-                    }
-                ) {
-                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
-                    Text(stringResource(R.string.cancel))
-                }
+        ConfirmBottomSheet(
+            title = stringResource(R.string.delete_model),
+            message = stringResource(R.string.delete_model_confirmation, name),
+            confirmText = stringResource(R.string.delete),
+            destructive = true,
+            onDismiss = { showDeleteDialog = false },
+            onConfirm = {
+                val deleted = TesseractModelStore.deleteModel(context, tessCode)
+                Toast.makeText(
+                    context,
+                    context.getString(
+                        if (deleted) R.string.model_deleted_successfully
+                        else R.string.failed_to_delete_model
+                    ),
+                    Toast.LENGTH_SHORT
+                ).show()
+                showDeleteDialog = false
             }
         )
     }

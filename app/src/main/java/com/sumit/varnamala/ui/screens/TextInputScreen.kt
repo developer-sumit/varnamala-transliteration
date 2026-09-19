@@ -2,12 +2,16 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Language
-import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.data.HistoryEntry
+import com.sumit.varnamala.data.Screen
+import com.sumit.varnamala.data.TransliterationLanguageCatalog
 import com.sumit.varnamala.data.TransliterationHistoryRepository
+import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 import com.sumit.varnamala.ui.components.GlassButton
-import com.sumit.varnamala.ui.components.LanguageSelectionDialog
+import com.sumit.varnamala.ui.components.InfoBottomSheet
+import com.sumit.varnamala.ui.components.LanguageSelectionRow
+import com.sumit.varnamala.utils.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 
 import android.content.ClipData
@@ -47,7 +51,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -95,6 +98,7 @@ fun TextInputScreen(navController: NavController) {
 
     val historyRepository = remember { TransliterationHistoryRepository(context) }
     val userPrefsRepository = remember { UserPreferencesRepository(context) }
+    val ocrSettingsRepository = remember { OCRSettingsRepository(context) }
 
     // User preferences
     val textDisplaySize by userPrefsRepository.textDisplaySize.collectAsState(initial = 1.0f)
@@ -107,12 +111,23 @@ fun TextInputScreen(navController: NavController) {
     var transliteratedText by remember { mutableStateOf("") }
     var isTransliterating by remember { mutableStateOf(false) }
 
-    // Language selection
-    val supportedLanguages = remember { AppLanguageRepository.getSupportedLanguages() }
-    var sourceLanguage by remember { mutableStateOf<Language?>(null) }
-    var targetLanguage by remember { mutableStateOf(supportedLanguages.find { it.code == "hi" }) }
-    var showSourceLanguageDialog by remember { mutableStateOf(false) }
-    var showTargetLanguageDialog by remember { mutableStateOf(false) }
+    val selectedSourceCode by ocrSettingsRepository.selectedSourceTransliterationCode.collectAsState(
+        initial = "auto"
+    )
+    val selectedTargetCode by ocrSettingsRepository.selectedTargetTransliterationCode.collectAsState(
+        initial = "hi"
+    )
+    val sourceLanguage = remember(selectedSourceCode) {
+        if (selectedSourceCode == "auto") {
+            Language("auto", "Auto-detect", "Auto-detect", "", localeCode = "auto")
+        } else {
+            TransliterationLanguageCatalog.find(selectedSourceCode)
+        }
+    }
+    val targetLanguage = remember(selectedTargetCode) {
+        TransliterationLanguageCatalog.find(selectedTargetCode)
+            ?: TransliterationLanguageCatalog.defaultTarget()
+    }
     var showTextInputInfoDialog by remember { mutableStateOf(false) }
 
     val focusRequester = remember { FocusRequester() }
@@ -171,8 +186,12 @@ fun TextInputScreen(navController: NavController) {
 
             delay(100) // Small delay for UX
 
-            val srcLang = sourceLanguage?.localeCode ?: "en"
-            val tgtLang = targetLanguage?.localeCode ?: "hi"
+            val srcLang = if (sourceLanguage?.localeCode == "auto") {
+                LanguageDetector.detectLanguage(inputText)
+            } else {
+                sourceLanguage?.localeCode ?: "en"
+            }
+            val tgtLang = targetLanguage.localeCode
 
             transliteratedText = Transliterator.transliterate(inputText, srcLang, tgtLang)
 
@@ -222,7 +241,7 @@ fun TextInputScreen(navController: NavController) {
     fun speakText(text: String) {
         if (ttsReady && tts != null) {
             performHapticFeedback()
-            val locale = when (targetLanguage?.localeCode) {
+            val locale = when (targetLanguage.localeCode) {
                 "hi" -> Locale("hi", "IN")
                 "bn" -> Locale("bn", "IN")
                 "ta" -> Locale("ta", "IN")
@@ -232,6 +251,7 @@ fun TextInputScreen(navController: NavController) {
                 "ml" -> Locale("ml", "IN")
                 "pa" -> Locale("pa", "IN")
                 "mr" -> Locale("mr", "IN")
+                "ur" -> Locale("ur", "IN")
                 else -> Locale.getDefault()
             }
             tts?.language = locale
@@ -284,61 +304,25 @@ fun TextInputScreen(navController: NavController) {
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Language Selection Row
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Source Language
-                TextButton(
-                    onClick = { showSourceLanguageDialog = true },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = sourceLanguage?.let { "${it.flagEmoji} ${it.name}" }
-                            ?: stringResource(R.string.auto_detect),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
+            LanguageSelectionRow(
+                sourceLanguage = sourceLanguage,
+                targetLanguage = targetLanguage,
+                onSourceLanguageClick = {
+                    navController.navigate(
+                        Screen.TransliterationLanguage.create(
+                            Screen.TransliterationLanguage.ROLE_SOURCE
+                        )
                     )
-                }
-
-                // Swap Button
-                IconButton(
-                    onClick = {
-                        performHapticFeedback()
-                        val temp = sourceLanguage
-                        sourceLanguage = targetLanguage
-                        targetLanguage = temp
-                        if (transliteratedText.isNotBlank()) {
-                            transliterate()
-                        }
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        contentDescription = "Swap languages",
-                        tint = MaterialTheme.colorScheme.primary
+                },
+                onTargetLanguageClick = {
+                    navController.navigate(
+                        Screen.TransliterationLanguage.create(
+                            Screen.TransliterationLanguage.ROLE_TARGET
+                        )
                     )
-                }
-
-                // Target Language
-                TextButton(
-                    onClick = { showTargetLanguageDialog = true },
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = targetLanguage?.let { "${it.flagEmoji} ${it.name}" }
-                            ?: stringResource(R.string.select_language),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
 
             // Input Text Area
             Column(
@@ -532,50 +516,11 @@ fun TextInputScreen(navController: NavController) {
         }
     }
 
-    // Info Dialog
     if (showTextInputInfoDialog) {
-        AlertDialog(
-            onDismissRequest = { showTextInputInfoDialog = false },
-            confirmButton = {
-                TextButton(onClick = { showTextInputInfoDialog = false }) {
-                    Text(text = stringResource(R.string.close))
-                }
-            },
-            title = { Text(text = stringResource(R.string.text_input_info_title)) },
-            text = { Text(text = stringResource(R.string.text_input_info_message)) }
-        )
-    }
-
-    // Language Selection Dialogs
-    if (showSourceLanguageDialog) {
-        LanguageSelectionDialog(
-            title = stringResource(R.string.select_ocr_language),
-            currentLanguage = sourceLanguage,
-            onLanguageSelected = {
-                sourceLanguage = it
-                showSourceLanguageDialog = false
-            },
-            onDismiss = { showSourceLanguageDialog = false },
-            includeDefaultOption = true,
-            defaultOptionLabel = stringResource(R.string.auto_detect),
-            onDefaultSelected = {
-                sourceLanguage = null
-                showSourceLanguageDialog = false
-            },
-            showDownloadOption = false  // No download needed for text transliteration
-        )
-    }
-
-    if (showTargetLanguageDialog) {
-        LanguageSelectionDialog(
-            title = stringResource(R.string.select_transliteration_language),
-            currentLanguage = targetLanguage,
-            onLanguageSelected = {
-                targetLanguage = it
-                showTargetLanguageDialog = false
-            },
-            onDismiss = { showTargetLanguageDialog = false },
-            showDownloadOption = false  // No download needed for transliteration
+        InfoBottomSheet(
+            title = stringResource(R.string.text_input_info_title),
+            message = stringResource(R.string.text_input_info_message),
+            onDismiss = { showTextInputInfoDialog = false }
         )
     }
 }

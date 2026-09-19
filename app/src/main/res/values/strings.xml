@@ -79,12 +79,14 @@
     <string name="camera_ocr_reading_ms_per_word">Reading time per word</string>
     <string name="camera_ocr_max_extra_delay_ms">Max extra delay</string>
     <string name="camera_ocr_skip_frames">Skip frames</string>
+    <string name="visual_replacement_mode">Visual replacement mode</string>
     <string name="ms_value">%d ms</string>
     <string name="frames_value">%d frames</string>
     
     <!-- Content descriptions -->
     <string name="copied">Copied</string>
     <string name="select_language">Select language</string>
+    <string name="search_languages">Search languages</string>
     <string name="selected">Selected</string>
     <string name="back">Back</string>
 
@@ -131,6 +133,7 @@
     <string name="to">To</string>
     <string name="transliterate">Transliterate</string>
     <string name="select_ocr_language">Select OCR language</string>
+    <string name="select_source_language">Select source language</string>
     <string name="select_transliteration_language">Select transliteration language</string>
     <string name="transliterate_to">Transliterate to</string>
 
@@ -156,6 +159,7 @@
     <string name="model_download_notification_title">Downloading language model</string>
     <string name="model_download_notification_content">%1$s • %2$d%%</string>
     <string name="model_not_downloaded_fallback">Model not downloaded, falling back to default model</string>
+    <string name="model_required_for_ocr">Download the %s OCR model before scanning.</string>
 
     <string name="no_internet_connection">No internet connection</string>
 

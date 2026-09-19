@@ -48,9 +48,9 @@ fun BottomNavBar(
 ) {
     val items = listOf(
         Triple(
-            Screen.Home.route, R.drawable.ic_camera, R.string.bottom_nav_camera
-        ), Triple(
             Screen.TextInput.route, R.drawable.ic_keyboard, R.string.bottom_nav_text
+        ), Triple(
+            Screen.Home.route, R.drawable.ic_camera, R.string.bottom_nav_camera
         ), Triple(
             Screen.Gallery.route, R.drawable.ic_image_outline, R.string.bottom_nav_gallery
         )

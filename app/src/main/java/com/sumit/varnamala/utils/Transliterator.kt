@@ -32,6 +32,62 @@ object Transliterator {
         sourceLanguage: String?,
         targetLanguage: String = Languages.ENGLISH
     ): String {
+        if (text.isBlank()) {
+            return text
+        }
+
+        return transliterateWithIcu(text, sourceLanguage, targetLanguage)
+    }
+
+    private fun transliterateWithIcu(
+        text: String,
+        sourceLanguage: String?,
+        targetLanguage: String
+    ): String {
+        val normalizedSource = sourceLanguage?.let(::normalizeLanguageCode)
+        val normalizedTarget = normalizeLanguageCode(targetLanguage)
+        val targetScript = scriptForLanguage(normalizedTarget) ?: return text
+        val sourceScript = normalizedSource?.let(::scriptForLanguage)
+
+        val transformId = when {
+            targetScript == "Latin" -> "Any-Latin; Latin-ASCII"
+            sourceScript == null || sourceScript == "Latin" -> "Latin-$targetScript"
+            sourceScript == targetScript -> return text
+            else -> "$sourceScript-Latin; Latin-$targetScript"
+        }
+
+        return runCatching {
+            android.icu.text.Transliterator
+                .getInstance(transformId)
+                .transliterate(text)
+        }.getOrElse { error ->
+            Log.w(TAG, "ICU transliteration failed for $transformId", error)
+            text
+        }
+    }
+
+    private fun scriptForLanguage(languageCode: String): String? {
+        return when (normalizeLanguageCode(languageCode)) {
+            "en", "eng", "latin" -> "Latin"
+            "hi", "mr", "ne", "sa", "hin", "mar", "nep", "san", "devanagari" -> "Devanagari"
+            "bn", "as", "ben", "asm" -> "Bengali"
+            "gu", "guj" -> "Gujarati"
+            "pa", "pan", "gurmukhi" -> "Gurmukhi"
+            "kn", "kan" -> "Kannada"
+            "ml", "mal" -> "Malayalam"
+            "or", "ori" -> "Oriya"
+            "ta", "tam" -> "Tamil"
+            "te", "tel" -> "Telugu"
+            "ur", "urd", "arabic" -> "Arabic"
+            else -> null
+        }
+    }
+
+    private fun legacyTransliterate(
+        text: String,
+        sourceLanguage: String?,
+        targetLanguage: String = Languages.ENGLISH
+    ): String {
         if (text.isBlank() || sourceLanguage == null || sourceLanguage == targetLanguage) {
             return text
         }
@@ -588,8 +644,11 @@ object Transliterator {
     private fun normalizeLanguageCode(code: String): String {
         return when (code.lowercase()) {
             // Devanagari
-            "hindi", "hi", "devanagari" -> "hi"
+            "english", "en", "eng", "latin" -> "en"
+            "hindi", "hi", "hin", "devanagari" -> "hi"
             "marathi", "mr", "mar" -> "mr"
+            "nepali", "ne", "nep" -> "ne"
+            "sanskrit", "sa", "san" -> "sa"
 
             // Bengali-Assamese
             "bengali", "bn", "ben" -> "bn"
@@ -605,6 +664,7 @@ object Transliterator {
             "gujarati", "gu", "guj" -> "gu"
             "punjabi", "pa", "pan", "gurmukhi" -> "pa"
             "odia", "or", "ori", "oriya" -> "or"
+            "urdu", "ur", "urd" -> "ur"
 
             else -> code.lowercase()
         }
