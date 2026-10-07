@@ -7,12 +7,8 @@ import com.sumit.varnamala.data.TransliterationLanguageCatalog
 import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
 import com.sumit.varnamala.data.ocr.OcrLanguageModel
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
-import com.sumit.varnamala.models.TesseractModelStore
-import com.sumit.varnamala.models.modeldownload.ModelDownloadManager
-import com.sumit.varnamala.models.modeldownload.ModelDownloadWorker
 import com.sumit.varnamala.ui.components.GlassButton
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +26,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,8 +49,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -66,7 +59,6 @@ fun OcrLanguageScreen(navController: NavController) {
     val selectedCode by settingsRepository.selectedOcrModelCode.collectAsState(
         initial = OcrLanguageCatalog.DEFAULT_SOURCE_CODE
     )
-    val workManager = remember { WorkManager.getInstance(context) }
     val topInset = WindowInsets.safeDrawing.asPaddingValues().calculateTopPadding()
     var query by remember { mutableStateOf("") }
     val languages = remember(query) {
@@ -112,38 +104,13 @@ fun OcrLanguageScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(languages, key = { it.code }) { language ->
-                val tag = ModelDownloadManager.tagForLanguage(language.code)
-                val workInfos by remember(tag) {
-                    workManager.getWorkInfosByTagFlow(tag)
-                }.collectAsState(initial = emptyList())
-                val activeWork = workInfos.firstOrNull {
-                    it.state == WorkInfo.State.RUNNING || it.state == WorkInfo.State.ENQUEUED
-                }
-                val progress = activeWork?.progress?.getInt(ModelDownloadWorker.KEY_PROGRESS, 0)
-                val downloaded = TesseractModelStore.isModelDownloaded(context, language)
-
                 OcrLanguageRow(
                     language = language,
                     selected = selectedCode == language.code,
-                    downloaded = downloaded,
-                    progress = progress,
                     onClick = {
-                        if (downloaded) {
-                            scope.launch {
-                                settingsRepository.setSelectedOcrModelCode(language.code)
-                                navController.popBackStack()
-                            }
-                        } else if (activeWork == null) {
-                            val started = runCatching {
-                                ModelDownloadManager.enqueueDownload(context, language.code)
-                            }.getOrDefault(false)
-                            if (!started) {
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.no_internet_connection),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                        scope.launch {
+                            settingsRepository.setSelectedOcrModelCode(language.code)
+                            navController.popBackStack()
                         }
                     }
                 )
@@ -252,6 +219,7 @@ private fun PickerHeader(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         GlassButton(
+            description = stringResource(R.string.back),
             icon = painterResource(R.drawable.ic_chevron_left),
             onClick = onBack
         )
@@ -269,8 +237,6 @@ private fun PickerHeader(
 private fun OcrLanguageRow(
     language: OcrLanguageModel,
     selected: Boolean,
-    downloaded: Boolean,
-    progress: Int?,
     onClick: () -> Unit,
 ) {
     Row(
@@ -310,38 +276,6 @@ private fun OcrLanguageRow(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-        }
-
-        when {
-            progress != null -> {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    CircularProgressIndicator(
-                        progress = { (progress / 100f).coerceIn(0f, 1f) },
-                        modifier = Modifier.size(22.dp),
-                        strokeWidth = 3.dp
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text("$progress%", style = MaterialTheme.typography.bodySmall)
-                }
-            }
-
-            downloaded -> {
-                Icon(
-                    painter = painterResource(R.drawable.ic_check),
-                    contentDescription = stringResource(R.string.model_downloaded),
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            else -> {
-                IconButton(onClick = onClick) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_download),
-                        contentDescription = stringResource(R.string.model_download)
-                    )
-                }
-            }
         }
     }
 }

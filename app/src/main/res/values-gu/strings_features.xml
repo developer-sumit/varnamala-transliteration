@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">મદદ અને ટ્યુટોરિયલ</string>
+    <string name="help_hint">એક ટૂંકો માર્ગદર્શક પ્રવાસ</string>
+    <string name="help_scan_title">બોર્ડ સ્કેન કરો</string>
+    <string name="help_scan_body">કૅમેરાને કોઈ લખાણ તરફ રાખો. ફોટો લેવા ગોળ બટન દબાવો, અથવા લાઇવ વાંચવા તેને દબાવી રાખો.</string>
+    <string name="help_languages_title">તમારી ભાષાઓ પસંદ કરો</string>
+    <string name="help_languages_body">કૅમેરાની ઉપર બે બટન છે: એક લખાણની ભાષા માટે અને બીજું જે લિપિમાં વાંચવું હોય તેના માટે.</string>
+    <string name="help_tap_title">અડીને સાંભળો</string>
+    <string name="help_tap_body">ચિત્ર પર કોઈ શબ્દને અડો, તે સંભળાશે. કોઈ લીટીને દબાવી રાખો, તે કૉપી થશે. ભૂખરી લીટીઓ વિશે ઍપને ખાતરી નથી.</string>
+    <string name="help_voice_title">ઑફલાઇન અવાજ</string>
+    <string name="help_voice_body">સેટિંગ્સમાં \'અવાજ અને બોલવું\' ખોલી ભારતીય ભાષાઓનો કુદરતી અવાજ ડાઉનલોડ કરો. પછી તે ઇન્ટરનેટ વગર ચાલે છે.</string>
+    <string name="help_type_title">ટાઇપ કરીને બદલો</string>
+    <string name="help_type_body">કીબોર્ડ ટૅબ ખોલી ટાઇપ કરો. ટાઇપ કરતાં જ બદલાયેલું લખાણ દેખાય છે, અને બંને રૂપ સાંભળી શકાય છે.</string>
+    <string name="help_keyboard_title">લિપ્યંતર કીબોર્ડ</string>
+    <string name="help_keyboard_body">કોઈપણ ઍપમાં અંગ્રેજી અક્ષરોમાં ટાઇપ કરો અને ભારતીય લિપિ મેળવો. તેને ફોનની કીબોર્ડ સેટિંગ્સમાં ચાલુ કરો.</string>
+    <string name="help_private_title">ડિઝાઇનથી જ ખાનગી</string>
+    <string name="help_private_body">વાંચવું, બદલવું અને બોલવું બધું તમારા ફોન પર થાય છે. તમે જે સ્કેન કરો છો તે ક્યાંય મોકલાતું નથી.</string>
+    <string name="help_keyboard_enable">કીબોર્ડ સેટિંગ્સ ખોલો</string>
+    <string name="help_replay">કૅમેરા ટૂર ફરી જુઓ</string>
+    <string name="widget_label">ટેક્સ્ટ સ્કેન કરો</string>
+</resources>

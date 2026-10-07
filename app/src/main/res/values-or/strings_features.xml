@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">ସାହାଯ୍ୟ ଓ ଟ୍ୟୁଟୋରିଆଲ୍</string>
+    <string name="help_hint">ଏକ ଛୋଟ ଗାଇଡେଡ୍ ଟୁର୍</string>
+    <string name="help_scan_title">ବୋର୍ଡ ସ୍କାନ୍ କରନ୍ତୁ</string>
+    <string name="help_scan_body">କ୍ୟାମେରାକୁ କୌଣସି ଲେଖା ଆଡ଼କୁ ଧରନ୍ତୁ। ଫଟୋ ନେବାକୁ ଗୋଲ ବଟନ୍ ଦବାନ୍ତୁ, ବା ସିଧାସଳଖ ପଢ଼ିବାକୁ ଧରି ରଖନ୍ତୁ।</string>
+    <string name="help_languages_title">ଆପଣଙ୍କ ଭାଷା ବାଛନ୍ତୁ</string>
+    <string name="help_languages_body">କ୍ୟାମେରା ଉପରେ ଦୁଇଟି ବଟନ୍ ଅଛି: ଗୋଟିଏ ଲେଖାର ଭାଷା ପାଇଁ, ଅନ୍ୟଟି ଯେଉଁ ଲିପିରେ ପଢ଼ିବେ ତା ପାଇଁ।</string>
+    <string name="help_tap_title">ଛୁଇଁ ଶୁଣନ୍ତୁ</string>
+    <string name="help_tap_body">ଛବିରେ କୌଣସି ଶବ୍ଦକୁ ଛୁଇଁଲେ ତାହା ଶୁଣାଯିବ। କୌଣସି ଧାଡ଼ିକୁ ଧରି ରଖିଲେ କପି ହେବ। ଧୂସର ଧାଡ଼ି ବିଷୟରେ ଆପ୍ ନିଶ୍ଚିତ ନୁହେଁ।</string>
+    <string name="help_voice_title">ଅଫଲାଇନ୍ ସ୍ୱର</string>
+    <string name="help_voice_body">ସେଟିଂସରେ \'ସ୍ୱର ଓ କଥା\' ଖୋଲି ଭାରତୀୟ ଭାଷାର ସ୍ୱାଭାବିକ ସ୍ୱର ଡାଉନଲୋଡ୍ କରନ୍ତୁ। ତା\'ପରେ ଇଣ୍ଟରନେଟ୍ ବିନା କାମ କରେ।</string>
+    <string name="help_type_title">ଟାଇପ୍ କରି ବଦଳାନ୍ତୁ</string>
+    <string name="help_type_body">କୀବୋର୍ଡ୍ ଟ୍ୟାବ୍ ଖୋଲି ଟାଇପ୍ କରନ୍ତୁ। ଟାଇପ୍ କରିବା ସାଙ୍ଗେ ସାଙ୍ଗେ ବଦଳିଥିବା ଲେଖା ଦେଖାଯାଏ, ଆଉ ଦୁଇ ରୂପ ଶୁଣିପାରିବେ।</string>
+    <string name="help_keyboard_title">ଲିପ୍ୟନ୍ତର କୀବୋର୍ଡ୍</string>
+    <string name="help_keyboard_body">ଯେକୌଣସି ଆପରେ ଇଂରାଜୀ ଅକ୍ଷରରେ ଟାଇପ୍ କରି ଭାରତୀୟ ଲିପି ପାଆନ୍ତୁ। ଫୋନର କୀବୋର୍ଡ୍ ସେଟିଂସରେ ଏହାକୁ ଚାଲୁ କରନ୍ତୁ।</string>
+    <string name="help_private_title">ଡିଜାଇନରୁ ହିଁ ବ୍ୟକ୍ତିଗତ</string>
+    <string name="help_private_body">ପଢ଼ିବା, ବଦଳାଇବା ଓ କହିବା ସବୁ ଆପଣଙ୍କ ଫୋନରେ ହୁଏ। ଆପଣ ଯାହା ସ୍କାନ୍ କରନ୍ତି ତାହା କେଉଁଠି ପଠାଯାଏ ନାହିଁ।</string>
+    <string name="help_keyboard_enable">କୀବୋର୍ଡ୍ ସେଟିଂସ୍ ଖୋଲନ୍ତୁ</string>
+    <string name="help_replay">କ୍ୟାମେରା ଟୁର୍ ପୁଣି ଦେଖନ୍ତୁ</string>
+    <string name="widget_label">ଟେକ୍ସଟ୍ ସ୍କାନ୍ କରନ୍ତୁ</string>
+</resources>

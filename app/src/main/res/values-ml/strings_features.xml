@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">സഹായവും ട്യൂട്ടോറിയലും</string>
+    <string name="help_hint">ഒരു ചെറിയ ഗൈഡഡ് ടൂർ</string>
+    <string name="help_scan_title">ബോർഡ് സ്കാൻ ചെയ്യുക</string>
+    <string name="help_scan_body">ക്യാമറ ഏതെങ്കിലും എഴുത്തിലേക്ക് പിടിക്കുക. ഫോട്ടോ എടുക്കാൻ വട്ടത്തിലുള്ള ബട്ടൺ അമർത്തുക, അല്ലെങ്കിൽ തത്സമയം വായിക്കാൻ അമർത്തിപ്പിടിക്കുക.</string>
+    <string name="help_languages_title">നിങ്ങളുടെ ഭാഷകൾ തിരഞ്ഞെടുക്കുക</string>
+    <string name="help_languages_body">ക്യാമറയ്ക്ക് മുകളിൽ രണ്ട് ബട്ടണുകളുണ്ട്: ഒന്ന് എഴുത്തിന്റെ ഭാഷയ്ക്ക്, മറ്റേത് നിങ്ങൾ വായിക്കാൻ ആഗ്രഹിക്കുന്ന ലിപിക്ക്.</string>
+    <string name="help_tap_title">തൊട്ടു കേൾക്കുക</string>
+    <string name="help_tap_body">ചിത്രത്തിലെ ഒരു വാക്കിൽ തൊട്ടാൽ അത് കേൾക്കാം. ഒരു വരി അമർത്തിപ്പിടിച്ചാൽ പകർത്താം. ചാരനിറത്തിലുള്ള വരികളെക്കുറിച്ച് ആപ്പിന് ഉറപ്പില്ല.</string>
+    <string name="help_voice_title">ഓഫ്‌ലൈൻ ശബ്ദം</string>
+    <string name="help_voice_body">ക്രമീകരണത്തിൽ \'ശബ്ദവും സംസാരവും\' തുറന്ന് ഇന്ത്യൻ ഭാഷകളുടെ സ്വാഭാവിക ശബ്ദം ഡൗൺലോഡ് ചെയ്യുക. പിന്നെ ഇന്റർനെറ്റ് ഇല്ലാതെ പ്രവർത്തിക്കും.</string>
+    <string name="help_type_title">ടൈപ്പ് ചെയ്ത് മാറ്റുക</string>
+    <string name="help_type_body">കീബോർഡ് ടാബ് തുറന്ന് ടൈപ്പ് ചെയ്യുക. ടൈപ്പ് ചെയ്യുന്നതിനൊപ്പം മാറ്റിയ എഴുത്ത് കാണാം, രണ്ട് രൂപവും കേൾക്കാം.</string>
+    <string name="help_keyboard_title">ലിപ്യന്തരീകരണ കീബോർഡ്</string>
+    <string name="help_keyboard_body">ഏത് ആപ്പിലും ഇംഗ്ലീഷ് അക്ഷരങ്ങളിൽ ടൈപ്പ് ചെയ്ത് ഇന്ത്യൻ ലിപി നേടുക. ഫോണിന്റെ കീബോർഡ് ക്രമീകരണത്തിൽ ഇത് ഓണാക്കുക.</string>
+    <string name="help_private_title">രൂപകൽപ്പനയിലേ സ്വകാര്യം</string>
+    <string name="help_private_body">വായിക്കുന്നതും മാറ്റുന്നതും സംസാരിക്കുന്നതും എല്ലാം നിങ്ങളുടെ ഫോണിൽ തന്നെയാണ്. നിങ്ങൾ സ്കാൻ ചെയ്യുന്നത് എവിടെയും അയയ്ക്കില്ല.</string>
+    <string name="help_keyboard_enable">കീബോർഡ് ക്രമീകരണം തുറക്കുക</string>
+    <string name="help_replay">ക്യാമറ ടൂർ വീണ്ടും കാണുക</string>
+    <string name="widget_label">ടെക്സ്റ്റ് സ്കാൻ ചെയ്യുക</string>
+</resources>

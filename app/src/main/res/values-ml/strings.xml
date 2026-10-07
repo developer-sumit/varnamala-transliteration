@@ -152,20 +152,14 @@
     <string name="transliterate_to">ലിപ്യന്തരണം ചെയ്യുക</string>
 
     <!-- OCR engine selection -->
-    <string name="select_ocr_engine">OCR എഞ്ചിൻ തിരഞ്ഞെടുക്കുക</string>
-    <string name="ocr_engine_mlkit_description">വേഗം, ഓൺലൈൻ, നിരവധി ഭാഷകൾ പിന്തുണയ്ക്കുന്നു</string>
-    <string name="ocr_engine_tesseract_name">Tesseract</string>
-    <string name="ocr_engine_tesseract_description">ഓഫ്‌ലൈൻ, ഭാഷാ ഡാറ്റ ഡൗൺലോഡ് ആവശ്യമാണ്</string>
 
     <!-- Transliteration selection -->
-    <string name="default_mlkit">ഡിഫോൾട്ട് (ML Kit)</string>
 
     <string name="unable_to_open_link">ലിങ്ക് തുറക്കാനായില്ല.</string>
 
     <!-- Model downloads -->
     <string name="models">ഭാഷാ മോഡലുകൾ</string>
     <string name="manage_models">ഡൗൺലോഡ് ചെയ്ത OCR മോഡലുകൾ നിയന്ത്രിക്കുക</string>
-    <string name="download_models_hint">ആവശ്യത്തിന് ഓഫ്‌ലൈൻ Tesseract ഭാഷാ മോഡലുകൾ ഡൗൺലോഡ് ചെയ്യുക</string>
     <string name="model_download">മോഡൽ ഡൗൺലോഡ് ചെയ്യുക</string>
     <string name="model_downloaded">ഡൗൺലോഡ് ചെയ്തു</string>
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="scan"
+        android:enabled="true"
+        android:icon="@drawable/ic_tile_camera"
+        android:shortcutShortLabel="@string/widget_label"
+        android:shortcutLongLabel="@string/widget_label">
+        <intent
+            android:action="com.sumit.varnamala.OPEN_CAMERA"
+            android:targetClass="com.sumit.varnamala.MainActivity"
+            android:targetPackage="com.sumit.varnamala" />
+    </shortcut>
+</shortcuts>

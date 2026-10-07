@@ -1,20 +1,13 @@
 package com.sumit.varnamala.ui.components
 
 import com.sumit.varnamala.data.ocr.OCRResult
-import com.sumit.varnamala.data.ocr.OcrEngine
 import com.sumit.varnamala.data.ocr.OcrLanguageModel
-import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
-import com.sumit.varnamala.data.ocr.TextBlock
-import com.sumit.varnamala.data.ocr.TextElement
-import com.sumit.varnamala.data.ocr.TextLine
-import com.sumit.varnamala.ocr.tesseract.TesseractOcrRepository
-import com.sumit.varnamala.ocr.tesseract.rotatedIfNeeded
+import com.sumit.varnamala.ocr.paddle.PaddleOcrRepository
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.ImageFormat
+import android.graphics.Matrix
 import android.graphics.Rect
-import android.graphics.YuvImage
 import android.util.Log
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
@@ -43,15 +36,17 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.TextRecognizer
-import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.googlecode.tesseract.android.TessBaseAPI
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.io.ByteArrayOutputStream
+import java.util.concurrent.atomic.AtomicBoolean
+import android.os.Handler
+import android.os.Looper
+import kotlinx.coroutines.withContext
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -63,9 +58,7 @@ fun OCRCameraPreview(
     isDetectionRunning: Boolean = false,
     flashEnabled: Boolean = false,
     lensFacing: Int = CameraSelector.LENS_FACING_BACK,
-    preferredLanguage: String? = null,
-    ocrEngine: OcrEngine = OcrEngine.ML_KIT,
-    tesseractModel: OcrLanguageModel? = null,
+    paddleLanguage: OcrLanguageModel? = null,
     // time-based sampling (milliseconds)
     detectionIntervalMs: Long = 1000L,
     // reading time estimate per word (ms)
@@ -83,18 +76,21 @@ fun OCRCameraPreview(
     boundingBoxStrokeWidth: Float = 2f,
     // Single capture functionality
     textOverride: Map<Rect, String>? = null,
-    visualReplacementMode: OcrVisualReplacementMode = OcrVisualReplacementMode.REPLACE_LITE,
     captureImage: Boolean = false,
+    onWordTap: ((String) -> Unit)? = null,
+    highContrast: Boolean = false,
     onCaptureComplete: () -> Unit = {},
     onImageCaptured: (android.graphics.Bitmap) -> Unit = {},
     onOCRResult: (OCRResult) -> Unit = {},
-    onManualLanguageRequired: () -> Unit = {},
     onError: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
-    val tesseractRepository = remember { TesseractOcrRepository(context) }
+    val paddleRepository = remember { PaddleOcrRepository(context) }
+    // Recognition runs here, not on the camera analyzer thread, so the analyzer only copies a
+    // frame and returns. Frames that arrive while a run is active are dropped.
+    val ocrScope = remember { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
 
     var camera: Camera? by remember { mutableStateOf(null) }
     var cameraProvider: ProcessCameraProvider? by remember { mutableStateOf(null) }
@@ -103,13 +99,16 @@ fun OCRCameraPreview(
     var imageCapture: ImageCapture? by remember { mutableStateOf(null) }
     var previewView: PreviewView? by remember { mutableStateOf(null) }
 
-    val latinRecognizer =
-        remember { TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS) }
-    val devanagariRecognizer =
-        remember { TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build()) }
-
     var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
+    var lastNonEmptyAt by remember { mutableStateOf(0L) }
     var previewSize by remember { mutableStateOf(IntSize.Zero) }
+
+    LaunchedEffect(paddleRepository) {
+        withContext(Dispatchers.IO) {
+            runCatching { paddleRepository.warmUp() }
+                .onFailure { Log.w("OCRCameraPreview", "OCR warm-up failed", it) }
+        }
+    }
 
     Box(modifier = modifier) {
         AndroidView(
@@ -147,7 +146,7 @@ fun OCRCameraPreview(
             result = lastOCRResult,
             textOverride = textOverride,
             containerSize = previewSize,
-            visualReplacementMode = visualReplacementMode,
+            cropToFill = true,
             showBoundingBoxes = showBoundingBoxes,
             showTextOverlay = showTextOverlay,
             showWordBoundingBoxes = showWordBoundingBoxes,
@@ -156,13 +155,21 @@ fun OCRCameraPreview(
             textBackgroundOpacity = textBackgroundOpacity,
             boundingBoxStrokeWidth = boundingBoxStrokeWidth,
             enableTextCopy = true,
+            onWordTap = onWordTap,
+            highContrast = highContrast,
             modifier = Modifier.fillMaxSize()
         )
 
-        LaunchedEffect(isDetectionRunning, lensFacing) {
+        LaunchedEffect(isDetectionRunning, lensFacing, cameraProvider) {
             cameraProvider?.let { provider ->
                 val wrappedOnOCR: (OCRResult) -> Unit = { result ->
-                    lastOCRResult = result
+                    // Keep showing the previous lines briefly when a frame finds nothing (motion
+                    // blur, a blink), so the overlay does not flicker between runs.
+                    val now = System.currentTimeMillis()
+                    if (result.boundingBoxes.isNotEmpty()) lastNonEmptyAt = now
+                    if (result.boundingBoxes.isNotEmpty() || now - lastNonEmptyAt > KEEP_LAST_RESULT_MS) {
+                        lastOCRResult = result
+                    }
                     onOCRResult(result)
                 }
 
@@ -175,18 +182,14 @@ fun OCRCameraPreview(
                     isDetectionRunning = isDetectionRunning,
                     cameraExecutor = cameraExecutor,
                     skipFrames = skipFrames,
-                    latinRecognizer = latinRecognizer,
-                    devanagariRecognizer = devanagariRecognizer,
                     timeBasedIntervalMs = detectionIntervalMs,
                     readingMsPerWord = readingMsPerWord,
                     maxExtraDelayMs = maxExtraDelayMs,
                     suppressDuplicateDurationMs = 2000L,
-                    preferredLanguage = preferredLanguage,
-                    ocrEngine = ocrEngine,
-                    tesseractModel = tesseractModel,
-                    tesseractRepository = tesseractRepository,
+                    paddleLanguage = paddleLanguage,
+                    paddleRepository = paddleRepository,
+                    ocrScope = ocrScope,
                     onOCRResult = wrappedOnOCR,
-                    onManualLanguageRequired = onManualLanguageRequired,
                     onError = onError,
                     onAnalyzerReady = { analyzer -> imageAnalyzer = analyzer },
                     onCameraReady = { cam ->
@@ -219,29 +222,33 @@ fun OCRCameraPreview(
                                 try {
                                     // Convert ImageProxy to Bitmap
                                     val bitmap = imageProxyToBitmap(imageProxy)
+                                        .rotated(imageProxy.imageInfo.rotationDegrees)
 
                                     // Pass bitmap to parent for overlay display
                                     onImageCaptured(bitmap)
 
-                                    // Process the captured image for OCR
-                                    processCapturedImageProxy(
-                                        imageProxy = imageProxy,
-                                        preferredLanguage = preferredLanguage,
-                                        ocrEngine = ocrEngine,
-                                        tesseractModel = tesseractModel,
-                                        tesseractRepository = tesseractRepository,
-                                        latinRecognizer = latinRecognizer,
-                                        devanagariRecognizer = devanagariRecognizer,
-                                        onOCRResult = { result ->
-                                            lastOCRResult = result
-                                            onOCRResult(result)
-                                            onCaptureComplete()
-                                        },
-                                        onError = { error ->
-                                            onError(error)
-                                            onCaptureComplete()
-                                        }
-                                    )
+                                    // Process the captured image for OCR off the main thread.
+                                    val mainExecutor = ContextCompat.getMainExecutor(context)
+                                    cameraExecutor.execute {
+                                        processCapturedBitmap(
+                                            bitmap = bitmap,
+                                            paddleLanguage = paddleLanguage,
+                                            paddleRepository = paddleRepository,
+                                            onOCRResult = { result ->
+                                                mainExecutor.execute {
+                                                    lastOCRResult = result
+                                                    onOCRResult(result)
+                                                    onCaptureComplete()
+                                                }
+                                            },
+                                            onError = { error ->
+                                                mainExecutor.execute {
+                                                    onError(error)
+                                                    onCaptureComplete()
+                                                }
+                                            }
+                                        )
+                                    }
                                 } catch (e: Exception) {
                                     onError("Failed to process captured image: ${e.message}")
                                     onCaptureComplete()
@@ -267,8 +274,9 @@ fun OCRCameraPreview(
     DisposableEffect(Unit) {
         onDispose {
             cameraExecutor.shutdown()
-            latinRecognizer.close()
-            devanagariRecognizer.close()
+            ocrScope.cancel()
+            // Release off the main thread: it waits for any run still in flight.
+            CoroutineScope(Dispatchers.IO).launch { paddleRepository.release() }
         }
     }
 }
@@ -320,17 +328,13 @@ private fun updateAnalysisUseCase(
     isDetectionRunning: Boolean,
     cameraExecutor: ExecutorService,
     skipFrames: Int,
-    latinRecognizer: TextRecognizer,
-    devanagariRecognizer: TextRecognizer,
     timeBasedIntervalMs: Long,
     readingMsPerWord: Int,
     maxExtraDelayMs: Int,
-    preferredLanguage: String?,
-    ocrEngine: OcrEngine,
-    tesseractModel: OcrLanguageModel?,
-    tesseractRepository: TesseractOcrRepository,
+    paddleLanguage: OcrLanguageModel?,
+    paddleRepository: PaddleOcrRepository,
+    ocrScope: CoroutineScope,
     onOCRResult: (OCRResult) -> Unit,
-    onManualLanguageRequired: () -> Unit,
     onError: (String) -> Unit,
     onAnalyzerReady: (ImageAnalysis?) -> Unit,
     onCameraReady: (Camera) -> Unit,
@@ -342,62 +346,57 @@ private fun updateAnalysisUseCase(
         if (isDetectionRunning) {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
                 .also { analysis ->
                     val analyzerCounter = AtomicInteger(0)
 
-                    var lastAllowedRun = 0L
+                    val lastAllowedRun = java.util.concurrent.atomic.AtomicLong(0L)
                     var lastSentText = ""
                     var lastSentTime = 0L
 
+                    val busy = AtomicBoolean(false)
+                    val mainHandler = Handler(Looper.getMainLooper())
+
                     analysis.setAnalyzer(cameraExecutor) { imageProxy ->
-                        try {
-                            val current = analyzerCounter.incrementAndGet() % (skipFrames + 1)
-                            if (current != 0) {
-                                imageProxy.close(); return@setAnalyzer
-                            }
+                        val current = analyzerCounter.incrementAndGet() % (skipFrames + 1)
+                        // Drop the frame when a run is active or the pause between runs has not passed.
+                        if (current != 0 || busy.get() || System.currentTimeMillis() < lastAllowedRun.get()) {
+                            imageProxy.close()
+                            return@setAnalyzer
+                        }
+                        val bitmap = try {
+                            imageProxyToBitmap(imageProxy).rotated(imageProxy.imageInfo.rotationDegrees)
+                        } catch (t: Throwable) {
+                            Log.w("OCRCameraPreview", "Frame conversion failed", t)
+                            null
+                        } finally {
+                            runCatching { imageProxy.close() }
+                        }
+                        if (bitmap == null || !busy.compareAndSet(false, true)) return@setAnalyzer
 
-                            val now = System.currentTimeMillis()
-                            if (now < lastAllowedRun) {
-                                imageProxy.close(); return@setAnalyzer
-                            }
-
-                            val sendWrapper: (OCRResult) -> Unit = { result ->
+                        ocrScope.launch {
+                            try {
+                                val result = paddleRepository.processBitmap(bitmap, paddleLanguage?.code)
                                 val ts = System.currentTimeMillis()
                                 val text = result.text
-                                val words =
-                                    if (text.isBlank()) 0 else text.trim().split(Regex("\\s+")).size
-                                val extraDelay =
-                                    min(maxExtraDelayMs.toLong(), words.toLong() * readingMsPerWord)
-                                // schedule next allowed run after base interval + reading extra
-                                lastAllowedRun = ts + timeBasedIntervalMs + extraDelay
-
-                                if (text.isNotEmpty() && text == lastSentText && ts - lastSentTime < suppressDuplicateDurationMs) {
-                                    // suppressed duplicate
-                                } else {
+                                val words = if (text.isBlank()) 0 else text.trim().split(Regex("\\s+")).size
+                                val extraDelay = min(maxExtraDelayMs.toLong(), words.toLong() * readingMsPerWord)
+                                // The pause counts from when this run finished, not when it started.
+                                lastAllowedRun.set(ts + timeBasedIntervalMs + extraDelay)
+                                val duplicate = text.isNotEmpty() && text == lastSentText && ts - lastSentTime < suppressDuplicateDurationMs
+                                if (!duplicate) {
                                     lastSentText = text
                                     lastSentTime = ts
-                                    onOCRResult(result)
+                                    mainHandler.post { onOCRResult(result) }
                                 }
-                            }
-
-                            processImageProxy(
-                                imageProxy = imageProxy,
-                                latinRecognizer = latinRecognizer,
-                                devanagariRecognizer = devanagariRecognizer,
-                                preferredLanguage = preferredLanguage,
-                                ocrEngine = ocrEngine,
-                                tesseractModel = tesseractModel,
-                                tesseractRepository = tesseractRepository,
-                                onOCRResult = sendWrapper,
-                                onManualLanguageRequired = onManualLanguageRequired,
-                                onError = onError
-                            )
-                            return@setAnalyzer
-                        } catch (t: Throwable) {
-                            try {
-                                imageProxy.close()
-                            } catch (_: Throwable) {
+                            } catch (e: CancellationException) {
+                                throw e
+                            } catch (t: Throwable) {
+                                Log.e("OCRCameraPreview", "Live OCR failed", t)
+                                mainHandler.post { onError(t.message ?: "OCR failed") }
+                            } finally {
+                                busy.set(false)
                             }
                         }
                     }
@@ -451,261 +450,49 @@ private fun selectCameraSelector(
     }
 }
 
-@SuppressLint("UnsafeOptInUsageError")
-private fun processImageProxy(
-    imageProxy: ImageProxy,
-    latinRecognizer: TextRecognizer,
-    devanagariRecognizer: TextRecognizer,
-    preferredLanguage: String?,
-    ocrEngine: OcrEngine,
-    tesseractModel: OcrLanguageModel?,
-    tesseractRepository: TesseractOcrRepository,
+/**
+ * Decodes any CameraX frame (RGBA analysis frames, YUV frames with row padding, or JPEG
+ * captures) into a bitmap; rotation is applied separately. The previous manual NV21 copy ignored row and
+ * pixel strides and crashed on single-plane JPEG captures, so OCR never received a valid image.
+ */
+private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap = imageProxy.toBitmap()
+
+private fun android.graphics.Bitmap.rotated(degrees: Int): android.graphics.Bitmap {
+    if (degrees == 0) return this
+    return android.graphics.Bitmap.createBitmap(
+        this,
+        0,
+        0,
+        width,
+        height,
+        Matrix().apply { postRotate(degrees.toFloat()) },
+        true,
+    )
+}
+
+
+private fun processCapturedBitmap(
+    bitmap: android.graphics.Bitmap,
+    paddleLanguage: OcrLanguageModel?,
+    paddleRepository: PaddleOcrRepository,
     onOCRResult: (OCRResult) -> Unit,
-    onManualLanguageRequired: () -> Unit,
     onError: (String) -> Unit
 ) {
-    try {
-        val startTime = System.currentTimeMillis()
-        val mediaImage = imageProxy.image
-        if (mediaImage == null) {
-            imageProxy.close(); return
-        }
-
-        if (ocrEngine == OcrEngine.TESSERACT) {
-            val model = tesseractModel
-            if (model == null) {
-                onError("Select and download an OCR language model before scanning.")
-                imageProxy.close()
-                return
-            }
-            val bitmap = imageProxyToBitmap(imageProxy)
-                .rotatedIfNeeded(imageProxy.imageInfo.rotationDegrees)
-            imageProxy.close()
-            runCatching {
-                runBlocking {
-                    tesseractRepository.processBitmap(
-                        bitmap = bitmap,
-                        model = model,
-                        pageSegMode = TessBaseAPI.PageSegMode.PSM_SPARSE_TEXT
-                    )
-                }
-            }.onSuccess(onOCRResult)
-                .onFailure { onError(it.message ?: "Tesseract OCR failed") }
-            return
-        }
-
-        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-
-        fun handleNoText() {
-            onManualLanguageRequired()
-            val emptyResult = OCRResult(
-                text = "",
-                language = "Unknown",
-                boundingBoxes = emptyList(),
-                imageWidth = image.width,
-                imageHeight = image.height,
-                imageRotation = imageProxy.imageInfo.rotationDegrees
+    runCatching {
+        runBlocking {
+            paddleRepository.processBitmap(
+                bitmap,
+                paddleLanguage?.code,
+                com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.MEDIUM,
+                enhance = true,
             )
-            onOCRResult(emptyResult)
-            imageProxy.close()
-        }
-
-        val tryLatin: () -> Unit = {
-            latinRecognizer.process(image)
-                .addOnSuccessListener { latinResult ->
-                    val finalProcessingTime = System.currentTimeMillis() - startTime
-                    if (latinResult.text.isNotEmpty()) onOCRResult(
-                        convertToOCRResult(
-                            latinResult,
-                            "English",
-                            finalProcessingTime,
-                            image.width,
-                            image.height,
-                            imageProxy.imageInfo.rotationDegrees
-                        )
-                    ) else handleNoText()
-                }
-                .addOnFailureListener { _ -> handleNoText() }
-                .addOnCompleteListener { imageProxy.close() }
-        }
-
-        val tryDevanagari: () -> Unit = {
-            devanagariRecognizer.process(image)
-                .addOnSuccessListener { devanagariResult ->
-                    val processingTime = System.currentTimeMillis() - startTime
-                    if (devanagariResult.text.isNotEmpty()) {
-                        onOCRResult(
-                            convertToOCRResult(
-                                devanagariResult,
-                                "Devanagari",
-                                processingTime,
-                                image.width,
-                                image.height,
-                                imageProxy.imageInfo.rotationDegrees
-                            )
-                        ); imageProxy.close()
-                    } else tryLatin()
-                }
-                .addOnFailureListener { _ -> tryLatin() }
-        }
-
-        when (preferredLanguage?.lowercase()) {
-            null -> tryDevanagari()
-            "english", "en", "latin" -> tryLatin()
-            "devanagari", "hi", "hindi" -> tryDevanagari()
-            else -> tryDevanagari()
-        }
-
-    } catch (exc: Exception) {
-        onError("Image processing failed: ${exc.message}")
-        try {
-            imageProxy.close()
-        } catch (_: Throwable) {
         }
     }
+        .onSuccess(onOCRResult)
+        .onFailure {
+            Log.e("OCRCameraPreview", "Captured image OCR failed", it)
+            onError(it.message ?: "PaddleOCR failed")
+        }
 }
 
-private fun convertToOCRResult(
-    mlkitResult: Text,
-    language: String,
-    processingTime: Long,
-    imageWidth: Int = 0,
-    imageHeight: Int = 0,
-    imageRotation: Int = 0
-): OCRResult {
-    val textBlocks = mlkitResult.textBlocks.map { block ->
-        TextBlock(
-            text = block.text,
-            boundingBox = block.boundingBox ?: Rect(),
-            lines = block.lines.map { line ->
-                TextLine(
-                    text = line.text,
-                    boundingBox = line.boundingBox ?: Rect(),
-                    elements = line.elements.map { element ->
-                        TextElement(
-                            text = element.text,
-                            boundingBox = element.boundingBox ?: Rect()
-                        )
-                    }
-                )
-            }
-        )
-    }
-
-    return OCRResult(
-        text = mlkitResult.text,
-        language = language,
-        boundingBoxes = textBlocks,
-        imageWidth = imageWidth,
-        imageHeight = imageHeight,
-        imageRotation = imageRotation
-    )
-}
-
-private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap {
-    val yBuffer = imageProxy.planes[0].buffer.duplicate()
-    val uBuffer = imageProxy.planes[1].buffer.duplicate()
-    val vBuffer = imageProxy.planes[2].buffer.duplicate()
-
-    val ySize = yBuffer.remaining()
-    val uSize = uBuffer.remaining()
-    val vSize = vBuffer.remaining()
-    val nv21 = ByteArray(ySize + uSize + vSize)
-
-    yBuffer.get(nv21, 0, ySize)
-    vBuffer.get(nv21, ySize, vSize)
-    uBuffer.get(nv21, ySize + vSize, uSize)
-
-    val yuvImage = YuvImage(
-        nv21,
-        ImageFormat.NV21,
-        imageProxy.width,
-        imageProxy.height,
-        null
-    )
-    val out = ByteArrayOutputStream()
-    yuvImage.compressToJpeg(
-        Rect(0, 0, imageProxy.width, imageProxy.height),
-        92,
-        out
-    )
-    val bytes = out.toByteArray()
-    return android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-}
-
-
-private fun processCapturedImageProxy(
-    imageProxy: ImageProxy,
-    preferredLanguage: String?,
-    ocrEngine: OcrEngine,
-    tesseractModel: OcrLanguageModel?,
-    tesseractRepository: TesseractOcrRepository,
-    latinRecognizer: TextRecognizer,
-    devanagariRecognizer: TextRecognizer,
-    onOCRResult: (OCRResult) -> Unit,
-    onError: (String) -> Unit
-) {
-    try {
-        if (ocrEngine == OcrEngine.TESSERACT) {
-            val model = tesseractModel
-            if (model == null) {
-                onError("Select and download an OCR language model before scanning.")
-                return
-            }
-            val bitmap = imageProxyToBitmap(imageProxy)
-                .rotatedIfNeeded(imageProxy.imageInfo.rotationDegrees)
-            runCatching {
-                runBlocking {
-                    tesseractRepository.processBitmap(
-                        bitmap = bitmap,
-                        model = model,
-                        pageSegMode = TessBaseAPI.PageSegMode.PSM_AUTO
-                    )
-                }
-            }.onSuccess(onOCRResult)
-                .onFailure { onError(it.message ?: "Tesseract OCR failed") }
-            return
-        }
-
-        val inputImage =
-            InputImage.fromMediaImage(imageProxy.image!!, imageProxy.imageInfo.rotationDegrees)
-        val startTime = System.currentTimeMillis()
-
-        fun tryLatin() {
-            latinRecognizer.process(inputImage)
-                .addOnSuccessListener { visionText ->
-                    val processingTime = System.currentTimeMillis() - startTime
-                    val result = convertToOCRResult(visionText, "latin", processingTime)
-                    onOCRResult(result)
-                }
-                .addOnFailureListener { exc ->
-                    onError("Latin OCR failed: ${exc.message}")
-                }
-        }
-
-        fun tryDevanagari() {
-            devanagariRecognizer.process(inputImage)
-                .addOnSuccessListener { visionText ->
-                    val processingTime = System.currentTimeMillis() - startTime
-                    val result = convertToOCRResult(visionText, "devanagari", processingTime)
-
-                    if (result.text.isNotBlank()) {
-                        onOCRResult(result)
-                    } else {
-                        tryLatin()
-                    }
-                }
-                .addOnFailureListener { _ -> tryLatin() }
-        }
-
-        when (preferredLanguage?.lowercase()) {
-            null -> tryDevanagari()
-            "english", "en", "latin" -> tryLatin()
-            "devanagari", "hi", "hindi" -> tryDevanagari()
-            else -> tryDevanagari()
-        }
-
-    } catch (exc: Exception) {
-        onError("Image processing failed: ${exc.message}")
-    }
-}
+private const val KEEP_LAST_RESULT_MS = 1500L

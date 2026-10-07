@@ -91,6 +91,7 @@ fun LanguageScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 GlassButton(
+                    description = stringResource(R.string.back),
                     icon = painterResource(R.drawable.ic_chevron_left),
                     onClick = { navController.popBackStack() }
                 )

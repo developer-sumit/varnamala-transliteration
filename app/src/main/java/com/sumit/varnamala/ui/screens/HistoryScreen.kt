@@ -5,6 +5,24 @@ import com.sumit.varnamala.data.HistoryEntry
 import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.ui.components.AppModalBottomSheet
 import com.sumit.varnamala.ui.components.GlassButton
+import com.sumit.varnamala.ui.components.HighlightedText
+import com.sumit.varnamala.ui.components.SpeakButton
+import com.sumit.varnamala.ui.components.SpeechController
+import com.sumit.varnamala.ui.components.rememberSpeechController
+import com.sumit.varnamala.ui.components.speechLanguage
+import com.sumit.varnamala.tts.SpeechPart
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import coil.compose.AsyncImage
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -85,11 +103,55 @@ fun HistoryScreen(navController: NavController) {
     val historyEntries by historyRepository.historyEntries.collectAsState(initial = emptyList())
     val favoriteEntries by historyRepository.favoriteEntries.collectAsState(initial = emptyList())
 
-    var showFavoritesOnly by remember { mutableStateOf(false) }
-    var showClearDialog by remember { mutableStateOf(false) }
-    var selectedEntry by remember { mutableStateOf<HistoryEntry?>(null) }
+    val collections by historyRepository.collections.collectAsState(initial = emptyList())
+    val speech = rememberSpeechController()
 
-    val displayedEntries = if (showFavoritesOnly) favoriteEntries else historyEntries
+    // Filter: null = everything, FAVORITES = hearts, otherwise a collection name.
+    var filter by remember { mutableStateOf<String?>(null) }
+    var query by remember { mutableStateOf("") }
+    var showSearch by remember { mutableStateOf(false) }
+    var showClearDialog by remember { mutableStateOf(false) }
+    var showBackupSheet by remember { mutableStateOf(false) }
+    var collectionTarget by remember { mutableStateOf<HistoryEntry?>(null) }
+    var selectedEntry by remember { mutableStateOf<HistoryEntry?>(null) }
+    val showFavoritesOnly = filter == FAVORITES
+
+    val displayedEntries = remember(historyEntries, filter, query) {
+        val needle = query.trim().lowercase()
+        historyEntries.filter { entry ->
+            val inFilter = when (filter) {
+                null -> true
+                FAVORITES -> entry.isFavorite
+                else -> entry.collection == filter
+            }
+            inFilter && (needle.isEmpty() || listOf(entry.originalText, entry.transliteratedText, entry.collection, entry.sourceLanguage, entry.targetLanguage)
+                .any { it.lowercase().contains(needle) })
+        }
+    }
+
+    val exportJson = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        if (uri != null) scope.launch {
+            val ok = runCatching { context.contentResolver.openOutputStream(uri)?.use { it.write(historyRepository.exportJson().toByteArray()) } }.isSuccess
+            Toast.makeText(context, context.getString(if (ok) R.string.backup_saved else R.string.backup_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+    val exportCsv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
+        if (uri != null) scope.launch {
+            val ok = runCatching { context.contentResolver.openOutputStream(uri)?.use { it.write(historyRepository.exportCsv().toByteArray()) } }.isSuccess
+            Toast.makeText(context, context.getString(if (ok) R.string.backup_saved else R.string.backup_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+    val importBackup = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) scope.launch {
+            val text = runCatching { context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() } }.getOrNull()
+            val added = if (text == null) -1 else historyRepository.importJson(text)
+            Toast.makeText(
+                context,
+                if (added < 0) context.getString(R.string.backup_invalid) else context.resources.getQuantityString(R.plurals.backup_imported, added, added),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -105,6 +167,7 @@ fun HistoryScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlassButton(
+                description = stringResource(R.string.back),
                 icon = painterResource(R.drawable.ic_chevron_left),
                 onClick = { navController.popBackStack() }
             )
@@ -113,31 +176,72 @@ fun HistoryScreen(navController: NavController) {
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onBackground
             )
-            GlassButton(
-                icon = painterResource(R.drawable.ic_delete_outline),
-                onClick = { showClearDialog = true }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                GlassButton(
+                    description = stringResource(R.string.a11y_search),
+                    icon = painterResource(R.drawable.ic_search),
+                    onClick = { showSearch = !showSearch; if (!showSearch) query = "" }
+                )
+                GlassButton(
+                    description = stringResource(R.string.a11y_backup),
+                    icon = painterResource(R.drawable.ic_share),
+                    onClick = { showBackupSheet = true }
+                )
+                GlassButton(
+                    description = stringResource(R.string.a11y_delete),
+                    icon = painterResource(R.drawable.ic_delete_outline),
+                    onClick = { showClearDialog = true }
+                )
+            }
+        }
+
+        AnimatedVisibility(visible = showSearch) {
+            OutlinedTextField(
+                value = query,
+                onValueChange = { query = it },
+                singleLine = true,
+                placeholder = { Text(stringResource(R.string.history_search_hint)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
             )
         }
 
-        // Filter Tabs
+        // Recent scans with thumbnails
+        val recents = remember(historyEntries) { historyEntries.sortedByDescending { it.timestamp }.take(6) }
+        if (recents.isNotEmpty() && query.isBlank() && filter == null) {
+            Text(
+                text = stringResource(R.string.recent_scans),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+            )
+            LazyRow(
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(recents, key = { "recent-${it.id}" }) { entry ->
+                    RecentScanTile(entry) { selectedEntry = entry }
+                }
+            }
+        }
+
+        // Filter chips: all, favourites, then one per collection
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             FilterChip(
-                selected = !showFavoritesOnly,
-                onClick = { showFavoritesOnly = false },
-                label = {
-                    Text(
-                        text = "${stringResource(R.string.all)} (${historyEntries.size})"
-                    )
-                }
+                selected = filter == null,
+                onClick = { filter = null },
+                label = { Text(text = "${stringResource(R.string.all)} (${historyEntries.size})") }
             )
             FilterChip(
                 selected = showFavoritesOnly,
-                onClick = { showFavoritesOnly = true },
+                onClick = { filter = FAVORITES },
                 label = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
@@ -150,6 +254,13 @@ fun HistoryScreen(navController: NavController) {
                     }
                 }
             )
+            collections.forEach { name ->
+                FilterChip(
+                    selected = filter == name,
+                    onClick = { filter = name },
+                    label = { Text(name) }
+                )
+            }
         }
 
         // History List
@@ -175,10 +286,11 @@ fun HistoryScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = if (showFavoritesOnly)
-                            stringResource(R.string.no_favorites)
-                        else
-                            stringResource(R.string.no_history),
+                        text = when {
+                            query.isNotBlank() -> stringResource(R.string.history_no_matches)
+                            showFavoritesOnly -> stringResource(R.string.no_favorites)
+                            else -> stringResource(R.string.no_history)
+                        },
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     )
@@ -202,11 +314,13 @@ fun HistoryScreen(navController: NavController) {
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
                 items(
-                    items = displayedEntries.sortedByDescending { it.timestamp },
+                    items = displayedEntries,
                     key = { it.id }
                 ) { entry ->
                     HistoryEntryCard(
                         entry = entry,
+                        speech = speech,
+                        onFileInCollection = { collectionTarget = entry },
                         isExpanded = selectedEntry?.id == entry.id,
                         onClick = {
                             selectedEntry = if (selectedEntry?.id == entry.id) null else entry
@@ -291,11 +405,115 @@ fun HistoryScreen(navController: NavController) {
             }
         }
     }
+
+    if (showBackupSheet) {
+        AppModalBottomSheet(onDismiss = { showBackupSheet = false }) {
+            Text(stringResource(R.string.backup_title), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(stringResource(R.string.backup_hint), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { showBackupSheet = false; exportJson.launch("varnamala-history.json") }) {
+                Text(stringResource(R.string.backup_export_json))
+            }
+            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = { showBackupSheet = false; exportCsv.launch("varnamala-history.csv") }) {
+                Text(stringResource(R.string.backup_export_csv))
+            }
+            OutlinedButton(modifier = Modifier.fillMaxWidth(), onClick = {
+                showBackupSheet = false
+                importBackup.launch(arrayOf("application/json", "text/plain", "application/octet-stream"))
+            }) {
+                Text(stringResource(R.string.backup_import))
+            }
+        }
+    }
+
+    collectionTarget?.let { entry ->
+        var newName by remember(entry.id) { mutableStateOf("") }
+        AppModalBottomSheet(onDismiss = { collectionTarget = null }) {
+            Text(stringResource(R.string.collection), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                collections.forEach { name ->
+                    FilterChip(
+                        selected = entry.collection == name,
+                        onClick = {
+                            scope.launch { historyRepository.setCollection(entry.id, if (entry.collection == name) "" else name) }
+                            collectionTarget = null
+                        },
+                        label = { Text(name) }
+                    )
+                }
+            }
+            OutlinedTextField(
+                value = newName,
+                onValueChange = { newName = it.take(30) },
+                singleLine = true,
+                label = { Text(stringResource(R.string.collection_new)) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                if (entry.collection.isNotEmpty()) {
+                    TextButton(onClick = {
+                        scope.launch { historyRepository.setCollection(entry.id, "") }
+                        collectionTarget = null
+                    }) { Text(stringResource(R.string.collection_remove)) }
+                }
+                TextButton(
+                    enabled = newName.isNotBlank(),
+                    onClick = {
+                        scope.launch { historyRepository.setCollection(entry.id, newName) }
+                        filter = newName.trim()
+                        collectionTarget = null
+                    }
+                ) { Text(stringResource(R.string.collection_create)) }
+            }
+        }
+    }
+}
+
+private const val FAVORITES = "\u0000favorites"
+
+/** Small picture-and-text tile in the "Recent scans" strip. */
+@Composable
+private fun RecentScanTile(entry: HistoryEntry, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(96.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.surface)
+            .combinedClickable(onClick = onClick)
+            .semantics(mergeDescendants = true) { contentDescription = entry.transliteratedText }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
+            contentAlignment = Alignment.Center
+        ) {
+            if (entry.imageRef.isNotEmpty()) {
+                AsyncImage(
+                    model = entry.imageRef,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                Text(text = "⌨️", fontSize = 22.sp)
+            }
+        }
+        Text(
+            text = entry.transliteratedText,
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(6.dp)
+        )
+    }
 }
 
 @Composable
 private fun HistoryEntryCard(
     entry: HistoryEntry,
+    speech: SpeechController,
+    onFileInCollection: () -> Unit,
     isExpanded: Boolean,
     onClick: () -> Unit,
     onCopy: () -> Unit,
@@ -352,27 +570,66 @@ private fun HistoryEntryCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    // Original text preview
-                    Text(
-                        text = entry.originalText,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                        maxLines = if (isExpanded) 3 else 1,
-                        overflow = TextOverflow.Ellipsis
+                if (entry.imageRef.isNotEmpty()) {
+                    AsyncImage(
+                        model = entry.imageRef,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(8.dp))
                     )
+                    Spacer(modifier = Modifier.width(12.dp))
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    val originalKey = "o-${entry.id}"
+                    val convertedKey = "c-${entry.id}"
+                    val originalPart = SpeechPart(entry.originalText, speechLanguage(entry.sourceLanguage))
+                    // Original text preview, with its own speak button
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        HighlightedText(
+                            text = entry.originalText,
+                            controller = speech,
+                            key = originalKey,
+                            partIndex = 0,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            maxLines = if (isExpanded) 3 else 1,
+                            modifier = Modifier.weight(1f)
+                        )
+                        SpeakButton(
+                            controller = speech,
+                            key = originalKey,
+                            description = stringResource(R.string.tts_speak_original_text),
+                            onClick = { speech.toggle(originalKey, listOf(originalPart)) },
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Transliterated text
-                    Text(
-                        text = entry.transliteratedText,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        maxLines = if (isExpanded) 5 else 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    // Converted text, with its own speak button (the original is read first when that setting is on)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        HighlightedText(
+                            text = entry.transliteratedText,
+                            controller = speech,
+                            key = convertedKey,
+                            partIndex = if (speech.settings.speakOriginal) 1 else 0,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+                            color = MaterialTheme.colorScheme.onSurface,
+                            maxLines = if (isExpanded) 5 else 2,
+                            modifier = Modifier.weight(1f)
+                        )
+                        SpeakButton(
+                            controller = speech,
+                            key = convertedKey,
+                            description = stringResource(R.string.tts_speak_converted_text),
+                            onClick = {
+                                speech.toggleConverted(convertedKey, originalPart, SpeechPart(entry.transliteratedText, entry.targetLanguage))
+                            },
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
                 }
 
                 // Favorite button
@@ -385,7 +642,7 @@ private fun HistoryEntryCard(
                             if (entry.isFavorite) R.drawable.ic_heart_filled
                             else R.drawable.ic_heart_outline
                         ),
-                        contentDescription = "Favorite",
+                        contentDescription = stringResource(R.string.favorites),
                         tint = favoriteColor,
                         modifier = Modifier.size(20.dp)
                     )
@@ -418,6 +675,14 @@ private fun HistoryEntryCard(
                             },
                             fontSize = 12.sp,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+
+                    if (entry.collection.isNotBlank()) {
+                        Text(
+                            text = "📁 ${entry.collection}",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
 
@@ -460,6 +725,19 @@ private fun HistoryEntryCard(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(stringResource(R.string.copy))
+                    }
+
+                    OutlinedButton(
+                        onClick = onFileInCollection,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_folder),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.collection), maxLines = 1)
                     }
 
                     OutlinedButton(

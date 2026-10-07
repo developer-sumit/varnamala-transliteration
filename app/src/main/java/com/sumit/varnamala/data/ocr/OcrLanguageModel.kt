@@ -1,8 +1,5 @@
 package com.sumit.varnamala.data.ocr
 
-private const val TESSDATA_BEST_BASE_URL =
-    "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/main/"
-
 enum class OcrModelCategory {
     LANGUAGE,
     SPECIAL
@@ -13,12 +10,7 @@ data class OcrLanguageModel(
     val displayName: String,
     val nativeName: String = displayName,
     val category: OcrModelCategory = OcrModelCategory.LANGUAGE,
-    val trainedDataPath: String = "$code.traineddata",
-    val downloadUrl: String = TESSDATA_BEST_BASE_URL + trainedDataPath,
 ) {
-    val fileName: String
-        get() = trainedDataPath.substringAfterLast('/')
-
     val isSelectableSource: Boolean
         get() = category == OcrModelCategory.LANGUAGE
 }

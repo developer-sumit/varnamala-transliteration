@@ -3,14 +3,12 @@ package com.sumit.varnamala.service
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.ocr.OCRResult
-import com.sumit.varnamala.data.ocr.TextBlock
-import com.sumit.varnamala.data.ocr.TextElement
-import com.sumit.varnamala.data.ocr.TextLine
 import com.sumit.varnamala.ui.theme.VarnamalaTheme
 import com.sumit.varnamala.utils.ScreenCaptureHelper
-import com.sumit.varnamala.utils.LanguageDetector
+import com.sumit.varnamala.transliteration.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
-import com.sumit.varnamala.ui.components.OCRInfoCard
+import com.sumit.varnamala.ui.components.OCROverlayCanvas
+import com.sumit.varnamala.ocr.paddle.PaddleOcrRepository
 import com.sumit.varnamala.data.AppLanguageRepository
 import com.sumit.varnamala.ui.components.CameraCaptureButton
 import com.sumit.varnamala.ui.components.LanguageSelectionRow
@@ -37,6 +35,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -66,6 +65,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -83,11 +84,6 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
-import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -105,6 +101,9 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
     private val store = ViewModelStore()
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    // One engine for the service's lifetime: building one per capture reloaded the models each
+    // time and leaked their native ONNX sessions.
+    private val ocrRepository by lazy { PaddleOcrRepository(this) }
 
     private var screenCaptureHelper: ScreenCaptureHelper? = null
     private var capturedBitmap: Bitmap? = null
@@ -303,6 +302,7 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
         var offsetX by remember { mutableFloatStateOf(0f) }
         var offsetY by remember { mutableFloatStateOf(0f) }
         var localIsDragging by remember { mutableStateOf(false) }
+        var capturedImageSize by remember { mutableStateOf(IntSize.Zero) }
         val availableLanguages = remember { AppLanguageRepository.getSupportedLanguages() }
 
         Box(
@@ -319,6 +319,7 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                         .fillMaxWidth()
                         .heightIn(max = 600.dp)
                         .clip(RoundedCornerShape(12.dp))
+                        .onGloballyPositioned { capturedImageSize = it.size }
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = {
@@ -355,6 +356,28 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                     contentScale = ContentScale.Fit
                 )
 
+                OCROverlayCanvas(
+                    result = ocrResult,
+                    containerSize = capturedImageSize,
+                    sourceBitmap = capturedBitmap,
+                    showBoundingBoxes = true,
+                    showBlockBoundingBoxes = true,
+                    showLineBoundingBoxes = true,
+                    textOverride = targetLanguage.value?.let { target ->
+                        ocrResult?.boundingBoxes.orEmpty()
+                            .flatMap { it.lines }
+                            .flatMap { it.elements }
+                            .associate { element ->
+                                element.boundingBox to Transliterator.transliterate(
+                                    element.text,
+                                    detectedLanguage.value,
+                                    target.localeCode
+                                )
+                            }
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
+
                 // Close button
                 if (!isProcessing.value) {
                     androidx.compose.material3.IconButton(
@@ -383,7 +406,7 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                     }
                 }
 
-                // Bottom section
+                // Results stay anchored to their detected regions; no bottom OCR card.
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -391,39 +414,6 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // OCR Results
-                    if (rawOcrText.value.isNotBlank() && !isProcessing.value) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp)
-                        ) {
-                            OCRInfoCard(
-                                ocrLoading = false,
-                                ocrError = null,
-                                rawOcrText = rawOcrText.value,
-                                transliteratedText = transliteratedText.value,
-                                onCopy = {
-                                    val clipboard =
-                                        getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                                    val clip = android.content.ClipData.newPlainText(
-                                        getString(R.string.clipboard_label_ocr_text),
-                                        transliteratedText.value
-                                    )
-                                    clipboard.setPrimaryClip(clip)
-                                    serviceScope.launch(Dispatchers.Main) {
-                                        Toast.makeText(
-                                            this@OverlayService,
-                                            getString(R.string.overlay_copied_to_clipboard),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
-
                     // Loading indicator
                     if (isProcessing.value) {
                         Box(
@@ -845,94 +835,18 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
     private fun processOCR(bitmap: Bitmap) {
         serviceScope.launch(Dispatchers.IO) {
             try {
-                val inputImage = InputImage.fromBitmap(bitmap, 0)
-
-                // Use selected language
-                val langCode = selectedLanguage.value?.code ?: "en"
-                when {
-                    langCode == "hi" || langCode.startsWith("mr") || langCode.startsWith("ne") || langCode.startsWith(
-                        "sa"
-                    ) -> {
-                        // Devanagari script languages
-                        val devanagariRecognizer = TextRecognition.getClient(
-                            DevanagariTextRecognizerOptions.Builder().build()
-                        )
-                        devanagariRecognizer.process(inputImage)
-                            .addOnSuccessListener { result ->
-                                val ocrResult = convertToOCRResult(
-                                    result,
-                                    "devanagari",
-                                    bitmap.width,
-                                    bitmap.height
-                                )
-                                this@OverlayService.ocrResult = ocrResult
-
-                                // Store raw OCR text and detect language
-                                rawOcrText.value = result.text
-                                detectedLanguage.value = if (result.text.isNotBlank()) {
-                                    LanguageDetector.detectLanguage(result.text)
-                                } else {
-                                    "unknown"
-                                }
-
-                                transliteratedText.value = targetLanguage.value?.let { targetLang ->
-                                    if (rawOcrText.value.isNotBlank()) {
-                                        Transliterator.transliterate(
-                                            text = rawOcrText.value,
-                                            sourceLanguage = detectedLanguage.value,
-                                            targetLanguage = targetLang.localeCode
-                                        )
-                                    } else rawOcrText.value
-                                } ?: rawOcrText.value
-
-                                isProcessing.value = false
-                            }
-                            .addOnFailureListener { e ->
-                                isProcessing.value = false
-                                serviceScope.launch(Dispatchers.Main) {
-                                    floatingButtonView?.alpha = 1f
-                                }
-                            }
-                    }
-
-                    else -> {
-                        // Latin script languages (default)
-                        val latinRecognizer =
-                            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                        latinRecognizer.process(inputImage)
-                            .addOnSuccessListener { result ->
-                                val ocrResult =
-                                    convertToOCRResult(result, "latin", bitmap.width, bitmap.height)
-                                this@OverlayService.ocrResult = ocrResult
-
-                                // Store raw OCR text and detect language
-                                rawOcrText.value = result.text
-                                detectedLanguage.value = if (result.text.isNotBlank()) {
-                                    LanguageDetector.detectLanguage(result.text)
-                                } else {
-                                    "unknown"
-                                }
-
-                                transliteratedText.value = targetLanguage.value?.let { targetLang ->
-                                    if (rawOcrText.value.isNotBlank()) {
-                                        Transliterator.transliterate(
-                                            text = rawOcrText.value,
-                                            sourceLanguage = detectedLanguage.value,
-                                            targetLanguage = targetLang.localeCode
-                                        )
-                                    } else rawOcrText.value
-                                } ?: rawOcrText.value
-
-                                isProcessing.value = false
-                            }
-                            .addOnFailureListener { e ->
-                                isProcessing.value = false
-                                serviceScope.launch(Dispatchers.Main) {
-                                    floatingButtonView?.alpha = 1f
-                                }
-                            }
-                    }
-                }
+                val result = ocrRepository.processBitmap(
+                    bitmap,
+                    selectedLanguage.value?.code
+                )
+                this@OverlayService.ocrResult = result
+                rawOcrText.value = result.text
+                detectedLanguage.value = result.text.takeIf { it.isNotBlank() }
+                    ?.let(LanguageDetector::detectLanguage) ?: "unknown"
+                transliteratedText.value = targetLanguage.value?.let { target ->
+                    Transliterator.transliterate(result.text, detectedLanguage.value, target.localeCode)
+                } ?: result.text
+                isProcessing.value = false
             } catch (e: Exception) {
                 isProcessing.value = false
                 serviceScope.launch(Dispatchers.Main) {
@@ -940,41 +854,6 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                 }
             }
         }
-    }
-
-    private fun convertToOCRResult(
-        mlkitResult: Text,
-        language: String,
-        imageWidth: Int,
-        imageHeight: Int
-    ): OCRResult {
-        val textBlocks = mlkitResult.textBlocks.map { block ->
-            TextBlock(
-                text = block.text,
-                boundingBox = block.boundingBox ?: android.graphics.Rect(),
-                lines = block.lines.map { line ->
-                    TextLine(
-                        text = line.text,
-                        boundingBox = line.boundingBox ?: android.graphics.Rect(),
-                        elements = line.elements.map { element ->
-                            TextElement(
-                                text = element.text,
-                                boundingBox = element.boundingBox ?: android.graphics.Rect()
-                            )
-                        }
-                    )
-                }
-            )
-        }
-
-        return OCRResult(
-            text = mlkitResult.text,
-            language = language,
-            boundingBoxes = textBlocks,
-            imageWidth = imageWidth,
-            imageHeight = imageHeight,
-            imageRotation = 0
-        )
     }
 
     private fun closeOCROverlay() {
@@ -1048,6 +927,8 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
         super.onDestroy()
 
         serviceScope.cancel()
+        // The scope is cancelled, so release on a throwaway thread-bound scope.
+        CoroutineScope(Dispatchers.IO).launch { runCatching { ocrRepository.release() } }
 
         closeOCROverlay()
 

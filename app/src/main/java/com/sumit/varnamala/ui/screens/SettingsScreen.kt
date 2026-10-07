@@ -3,9 +3,9 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
-import com.sumit.varnamala.data.ocr.OcrEngine
-import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
 import com.sumit.varnamala.ui.components.ConfirmBottomSheet
+import com.sumit.varnamala.utils.authenticateOwner
+import com.sumit.varnamala.utils.canAuthenticate
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.SliderBottomSheet
 import com.sumit.varnamala.data.ocr.OCRCacheRepository
@@ -105,10 +105,6 @@ fun SettingsScreen(
     )
     val cameraMaxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
     val cameraSkipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
-    val selectedOcrEngine by ocrSettingsRepository.selectedOcrEngine.collectAsState(initial = OcrEngine.TESSERACT)
-    val visualReplacementMode by ocrSettingsRepository.visualReplacementMode.collectAsState(
-        initial = OcrVisualReplacementMode.REPLACE_LITE
-    )
     val currentAppLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
     val currentLanguageDisplayName =
         AppLanguageRepository.getLanguageDisplayName(currentAppLanguage)
@@ -119,11 +115,17 @@ fun SettingsScreen(
     var showMaxExtraDelayDialog by remember { mutableStateOf(false) }
     var showSkipFramesDialog by remember { mutableStateOf(false) }
     var showTextSizeDialog by remember { mutableStateOf(false) }
+    var showRetentionDialog by remember { mutableStateOf(false) }
 
     // User preferences
     val hapticEnabled by userPrefsRepository.hapticFeedbackEnabled.collectAsState(initial = true)
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
     val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
+    val highContrast by userPrefsRepository.highContrast.collectAsState(initial = false)
+    val readingMode by userPrefsRepository.readingMode.collectAsState(initial = false)
+    val retentionDays by userPrefsRepository.historyRetentionDays.collectAsState(initial = 0)
+    val appLock by userPrefsRepository.appLockEnabled.collectAsState(initial = false)
+    val canAuthenticate = remember { canAuthenticate(context) }
     val textDisplaySize by userPrefsRepository.textDisplaySize.collectAsState(initial = 1.0f)
 
     val appName = stringResource(R.string.app_name)
@@ -191,6 +193,7 @@ fun SettingsScreen(
     ) {
         // Back button
         GlassButton(
+            description = stringResource(R.string.back),
             icon = painterResource(R.drawable.ic_chevron_left),
             onClick = { navController.popBackStack() })
 
@@ -349,55 +352,6 @@ fun SettingsScreen(
                     }
                 )
 
-                SettingItem(
-                    title = stringResource(R.string.select_ocr_engine),
-                    subtitle = when (selectedOcrEngine) {
-                        OcrEngine.TESSERACT -> stringResource(R.string.ocr_engine_tesseract_name)
-                        OcrEngine.ML_KIT -> stringResource(R.string.default_mlkit)
-                        OcrEngine.CUSTOM -> "Custom"
-                    },
-                    icon = painterResource(id = R.drawable.ic_database),
-                    isLastItem = false,
-                    showDivider = true,
-                    onClick = {
-                        scope.launch {
-                            ocrSettingsRepository.setSelectedOcrEngine(
-                                if (selectedOcrEngine == OcrEngine.TESSERACT) {
-                                    OcrEngine.ML_KIT
-                                } else {
-                                    OcrEngine.TESSERACT
-                                }
-                            )
-                        }
-                    },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_refresh),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                )
-
-                SettingItem(
-                    title = stringResource(R.string.visual_replacement_mode),
-                    subtitle = visualReplacementMode.displayName(),
-                    icon = painterResource(id = R.drawable.ic_image_outline),
-                    isLastItem = true,
-                    showDivider = false,
-                    onClick = {
-                        val modes = OcrVisualReplacementMode.entries
-                        val next = modes[(modes.indexOf(visualReplacementMode) + 1) % modes.size]
-                        scope.launch { ocrSettingsRepository.setVisualReplacementMode(next) }
-                    },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_refresh),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                )
             }
 
             SettingsCategory(title = stringResource(R.string.ocr_features)) {
@@ -470,23 +424,6 @@ fun SettingsScreen(
 
             // Data & Storage Section
             SettingsCategory(title = stringResource(R.string.data_storage)) {
-                // Language models
-                SettingItem(
-                    title = stringResource(R.string.models),
-                    subtitle = stringResource(R.string.manage_models),
-                    icon = painterResource(id = R.drawable.ic_database),
-                    isLastItem = false,
-                    showDivider = true,
-                    onClick = { navController.navigate(Screen.Models.route) },
-                    trailingContent = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_chevron_right),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                )
-
                 // Cache Storage
                 SettingItem(
                     title = stringResource(R.string.enable_cache_storage),
@@ -591,14 +528,118 @@ fun SettingsScreen(
                     title = stringResource(R.string.enable_tts),
                     subtitle = stringResource(R.string.enable_tts_hint),
                     icon = painterResource(id = R.drawable.ic_volume_up),
-                    isLastItem = true,
-                    showDivider = false,
+                    isLastItem = false,
+                    showDivider = true,
                     trailingContent = {
                         Switch(
                             checked = ttsEnabled,
                             onCheckedChange = { newValue ->
                                 scope.launch { userPrefsRepository.setTtsEnabled(newValue) }
                             }
+                        )
+                    }
+                )
+
+                // Voice and speech (download, voices, style, speed, pitch)
+                SettingItem(
+                    title = stringResource(R.string.tts_voice_screen_title),
+                    subtitle = stringResource(R.string.tts_voice_screen_hint),
+                    icon = painterResource(id = R.drawable.ic_volume_up),
+                    isLastItem = true,
+                    showDivider = false,
+                    onClick = { navController.navigate(Screen.Voice.route) },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+            }
+
+            // Accessibility, privacy and models
+            SettingsCategory(title = stringResource(R.string.accessibility_privacy)) {
+                SettingItem(
+                    title = stringResource(R.string.high_contrast),
+                    subtitle = stringResource(R.string.high_contrast_hint),
+                    icon = painterResource(id = R.drawable.ic_settings_outline),
+                    isLastItem = false,
+                    showDivider = true,
+                    trailingContent = {
+                        Switch(checked = highContrast, onCheckedChange = { scope.launch { userPrefsRepository.setHighContrast(it) } })
+                    }
+                )
+                SettingItem(
+                    title = stringResource(R.string.reading_mode),
+                    subtitle = stringResource(R.string.reading_mode_hint),
+                    icon = painterResource(id = R.drawable.ic_volume_up),
+                    isLastItem = false,
+                    showDivider = true,
+                    trailingContent = {
+                        Switch(checked = readingMode, onCheckedChange = { scope.launch { userPrefsRepository.setReadingMode(it) } })
+                    }
+                )
+                SettingItem(
+                    title = stringResource(R.string.history_retention),
+                    subtitle = if (retentionDays == 0) stringResource(R.string.history_retention_never)
+                    else stringResource(R.string.history_retention_days, retentionDays),
+                    icon = painterResource(id = R.drawable.ic_history),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { showRetentionDialog = true },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+                SettingItem(
+                    title = stringResource(R.string.app_lock),
+                    subtitle = stringResource(if (canAuthenticate) R.string.app_lock_hint else R.string.app_lock_unavailable),
+                    icon = painterResource(id = R.drawable.ic_shield_outline),
+                    isLastItem = false,
+                    showDivider = true,
+                    trailingContent = {
+                        Switch(
+                            checked = appLock,
+                            enabled = canAuthenticate,
+                            onCheckedChange = { want ->
+                                // Turning the lock on or off requires proving it is the owner.
+                                authenticateOwner(context, onSuccess = { scope.launch { userPrefsRepository.setAppLockEnabled(want) } })
+                            },
+                        )
+                    }
+                )
+                SettingItem(
+                    title = stringResource(R.string.model_manager),
+                    subtitle = stringResource(R.string.model_manager_hint),
+                    icon = painterResource(id = R.drawable.ic_download),
+                    isLastItem = false,
+                    showDivider = true,
+                    onClick = { navController.navigate(Screen.Models.route) },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                )
+                SettingItem(
+                    title = stringResource(R.string.help_title),
+                    subtitle = stringResource(R.string.help_hint),
+                    icon = painterResource(id = R.drawable.ic_info),
+                    isLastItem = true,
+                    showDivider = false,
+                    onClick = { navController.navigate(Screen.Help.route) },
+                    trailingContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_chevron_right),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 )
@@ -648,6 +689,24 @@ fun SettingsScreen(
                     .align(Alignment.CenterHorizontally)
             )
         }
+    }
+
+    if (showRetentionDialog) {
+        SliderBottomSheet(
+            title = stringResource(R.string.history_retention),
+            initialValue = retentionDays.toFloat(),
+            valueRange = 0f..90f,
+            steps = 8,
+            valueLabel = {
+                if (it.toInt() == 0) context.getString(R.string.history_retention_never)
+                else context.getString(R.string.history_retention_days, it.toInt())
+            },
+            onDismiss = { showRetentionDialog = false },
+            onConfirm = {
+                scope.launch { userPrefsRepository.setHistoryRetentionDays(it.toInt()) }
+                showRetentionDialog = false
+            }
+        )
     }
 
     if (showClearCacheDialog) {
@@ -862,14 +921,5 @@ fun SettingItem(
                     .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f))
             )
         }
-    }
-}
-
-private fun OcrVisualReplacementMode.displayName(): String {
-    return when (this) {
-        OcrVisualReplacementMode.SIMPLE_OVERLAY -> "Simple Overlay"
-        OcrVisualReplacementMode.REPLACE_LITE -> "Replace Lite"
-        OcrVisualReplacementMode.PERSPECTIVE_PATCH -> "Perspective Patch"
-        OcrVisualReplacementMode.OPENCV_INPAINT -> "OpenCV Inpainting"
     }
 }

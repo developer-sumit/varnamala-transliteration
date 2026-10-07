@@ -16,6 +16,7 @@ class OnboardingRepository(private val context: Context) {
     private object PreferencesKeys {
         val HAS_SEEN_CAMERA_TUTORIAL = booleanPreferencesKey("has_seen_camera_tutorial")
         val HAS_SELECTED_APP_LANGUAGE = booleanPreferencesKey("has_selected_app_language")
+        val HAS_REQUIRED_OCR_RESOURCES = booleanPreferencesKey("has_required_ocr_resources")
     }
 
     val hasSeenCameraTutorial: Flow<Boolean> = context.onboardingDataStore.data
@@ -33,6 +34,8 @@ class OnboardingRepository(private val context: Context) {
 
     val hasSelectedAppLanguageLoaded: Flow<Boolean?> = hasSelectedAppLanguage
         .map<Boolean, Boolean?> { it }
+    val hasRequiredOcrResources: Flow<Boolean> = context.onboardingDataStore.data
+        .map { it[PreferencesKeys.HAS_REQUIRED_OCR_RESOURCES] ?: false }
     suspend fun setHasSeenCameraTutorial(value: Boolean) {
         context.onboardingDataStore.edit { preferences ->
             preferences[PreferencesKeys.HAS_SEEN_CAMERA_TUTORIAL] = value
@@ -43,5 +46,8 @@ class OnboardingRepository(private val context: Context) {
         context.onboardingDataStore.edit { preferences ->
             preferences[PreferencesKeys.HAS_SELECTED_APP_LANGUAGE] = value
         }
+    }
+    suspend fun setHasRequiredOcrResources(value: Boolean) {
+        context.onboardingDataStore.edit { it[PreferencesKeys.HAS_REQUIRED_OCR_RESOURCES] = value }
     }
 }

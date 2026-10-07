@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">ಸಹಾಯ ಮತ್ತು ಟ್ಯುಟೋರಿಯಲ್</string>
+    <string name="help_hint">ಒಂದು ಚಿಕ್ಕ ಮಾರ್ಗದರ್ಶಿ ಪ್ರವಾಸ</string>
+    <string name="help_scan_title">ಫಲಕವನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</string>
+    <string name="help_scan_body">ಕ್ಯಾಮೆರಾವನ್ನು ಯಾವುದಾದರೂ ಬರಹದ ಕಡೆ ಹಿಡಿಯಿರಿ. ಫೋಟೋ ತೆಗೆಯಲು ದುಂಡಗಿನ ಬಟನ್ ಒತ್ತಿ, ಅಥವಾ ನೇರವಾಗಿ ಓದಲು ಒತ್ತಿ ಹಿಡಿಯಿರಿ.</string>
+    <string name="help_languages_title">ನಿಮ್ಮ ಭಾಷೆಗಳನ್ನು ಆರಿಸಿ</string>
+    <string name="help_languages_body">ಕ್ಯಾಮೆರಾ ಮೇಲೆ ಎರಡು ಬಟನ್‌ಗಳಿವೆ: ಒಂದು ಬರಹದ ಭಾಷೆಗೆ, ಇನ್ನೊಂದು ನೀವು ಓದಲು ಬಯಸುವ ಲಿಪಿಗೆ.</string>
+    <string name="help_tap_title">ಮುಟ್ಟಿ ಕೇಳಿ</string>
+    <string name="help_tap_body">ಚಿತ್ರದ ಮೇಲೆ ಒಂದು ಪದವನ್ನು ಮುಟ್ಟಿದರೆ ಅದು ಕೇಳಿಸುತ್ತದೆ. ಒಂದು ಸಾಲನ್ನು ಒತ್ತಿ ಹಿಡಿದರೆ ಅದು ನಕಲಾಗುತ್ತದೆ. ಬೂದು ಬಣ್ಣದ ಸಾಲುಗಳ ಬಗ್ಗೆ ಆ್ಯಪ್‌ಗೆ ಖಚಿತವಿಲ್ಲ.</string>
+    <string name="help_voice_title">ಆಫ್‌ಲೈನ್ ಧ್ವನಿ</string>
+    <string name="help_voice_body">ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ \'ಧ್ವನಿ ಮತ್ತು ಮಾತು\' ತೆರೆದು ಭಾರತೀಯ ಭಾಷೆಗಳ ಸಹಜ ಧ್ವನಿಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ. ನಂತರ ಅದು ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.</string>
+    <string name="help_type_title">ಟೈಪ್ ಮಾಡಿ ಬದಲಿಸಿ</string>
+    <string name="help_type_body">ಕೀಬೋರ್ಡ್ ಟ್ಯಾಬ್ ತೆರೆದು ಟೈಪ್ ಮಾಡಿ. ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಂತೆ ಬದಲಾದ ಪಠ್ಯ ಕಾಣುತ್ತದೆ, ಮತ್ತು ಎರಡೂ ರೂಪಗಳನ್ನು ಕೇಳಬಹುದು.</string>
+    <string name="help_keyboard_title">ಲಿಪ್ಯಂತರ ಕೀಬೋರ್ಡ್</string>
+    <string name="help_keyboard_body">ಯಾವುದೇ ಆ್ಯಪ್‌ನಲ್ಲಿ ಇಂಗ್ಲಿಷ್ ಅಕ್ಷರಗಳಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಭಾರತೀಯ ಲಿಪಿ ಪಡೆಯಿರಿ. ಇದನ್ನು ನಿಮ್ಮ ಫೋನಿನ ಕೀಬೋರ್ಡ್ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಆನ್ ಮಾಡಿ.</string>
+    <string name="help_private_title">ವಿನ್ಯಾಸದಲ್ಲೇ ಖಾಸಗಿ</string>
+    <string name="help_private_body">ಓದುವುದು, ಬದಲಿಸುವುದು ಮತ್ತು ಮಾತನಾಡುವುದು ಎಲ್ಲವೂ ನಿಮ್ಮ ಫೋನಿನಲ್ಲೇ ನಡೆಯುತ್ತದೆ. ನೀವು ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ್ದು ಎಲ್ಲಿಗೂ ಕಳುಹಿಸಲ್ಪಡುವುದಿಲ್ಲ.</string>
+    <string name="help_keyboard_enable">ಕೀಬೋರ್ಡ್ ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ</string>
+    <string name="help_replay">ಕ್ಯಾಮೆರಾ ಪ್ರವಾಸವನ್ನು ಮತ್ತೆ ನೋಡಿ</string>
+    <string name="widget_label">ಪಠ್ಯ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ</string>
+</resources>

@@ -179,6 +179,7 @@ fun GalleryScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlassButton(
+                description = stringResource(R.string.a11y_info),
                 icon = painterResource(R.drawable.ic_info),
                 onClick = { showGalleryInfoDialog = true })
             Text(
@@ -187,6 +188,7 @@ fun GalleryScreen(navController: NavController) {
                 color = MaterialTheme.colorScheme.onBackground
             )
             GlassButton(
+                description = stringResource(R.string.a11y_settings),
                 icon = painterResource(R.drawable.ic_settings_outline),
                 onClick = { navController.navigate(Screen.Settings.route) })
         }

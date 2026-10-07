@@ -79,7 +79,6 @@
     <string name="camera_ocr_reading_ms_per_word">Reading time per word</string>
     <string name="camera_ocr_max_extra_delay_ms">Max extra delay</string>
     <string name="camera_ocr_skip_frames">Skip frames</string>
-    <string name="visual_replacement_mode">Visual replacement mode</string>
     <string name="ms_value">%d ms</string>
     <string name="frames_value">%d frames</string>
     
@@ -138,20 +137,14 @@
     <string name="transliterate_to">Transliterate to</string>
 
     <!-- OCR engine selection -->
-    <string name="select_ocr_engine">Select OCR engine</string>
-    <string name="ocr_engine_mlkit_description">Fast, online, supports multiple languages</string>
-    <string name="ocr_engine_tesseract_name">Tesseract</string>
-    <string name="ocr_engine_tesseract_description">Offline, requires language data download</string>
 
     <!-- Transliteration selection -->
-    <string name="default_mlkit">Default (ML Kit)</string>
 
     <string name="unable_to_open_link">Unable to open link.</string>
 
     <!-- Model downloads -->
     <string name="models">Language models</string>
     <string name="manage_models">Manage downloaded OCR models</string>
-    <string name="download_models_hint">Download offline Tesseract language models on demand</string>
     <string name="model_download">Download model</string>
     <string name="model_downloaded">Downloaded</string>
 
@@ -199,6 +192,61 @@
     <string name="text_to_speech">Text-to-Speech</string>
     <string name="enable_tts">Enable TTS</string>
     <string name="enable_tts_hint">Read aloud transliterated text</string>
+    <string name="offline_voice">Offline Indic voice</string>
+    <string name="tts_voice">Voice</string>
+    <string name="voice_female">Female voice %1$d</string>
+    <string name="voice_male">Male voice %1$d</string>
+    <string name="low_confidence">low confidence</string>
+    <string name="mobile_data_title">Use mobile data?</string>
+    <string name="mobile_data_message">This download is %1$s and you are not on Wi-Fi. It may use a lot of your mobile data.</string>
+    <string name="download">Download</string>
+    <string name="storage_low_title">Not enough storage</string>
+    <string name="storage_low_message">This download needs about %1$s free, but only %2$s is available. Free up some space and try again.</string>
+    <string name="offline_title">No internet connection</string>
+    <string name="offline_message">Connect to the internet to download this model. Once it is downloaded, it works without a connection.</string>
+    <string name="tts_voice_screen_title">Voice &amp; speech</string>
+    <string name="offline_voice_description">Natural Indian-language voice that runs on your phone. Works without internet once downloaded.</string>
+    <string name="model_status_downloading">Downloading… %1$d%%</string>
+    <string name="model_status_installed">Downloaded</string>
+    <string name="model_status_not_installed">Not downloaded</string>
+    <string name="model_delete_title">Delete %1$s?</string>
+    <string name="model_delete_message">This frees %1$s. You can download it again later.</string>
+    <string name="retry">Retry</string>
+    <string name="tts_style">Speaking style</string>
+    <string name="style_neutral">Neutral</string>
+    <string name="style_news">News</string>
+    <string name="style_conversation">Conversation</string>
+    <string name="style_story">Story</string>
+    <string name="style_happy">Happy</string>
+    <string name="tts_speed">Speed</string>
+    <string name="tts_pitch">Pitch</string>
+    <string name="tts_behaviour">Reading aloud</string>
+    <string name="tts_speak_original">Speak the original first</string>
+    <string name="tts_speak_original_hint">Hear the sign in its own language, then in your target language</string>
+    <string name="tts_voice_screen_hint">Download the offline voice, choose a voice, style, speed and pitch</string>
+    <string name="accessibility_privacy">Accessibility, privacy and models</string>
+    <string name="high_contrast">High-contrast camera text</string>
+    <string name="high_contrast_hint">Black background with bold yellow text over the camera</string>
+    <string name="reading_mode">Read-aloud camera mode</string>
+    <string name="reading_mode_hint">Keep scanning and speak new signs aloud, with a vibration cue for where the text is</string>
+    <string name="history_retention">Auto-delete history</string>
+    <string name="history_retention_never">Never</string>
+    <string name="history_retention_days">After %1$d days</string>
+    <string name="app_lock">App lock</string>
+    <string name="app_lock_hint">Ask for fingerprint, face or screen lock before opening history</string>
+    <string name="app_lock_unavailable">Set up a screen lock on this device to use this</string>
+    <string name="model_manager">Model manager</string>
+    <string name="model_manager_hint">See, download and delete the OCR and voice models</string>
+    <string name="help_title">Help and tutorial</string>
+    <string name="help_hint">A short guided tour</string>
+    <string name="app_lock_prompt_title">Unlock Varnamala history</string>
+    <string name="app_lock_locked">History is locked</string>
+    <string name="app_lock_unlock">Unlock</string>
+    <string name="model_manager_intro">Models run on your phone, so scanning and speaking work without internet. Delete the ones you do not use to free space.</string>
+    <string name="model_ocr_small">Text reading: fast</string>
+    <string name="model_ocr_small_hint">Used for live scanning. Required.</string>
+    <string name="model_ocr_large">Text reading: accurate</string>
+    <string name="model_ocr_large_hint">Used for photos and gallery images. Slower but more exact. Without it, photos use the fast model.</string>
     <string name="tts_auto_speak">Auto-speak Results</string>
     <string name="tts_auto_speak_hint">Automatically speak after transliteration</string>
 
@@ -226,4 +274,22 @@
     <string name="clipboard_label_ocr_text">OCR Text</string>
     <string name="clipboard_label_transliterated_text">Transliterated Text</string>
     <string name="clipboard_label_text">Text</string>
+
+    <!-- OCR resource setup -->
+    <string name="resource_setup_title">Set up offline text scanning</string>
+    <string name="resource_setup_subtitle">Varnamala reads text on your device. Download the OCR models once to start scanning without internet.</string>
+    <string name="resource_setup_subtitle_ready">Everything is downloaded. Scanning works fully offline.</string>
+    <string name="resource_setup_bytes">%1$s of %2$s</string>
+    <string name="resource_setup_download">Download (%1$s)</string>
+    <string name="resource_setup_downloading">Downloading…</string>
+    <string name="resource_setup_retry">Retry download</string>
+    <string name="resource_setup_continue">Continue</string>
+    <string name="resource_setup_wifi_hint">Wi-Fi recommended. You can leave and resume; finished parts are kept.</string>
+    <string name="resource_setup_error_title">Download paused</string>
+    <string name="resource_pack_live_title">Live scan pack</string>
+    <string name="resource_pack_live_description">Fast model for hold-to-scan in the camera</string>
+    <string name="resource_pack_photo_title">Photo scan pack</string>
+    <string name="resource_pack_photo_description">Accurate model for captured photos and gallery images</string>
+    <string name="resource_pack_ready">Downloaded · %1$s</string>
+    <string name="resource_pack_ready_description">Downloaded</string>
 </resources>

@@ -9,8 +9,7 @@
 [![Android](https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=android&logoColor=white)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack%20Compose-4285F4?style=flat-square&logo=jetpack-compose&logoColor=white)](https://developer.android.com/jetpack/compose)
-[![ML Kit](https://img.shields.io/badge/ML%20Kit-4285F4?style=flat-square&logo=google&logoColor=white)](https://developers.google.com/ml-kit)
-[![Tesseract](https://img.shields.io/badge/Tesseract%20OCR-000000?style=flat-square&logo=tesseract&logoColor=white)](https://tesseract-ocr.github.io/)
+[![PaddleOCR](https://img.shields.io/badge/PaddleOCR-0052CC?style=flat-square)](https://github.com/PaddlePaddle/PaddleOCR)
 
 ---
 
@@ -56,7 +55,7 @@
 
 - 🔦 **Flash Support** - Use camera flash in low-light conditions
 - 🎛️ **Overlay Mode** - OCR any screen with floating button overlay
-- 🗃️ **Dual OCR Engines** - Choose between ML Kit and Tesseract
+- 🗃️ **On-device OCR** - PaddleOCR detection and recognition models
 - 💾 **Smart Caching** - Fast results for previously scanned images
 - 📦 **Downloadable Models** - Download only the languages you need
 
@@ -92,7 +91,7 @@ cd varnamala
 | ---------------- | ------------------------------- |
 | **UI Framework** | Jetpack Compose with Material 3 |
 | **Language**     | Kotlin                          |
-| **OCR Engine**   | Google ML Kit + Tesseract 4     |
+| **OCR Engine**   | PaddleOCR with ONNX Runtime     |
 | **Camera**       | CameraX                         |
 | **Storage**      | DataStore Preferences           |
 | **Architecture** | MVVM with Compose               |
@@ -195,8 +194,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Google ML Kit](https://developers.google.com/ml-kit) for text recognition
-- [Tesseract OCR](https://tesseract-ocr.github.io/) for offline OCR
+- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) for offline OCR
 - [Material Design 3](https://m3.material.io/) for design guidelines
 - [Jetpack Compose](https://developer.android.com/jetpack/compose) for modern UI
 

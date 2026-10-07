@@ -11,8 +11,16 @@ import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.InfoBottomSheet
 import com.sumit.varnamala.ui.components.LanguageSelectionRow
-import com.sumit.varnamala.utils.LanguageDetector
+import com.sumit.varnamala.transliteration.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
+import com.sumit.varnamala.tts.SpeechPart
+import com.sumit.varnamala.ui.components.HighlightedText
+import com.sumit.varnamala.ui.components.SpeakButton
+import com.sumit.varnamala.ui.components.rememberSpeechController
+import com.sumit.varnamala.ui.components.speakableHighlight as spokenWordHighlight
+import com.sumit.varnamala.ui.components.speechLanguage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -21,7 +29,6 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -104,12 +111,10 @@ fun TextInputScreen(navController: NavController) {
     val textDisplaySize by userPrefsRepository.textDisplaySize.collectAsState(initial = 1.0f)
     val hapticEnabled by userPrefsRepository.hapticFeedbackEnabled.collectAsState(initial = true)
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
-    val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
 
     // Input state
     var inputText by remember { mutableStateOf("") }
     var transliteratedText by remember { mutableStateOf("") }
-    var isTransliterating by remember { mutableStateOf(false) }
 
     val selectedSourceCode by ocrSettingsRepository.selectedSourceTransliterationCode.collectAsState(
         initial = "auto"
@@ -132,27 +137,9 @@ fun TextInputScreen(navController: NavController) {
 
     val focusRequester = remember { FocusRequester() }
 
-    // TTS
-    var tts by remember { mutableStateOf<TextToSpeech?>(null) }
-    var ttsReady by remember { mutableStateOf(false) }
-
-    LaunchedEffect(ttsEnabled) {
-        if (ttsEnabled) {
-            tts = TextToSpeech(context) { status ->
-                ttsReady = status == TextToSpeech.SUCCESS
-            }
-        } else {
-            tts?.shutdown()
-            tts = null
-            ttsReady = false
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            tts?.shutdown()
-        }
-    }
+    // Read-aloud: Rasa ONNX voice for Indic languages once downloaded, system voice otherwise.
+    val speech = rememberSpeechController()
+    var resolvedSource by remember { mutableStateOf("en") }
 
     // Haptic feedback helper
     fun performHapticFeedback() {
@@ -173,54 +160,43 @@ fun TextInputScreen(navController: NavController) {
         }
     }
 
-    // Transliterate function
-    fun transliterate() {
+    // Live transliteration: the result follows the text as it is typed. The conversion itself is
+    // quick, so only a short pause is needed; the history entry, clipboard copy and hand-off to
+    // the speech engine wait for typing to settle so a half-typed word is not saved.
+    LaunchedEffect(inputText, sourceLanguage, targetLanguage) {
         if (inputText.isBlank()) {
             transliteratedText = ""
-            return
+            speech.stop()
+            return@LaunchedEffect
         }
+        delay(120)
+        val srcLang = if (sourceLanguage?.localeCode == "auto") {
+            LanguageDetector.detectLanguage(inputText)
+        } else {
+            sourceLanguage?.localeCode ?: "en"
+        }
+        val tgtLang = targetLanguage.localeCode
+        val converted = withContext(Dispatchers.Default) { Transliterator.transliterate(inputText, srcLang, tgtLang) }
+        resolvedSource = speechLanguage(srcLang)
+        transliteratedText = converted
 
-        scope.launch {
-            isTransliterating = true
-            performHapticFeedback()
-
-            delay(100) // Small delay for UX
-
-            val srcLang = if (sourceLanguage?.localeCode == "auto") {
-                LanguageDetector.detectLanguage(inputText)
-            } else {
-                sourceLanguage?.localeCode ?: "en"
-            }
-            val tgtLang = targetLanguage.localeCode
-
-            transliteratedText = Transliterator.transliterate(inputText, srcLang, tgtLang)
-
-            isTransliterating = false
-
-            // Auto-copy if enabled
-            if (autoCopyEnabled && transliteratedText.isNotBlank()) {
-                val clipboard =
-                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                clipboard.setPrimaryClip(
-                    ClipData.newPlainText(
-                        context.getString(R.string.clipboard_label_transliterated_text),
-                        transliteratedText
-                    )
+        delay(1200)
+        if (autoCopyEnabled && converted.isNotBlank()) {
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            clipboard.setPrimaryClip(
+                ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), converted)
+            )
+        }
+        if (converted.isNotBlank() && converted != inputText) {
+            historyRepository.addEntry(
+                HistoryEntry(
+                    originalText = inputText,
+                    transliteratedText = converted,
+                    sourceLanguage = srcLang,
+                    targetLanguage = tgtLang,
+                    source = "text_input"
                 )
-            }
-
-            // Save to history
-            if (transliteratedText.isNotBlank() && transliteratedText != inputText) {
-                historyRepository.addEntry(
-                    HistoryEntry(
-                        originalText = inputText,
-                        transliteratedText = transliteratedText,
-                        sourceLanguage = srcLang,
-                        targetLanguage = tgtLang,
-                        source = "text_input"
-                    )
-                )
-            }
+            )
         }
     }
 
@@ -235,30 +211,6 @@ fun TextInputScreen(navController: NavController) {
             )
         )
         Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
-    }
-
-    // Speak text
-    fun speakText(text: String) {
-        if (ttsReady && tts != null) {
-            performHapticFeedback()
-            val locale = when (targetLanguage.localeCode) {
-                "hi" -> Locale("hi", "IN")
-                "bn" -> Locale("bn", "IN")
-                "ta" -> Locale("ta", "IN")
-                "te" -> Locale("te", "IN")
-                "gu" -> Locale("gu", "IN")
-                "kn" -> Locale("kn", "IN")
-                "ml" -> Locale("ml", "IN")
-                "pa" -> Locale("pa", "IN")
-                "mr" -> Locale("mr", "IN")
-                "ur" -> Locale("ur", "IN")
-                else -> Locale.getDefault()
-            }
-            tts?.language = locale
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-        } else {
-            Toast.makeText(context, "TTS not available", Toast.LENGTH_SHORT).show()
-        }
     }
 
     // Auto-focus input on launch
@@ -282,6 +234,7 @@ fun TextInputScreen(navController: NavController) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             GlassButton(
+                description = stringResource(R.string.a11y_info),
                 icon = painterResource(R.drawable.ic_info),
                 size = 45.dp,
                 background = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
@@ -293,6 +246,7 @@ fun TextInputScreen(navController: NavController) {
                 color = MaterialTheme.colorScheme.onBackground
             )
             GlassButton(
+                description = stringResource(R.string.a11y_settings),
                 icon = painterResource(R.drawable.ic_settings_outline),
                 onClick = { navController.navigate("settings") }
             )
@@ -348,6 +302,15 @@ fun TextInputScreen(navController: NavController) {
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                     if (inputText.isNotBlank()) {
+                        SpeakButton(
+                            controller = speech,
+                            key = "typed",
+                            description = stringResource(R.string.tts_speak_original_text),
+                            onClick = {
+                                performHapticFeedback()
+                                speech.toggle("typed", listOf(SpeechPart(inputText, resolvedSource)))
+                            },
+                        )
                         TextButton(
                             onClick = {
                                 inputText = ""
@@ -369,6 +332,7 @@ fun TextInputScreen(navController: NavController) {
                 BasicTextField(
                     value = inputText,
                     onValueChange = { inputText = it },
+                    visualTransformation = spokenWordHighlight(speech, "typed", 0, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 120.dp, max = 200.dp)
@@ -380,10 +344,7 @@ fun TextInputScreen(navController: NavController) {
                     cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(
-                        onDone = {
-                            keyboardController?.hide()
-                            transliterate()
-                        }
+                        onDone = { keyboardController?.hide() }
                     ),
                     decorationBox = { innerTextField ->
                         Box {
@@ -411,33 +372,6 @@ fun TextInputScreen(navController: NavController) {
                         .padding(top = 8.dp),
                     textAlign = TextAlign.End
                 )
-            }
-
-            // Transliterate Button
-            Button(
-                onClick = {
-                    keyboardController?.hide()
-                    transliterate()
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                enabled = inputText.isNotBlank() && !isTransliterating,
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                if (isTransliterating) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                } else {
-                    Text(
-                        text = stringResource(R.string.transliterate),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
 
             // Result Area
@@ -483,26 +417,30 @@ fun TextInputScreen(navController: NavController) {
                                 )
                             }
 
-                            // TTS button (if enabled)
-                            if (ttsEnabled) {
-                                IconButton(
-                                    onClick = { speakText(transliteratedText) }
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_volume_up),
-                                        contentDescription = "Speak",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(20.dp)
+                            SpeakButton(
+                                controller = speech,
+                                key = "converted",
+                                description = stringResource(R.string.tts_speak_converted_text),
+                                onClick = {
+                                    performHapticFeedback()
+                                    speech.toggleConverted(
+                                        "converted",
+                                        SpeechPart(inputText, resolvedSource),
+                                        SpeechPart(transliteratedText, targetLanguage.localeCode),
                                     )
-                                }
-                            }
+                                },
+                            )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
+                    // With "speak the original first" on, the original is part 0 and this text is part 1.
+                    HighlightedText(
                         text = transliteratedText,
+                        controller = speech,
+                        key = "converted",
+                        partIndex = if (speech.settings.speakOriginal) 1 else 0,
                         style = TextStyle(
                             color = MaterialTheme.colorScheme.onSurface,
                             fontSize = (18 * textDisplaySize).sp,

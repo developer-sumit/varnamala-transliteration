@@ -1,14 +1,22 @@
 package com.sumit.varnamala
 
 import com.sumit.varnamala.data.Screen
+import com.sumit.varnamala.data.TransliterationHistoryRepository
+import com.sumit.varnamala.data.preferences.UserPreferencesRepository
+import com.sumit.varnamala.ui.components.LockGate
+import com.sumit.varnamala.ui.screens.HelpScreen
+import com.sumit.varnamala.ui.screens.ModelManagerScreen
+import com.sumit.varnamala.ui.screens.VoiceScreen
+import kotlinx.coroutines.flow.first
 import com.sumit.varnamala.ui.screens.CameraScreen
 import com.sumit.varnamala.ui.screens.GalleryScreen
 import com.sumit.varnamala.ui.screens.HistoryScreen
 import com.sumit.varnamala.ui.screens.ImageDetailScreen
 import com.sumit.varnamala.ui.screens.SettingsScreen
 import com.sumit.varnamala.ui.screens.LanguageScreen
-import com.sumit.varnamala.ui.screens.ModelsScreen
 import com.sumit.varnamala.ui.screens.OnboardingLanguageScreen
+import com.sumit.varnamala.ui.screens.ResourceSetupScreen
+import com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner
 import com.sumit.varnamala.ui.screens.OcrLanguageScreen
 import com.sumit.varnamala.ui.screens.TextInputScreen
 import com.sumit.varnamala.ui.screens.TransliterationLanguageScreen
@@ -24,6 +32,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -49,10 +58,55 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
+    /** Set by the widget, quick tile and launcher shortcut: open the camera on the home screen. */
+    private val openCameraRequest = androidx.compose.runtime.mutableIntStateOf(0)
+
+    /** An image another app shared to Varnamala, waiting to be opened. */
+    private val sharedImage = androidx.compose.runtime.mutableStateOf<android.net.Uri?>(null)
+
+    private fun handleIntent(intent: Intent?) {
+        intent ?: return
+        when (intent.action) {
+            ACTION_OPEN_CAMERA -> openCameraRequest.intValue++
+            Intent.ACTION_SEND -> if (intent.type?.startsWith("image/") == true) {
+                sharedImage.value = if (android.os.Build.VERSION.SDK_INT >= 33) {
+                    intent.getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)
+                } else {
+                    @Suppress("DEPRECATION") intent.getParcelableExtra(Intent.EXTRA_STREAM)
+                }
+            }
+            Intent.ACTION_SEND_MULTIPLE -> if (intent.type?.startsWith("image/") == true) {
+                // Several images shared at once: open the first; the rest can be shared again.
+                sharedImage.value = if (android.os.Build.VERSION.SDK_INT >= 33) {
+                    intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)?.firstOrNull()
+                } else {
+                    @Suppress("DEPRECATION") intent.getParcelableArrayListExtra<android.net.Uri>(Intent.EXTRA_STREAM)?.firstOrNull()
+                }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // History asks for the owner again after the app has been in the background.
+        com.sumit.varnamala.utils.AppLockSession.unlocked = false
+    }
+
+    companion object {
+        const val ACTION_OPEN_CAMERA = "com.sumit.varnamala.OPEN_CAMERA"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleIntent(intent)
         enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
@@ -69,6 +123,7 @@ class MainActivity : ComponentActivity() {
             val onboardingRepository = remember {
                 OnboardingRepository(context)
             }
+            val paddleModels = remember { PaddleModelProvisioner(context) }
 
             // Update locale when language changes
             val currentLanguage by languageRepository.appLanguage.collectAsState(initial = "en")
@@ -92,6 +147,7 @@ class MainActivity : ComponentActivity() {
             val hasExplicitAppLanguage by languageRepository.hasExplicitAppLanguageLoaded.collectAsState(
                 initial = null
             )
+            val hasRequiredOcrResources by onboardingRepository.hasRequiredOcrResources.collectAsState(initial = false)
 
             LaunchedEffect(isDarkTheme) {
                 WindowCompat.setDecorFitsSystemWindows(activity.window, false)
@@ -107,6 +163,7 @@ class MainActivity : ComponentActivity() {
             VarnamalaTheme(darkTheme = isDarkTheme) {
                 val startDestination = when {
                     hasSelectedAppLanguage == null || hasExplicitAppLanguage == null -> null
+                    !hasRequiredOcrResources || !paddleModels.isReady(PaddleModelProvisioner.Tier.TINY) -> Screen.ResourceSetup.route
                     hasSelectedAppLanguage == true || hasExplicitAppLanguage == true -> Screen.Home.route
                     else -> Screen.OnboardingLanguage.route
                 }
@@ -121,12 +178,37 @@ class MainActivity : ComponentActivity() {
                     )
                     val showBottomBar = currentRoute in bottomBarRoutes
 
+                    // Hand-offs from other apps and the home screen. They wait until setup is done.
+                    val sharedUri = sharedImage.value
+                    LaunchedEffect(sharedUri, currentRoute) {
+                        if (sharedUri != null && currentRoute != null && currentRoute != Screen.ResourceSetup.route &&
+                            currentRoute != Screen.SharedImage.route
+                        ) {
+                            navController.navigate(Screen.SharedImage.route)
+                        }
+                    }
+                    val cameraRequest = openCameraRequest.intValue
+                    LaunchedEffect(cameraRequest, currentRoute) {
+                        if (cameraRequest > 0 && currentRoute != null && currentRoute != Screen.ResourceSetup.route) {
+                            if (currentRoute != Screen.Home.route) {
+                                navController.navigate(Screen.Home.route) { popUpTo(Screen.Home.route) { inclusive = true } }
+                            }
+                            openCameraRequest.intValue = 0
+                        }
+                    }
+                    // Delete old scans once per launch, if the user asked for that.
+                    LaunchedEffect(Unit) {
+                        val days = UserPreferencesRepository(context).historyRetentionDays.first()
+                        if (days > 0) TransliterationHistoryRepository(context).pruneOlderThan(days)
+                    }
+
                     Box(modifier = Modifier.fillMaxSize()) {
                         NavHost(
                             navController = navController,
                             startDestination = startDestination,
                             modifier = Modifier.fillMaxSize()
                         ) {
+                            composable(Screen.ResourceSetup.route) { ResourceSetupScreen(navController) }
                             composable(Screen.OnboardingLanguage.route, enterTransition = {
                                 slideIntoContainer(
                                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
@@ -230,19 +312,6 @@ class MainActivity : ComponentActivity() {
                                         ?: Screen.TransliterationLanguage.ROLE_TARGET
                                 )
                             }
-                            composable(Screen.Models.route, enterTransition = {
-                                slideIntoContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
-                                    animationSpec = tween(300)
-                                )
-                            }, exitTransition = {
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
-                                    animationSpec = tween(300)
-                                )
-                            }) {
-                                ModelsScreen(navController)
-                            }
                             composable(Screen.TextInput.route, enterTransition = {
                                 slideIntoContainer(
                                     towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
@@ -267,7 +336,13 @@ class MainActivity : ComponentActivity() {
                                     animationSpec = tween(300)
                                 )
                             }) {
-                                HistoryScreen(navController)
+                                LockGate { HistoryScreen(navController) }
+                            }
+                            composable(Screen.Voice.route) { VoiceScreen(navController) }
+                            composable(Screen.Models.route) { ModelManagerScreen(navController) }
+                            composable(Screen.Help.route) { HelpScreen(navController) }
+                            composable(Screen.SharedImage.route) {
+                                ImageDetailScreen(navController = navController, imageId = -1L, sharedUri = sharedImage.value)
                             }
                             composable(
                                 route = Screen.ImageDetail.route,

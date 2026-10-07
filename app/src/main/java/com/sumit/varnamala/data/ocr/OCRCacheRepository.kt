@@ -47,7 +47,9 @@ class OCRCacheRepository(private val context: Context) {
                             elements.add(
                                 CachedTextElement(
                                     text = elementJson.optString("text", ""),
-                                    boundingBox = rect
+                                    boundingBox = rect,
+                                    confidence = elementJson.optDouble("confidence", 1.0).toFloat(),
+                                    order = elementJson.optInt("order", j),
                                 )
                             )
                         }
@@ -66,7 +68,9 @@ class OCRCacheRepository(private val context: Context) {
                 text = json.optString("text", ""),
                 detectedLanguage = json.optString("detectedLanguage", "unknown"),
                 languageGroups = languageGroups,
-                timestamp = json.optLong("timestamp", System.currentTimeMillis())
+                timestamp = json.optLong("timestamp", System.currentTimeMillis()),
+                imageWidth = json.optInt("imageWidth", 0),
+                imageHeight = json.optInt("imageHeight", 0),
             )
         } catch (e: Exception) {
             null
@@ -80,6 +84,8 @@ class OCRCacheRepository(private val context: Context) {
                 put("text", result.text)
                 put("detectedLanguage", result.detectedLanguage)
                 put("timestamp", result.timestamp)
+                put("imageWidth", result.imageWidth)
+                put("imageHeight", result.imageHeight)
 
                 val groupsArray = JSONArray()
                 result.languageGroups.forEach { group ->
@@ -89,6 +95,8 @@ class OCRCacheRepository(private val context: Context) {
                         group.elements.forEach { element ->
                             val elementJson = JSONObject().apply {
                                 put("text", element.text)
+                                put("confidence", element.confidence.toDouble())
+                                put("order", element.order)
                                 val bbox = JSONObject().apply {
                                     put("left", element.boundingBox.left)
                                     put("top", element.boundingBox.top)

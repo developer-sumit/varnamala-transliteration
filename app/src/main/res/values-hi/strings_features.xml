@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">मदद और ट्यूटोरियल</string>
+    <string name="help_hint">एक छोटा गाइडेड टूर</string>
+    <string name="help_scan_title">बोर्ड स्कैन करें</string>
+    <string name="help_scan_body">कैमरा को किसी लिखावट की ओर करें। फ़ोटो लेने के लिए गोल बटन दबाएँ, या लाइव पढ़ने के लिए उसे दबाए रखें।</string>
+    <string name="help_languages_title">अपनी भाषाएँ चुनें</string>
+    <string name="help_languages_body">कैमरे के ऊपर दो बटन हैं: एक लिखावट की भाषा के लिए और दूसरा उस लिपि के लिए जिसमें आप उसे पढ़ना चाहते हैं।</string>
+    <string name="help_tap_title">छूकर सुनें</string>
+    <string name="help_tap_body">तस्वीर पर किसी शब्द को छूएँ, वह सुनाई देगा। किसी पंक्ति को दबाए रखें, वह कॉपी हो जाएगी। धूसर पंक्तियाँ वे हैं जिनके बारे में ऐप को पक्का भरोसा नहीं है।</string>
+    <string name="help_voice_title">ऑफ़लाइन आवाज़</string>
+    <string name="help_voice_body">सेटिंग में \'आवाज़ और बोलना\' खोलकर भारतीय भाषाओं की स्वाभाविक आवाज़ डाउनलोड करें। फिर यह बिना इंटरनेट के चलती है।</string>
+    <string name="help_type_title">टाइप करके बदलें</string>
+    <string name="help_type_body">कीबोर्ड टैब खोलकर टाइप करें। टाइप करते ही बदला हुआ पाठ दिखता है, और आप दोनों रूप सुन सकते हैं।</string>
+    <string name="help_keyboard_title">लिप्यंतरण कीबोर्ड</string>
+    <string name="help_keyboard_body">किसी भी ऐप में अंग्रेज़ी अक्षरों में टाइप करें और भारतीय लिपि पाएँ। इसे अपने फ़ोन की कीबोर्ड सेटिंग में चालू करें।</string>
+    <string name="help_private_title">डिज़ाइन से निजी</string>
+    <string name="help_private_body">पढ़ना, बदलना और बोलना सब आपके फ़ोन पर होता है। आप जो स्कैन करते हैं वह कहीं नहीं भेजा जाता।</string>
+    <string name="help_keyboard_enable">कीबोर्ड सेटिंग खोलें</string>
+    <string name="help_replay">कैमरा टूर फिर से देखें</string>
+    <string name="widget_label">टेक्स्ट स्कैन करें</string>
+</resources>

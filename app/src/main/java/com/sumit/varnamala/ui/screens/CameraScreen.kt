@@ -2,7 +2,6 @@ package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Screen
-import com.sumit.varnamala.ui.components.OCRInfoCard
 import com.sumit.varnamala.ui.components.CameraPermissionHandler
 import com.sumit.varnamala.ui.components.GlassButton
 import com.sumit.varnamala.ui.components.InfoBottomSheet
@@ -11,9 +10,8 @@ import com.sumit.varnamala.ui.components.OCROverlayCanvas
 import com.sumit.varnamala.ui.components.CameraCaptureButton
 import com.sumit.varnamala.ui.components.LanguageSelectionRow
 import com.sumit.varnamala.data.ocr.OCRResult
-import com.sumit.varnamala.data.ocr.OcrEngine
 import com.sumit.varnamala.data.ocr.OcrLanguageCatalog
-import com.sumit.varnamala.utils.LanguageDetector
+import com.sumit.varnamala.transliteration.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.HistoryEntry
@@ -22,7 +20,6 @@ import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
 import com.sumit.varnamala.data.preferences.OnboardingRepository
 import com.sumit.varnamala.data.preferences.UserPreferencesRepository
-import com.sumit.varnamala.models.TesseractModelStore
 import com.sumit.varnamala.ui.tutorial.CoachMarkStep
 import com.sumit.varnamala.ui.tutorial.CoachMarksOverlay
 import com.sumit.varnamala.ui.tutorial.captureBounds
@@ -31,7 +28,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Bitmap
-import android.speech.tts.TextToSpeech
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -72,6 +68,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -81,8 +78,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.sumit.varnamala.data.ScanThumbnails
+import com.sumit.varnamala.tts.SpeechPart
+import com.sumit.varnamala.ui.components.ScanResultCard
+import com.sumit.varnamala.ui.components.rememberSpeechController
+import com.sumit.varnamala.ui.components.speechLanguage
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @Composable
 fun CameraScreen(navController: NavController) {
@@ -128,64 +135,24 @@ fun CameraScreen(navController: NavController) {
     val readingMsPerWord by ocrSettingsRepository.cameraReadingMsPerWord.collectAsState(initial = 300)
     val maxExtraDelayMs by ocrSettingsRepository.cameraMaxExtraDelayMs.collectAsState(initial = 5000)
     val skipFrames by ocrSettingsRepository.cameraSkipFrames.collectAsState(initial = 5)
-    val selectedOcrEngine by ocrSettingsRepository.selectedOcrEngine.collectAsState(
-        initial = OcrEngine.TESSERACT
-    )
     val selectedOcrModelCode by ocrSettingsRepository.selectedOcrModelCode.collectAsState(
         initial = OcrLanguageCatalog.DEFAULT_SOURCE_CODE
     )
     val selectedTargetCode by ocrSettingsRepository.selectedTargetTransliterationCode.collectAsState(
         initial = "hi"
     )
-    val visualReplacementMode by ocrSettingsRepository.visualReplacementMode.collectAsState(
-        initial = com.sumit.varnamala.data.ocr.OcrVisualReplacementMode.REPLACE_LITE
-    )
 
     // User preferences
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
-    val ttsEnabled by userPrefsRepository.ttsEnabled.collectAsState(initial = false)
     val ttsAutoSpeak by userPrefsRepository.ttsAutoSpeak.collectAsState(initial = false)
 
-    // TTS
-    var tts by remember { mutableStateOf<TextToSpeech?>(null) }
-    var ttsReady by remember { mutableStateOf(false) }
-
-    LaunchedEffect(ttsEnabled) {
-        if (ttsEnabled) {
-            tts = TextToSpeech(context) { status ->
-                ttsReady = status == TextToSpeech.SUCCESS
-            }
-        } else {
-            tts?.shutdown()
-            tts = null
-            ttsReady = false
-        }
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            tts?.shutdown()
-        }
-    }
-
-    fun speakText(text: String, targetLangCode: String) {
-        if (ttsReady && tts != null && text.isNotBlank()) {
-            val locale = when (targetLangCode) {
-                "hi" -> Locale("hi", "IN")
-                "bn" -> Locale("bn", "IN")
-                "ta" -> Locale("ta", "IN")
-                "te" -> Locale("te", "IN")
-                "gu" -> Locale("gu", "IN")
-                "kn" -> Locale("kn", "IN")
-                "ml" -> Locale("ml", "IN")
-                "pa" -> Locale("pa", "IN")
-                "mr" -> Locale("mr", "IN")
-                else -> Locale.getDefault()
-            }
-            tts?.language = locale
-            tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, null)
-        }
-    }
+    // Read-aloud: Rasa voice for Indic languages once downloaded, system voice otherwise.
+    val speech = rememberSpeechController()
+    val highContrast by userPrefsRepository.highContrast.collectAsState(initial = false)
+    val textDisplaySize by userPrefsRepository.textDisplaySize.collectAsState(initial = 1f)
+    val readingMode by userPrefsRepository.readingMode.collectAsState(initial = false)
+    val hapticEnabled by userPrefsRepository.hapticFeedbackEnabled.collectAsState(initial = true)
+    var lastSpokenText by remember { mutableStateOf("") }
 
     // State variables
     var flashEnabled by remember { mutableStateOf(false) }
@@ -197,6 +164,7 @@ fun CameraScreen(navController: NavController) {
     var captureImage by remember { mutableStateOf(false) }
     var isCapturing by remember { mutableStateOf(false) }
     var capturedBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    var capturedDisplaySize by remember { mutableStateOf(IntSize.Zero) }
     var capturedImageProcessing by remember { mutableStateOf(false) }
 
     // OCR result processing variables
@@ -220,10 +188,8 @@ fun CameraScreen(navController: NavController) {
         )
     }
 
-    fun hasRequiredOcrModel(): Boolean {
-        if (selectedOcrEngine != OcrEngine.TESSERACT) return true
-        return TesseractModelStore.isModelDownloaded(context, selectedOcrModel)
-    }
+    // PP-OCRv6 models are bundled with the app and loaded by its SDK.
+    fun hasRequiredOcrModel() = true
 
     fun promptModelDownload() {
         Toast.makeText(
@@ -232,6 +198,82 @@ fun CameraScreen(navController: NavController) {
             Toast.LENGTH_LONG
         ).show()
         navController.navigate(Screen.OcrLanguage.route)
+    }
+
+    // The whole recognized text, converted once per result rather than on every recomposition.
+    val convertedText = remember(rawOcrText, detectedLanguage, selectedTargetLanguage) {
+        if (rawOcrText.isBlank()) "" else Transliterator.transliterate(
+            text = rawOcrText,
+            sourceLanguage = detectedLanguage,
+            targetLanguage = selectedTargetLanguage.localeCode
+        )
+    }
+
+    fun vibrateCue(pulses: Int) {
+        if (!hapticEnabled) return
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
+        } else {
+            @Suppress("DEPRECATION") context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        }
+        // Short pulses with gaps: one = text on the left, two = in the middle, three = on the right.
+        val pattern = LongArray(pulses * 2 + 1) { i -> if (i == 0) 0L else if (i % 2 == 1) 120L else 60L }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+        else @Suppress("DEPRECATION") vibrator.vibrate(pattern, -1)
+    }
+
+    // Keep a record of what was scanned, with a small picture, once a photo has been read.
+    LaunchedEffect(rawOcrText, convertedText, capturedBitmap) {
+        val photo = capturedBitmap ?: return@LaunchedEffect
+        if (rawOcrText.isNotBlank() && convertedText.isNotBlank() && convertedText != rawOcrText) {
+            historyRepository.addEntry(
+                HistoryEntry(
+                    originalText = rawOcrText,
+                    transliteratedText = convertedText,
+                    sourceLanguage = detectedLanguage,
+                    targetLanguage = selectedTargetLanguage.localeCode,
+                    source = "camera",
+                    imageRef = ScanThumbnails.save(context, photo),
+                )
+            )
+            if (autoCopyEnabled) {
+                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), convertedText))
+            }
+            // Auto-speak: read a photographed sign as soon as it has been recognized.
+            if (ttsAutoSpeak) {
+                speech.toggleConverted(
+                    "scan",
+                    SpeechPart(rawOcrText, speechLanguage(detectedLanguage)),
+                    SpeechPart(convertedText, selectedTargetLanguage.localeCode),
+                )
+            }
+        }
+    }
+
+    // Read-aloud mode: scan continuously, speak each new sign once it has finished reading the last
+    // one, and buzz to say where the text is in the frame.
+    LaunchedEffect(readingMode) {
+        detectionRunning = readingMode
+        if (!readingMode) speech.stop()
+    }
+    LaunchedEffect(lastOCRResult) {
+        val result = lastOCRResult ?: return@LaunchedEffect
+        if (!readingMode || capturedBitmap != null || result.text.isBlank()) return@LaunchedEffect
+        if (result.text == lastSpokenText || speech.activeKey != null) return@LaunchedEffect
+        lastSpokenText = result.text
+        val centre = result.allLines.filter { !it.isLowConfidence }.map { it.boundingBox.centerX() }.average() / result.imageWidth.coerceAtLeast(1)
+        vibrateCue(if (centre < 0.38) 1 else if (centre > 0.62) 3 else 2)
+        val converted = Transliterator.transliterate(
+            text = result.text,
+            sourceLanguage = LanguageDetector.detectLanguage(result.text),
+            targetLanguage = selectedTargetLanguage.localeCode,
+        )
+        speech.toggleConverted(
+            "reading",
+            SpeechPart(result.text, speechLanguage(LanguageDetector.detectLanguage(result.text))),
+            SpeechPart(converted, selectedTargetLanguage.localeCode),
+        )
     }
 
     Box(
@@ -256,22 +298,23 @@ fun CameraScreen(navController: NavController) {
                         isDetectionRunning = detectionRunning,
                         flashEnabled = flashEnabled,
                         lensFacing = lensFacing,
-                        preferredLanguage = selectedOcrModel.code,
-                        ocrEngine = selectedOcrEngine,
-                        tesseractModel = selectedOcrModel.takeIf { selectedOcrEngine == OcrEngine.TESSERACT },
+                        paddleLanguage = selectedOcrModel,
+                        onWordTap = { word -> speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage)))) },
+                        highContrast = highContrast,
                         detectionIntervalMs = detectionIntervalMs,
                         readingMsPerWord = readingMsPerWord,
                         maxExtraDelayMs = maxExtraDelayMs,
                         skipFrames = skipFrames,
-                        showBoundingBoxes = false,
+                        showBoundingBoxes = true,
                         showTextOverlay = true,
                         showWordBoundingBoxes = false,
-                        showLineBoundingBoxes = false,
-                        showBlockBoundingBoxes = false,
+                        showLineBoundingBoxes = true,
+                        showBlockBoundingBoxes = true,
                         textOverride = selectedTargetLanguage?.let { targetLang ->
                             lastOCRResult?.boundingBoxes
                                 ?.flatMap { it.lines }
                                 ?.flatMap { it.elements }
+                                ?.filter { !it.isLowConfidence }
                                 ?.associate { element ->
                                     element.boundingBox to Transliterator.transliterate(
                                         text = element.text,
@@ -280,7 +323,6 @@ fun CameraScreen(navController: NavController) {
                                     )
                                 }
                         },
-                        visualReplacementMode = visualReplacementMode,
                         // Single capture functionality
                         captureImage = captureImage,
                         onCaptureComplete = {
@@ -310,7 +352,6 @@ fun CameraScreen(navController: NavController) {
                                 }
                             }
                         },
-                        onManualLanguageRequired = { },
                         onError = { error ->
                             errorMessage = error
                             if (isCapturing) {
@@ -355,16 +396,28 @@ fun CameraScreen(navController: NavController) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Left side - Info button
-            GlassButton(
-                icon = painterResource(R.drawable.ic_info),
-                background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                onClick = { showCameraInfoDialog = true }
-            )
+            // Left side - Info button and read-aloud mode
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                GlassButton(
+                    description = stringResource(R.string.a11y_info),
+                    icon = painterResource(R.drawable.ic_info),
+                    background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                    onClick = { showCameraInfoDialog = true }
+                )
+                GlassButton(
+                    modifier = Modifier.semantics {
+                        contentDescription = context.getString(if (readingMode) R.string.reading_mode_on else R.string.reading_mode_off)
+                    },
+                    icon = painterResource(R.drawable.ic_volume_up),
+                    background = if (readingMode) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                    onClick = { tutorialScope.launch { userPrefsRepository.setReadingMode(!readingMode) } }
+                )
+            }
 
             // Right side - History and Settings
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 GlassButton(
+                    description = stringResource(R.string.history),
                     icon = painterResource(R.drawable.ic_history),
                     background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
                     onClick = { navController.navigate(Screen.History.route) }
@@ -373,6 +426,7 @@ fun CameraScreen(navController: NavController) {
                     modifier = Modifier.captureBounds("settings") { key, rect ->
                         tutorialTargets[key] = rect
                     },
+                    description = stringResource(R.string.a11y_settings),
                     icon = painterResource(R.drawable.ic_settings_outline),
                     background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
                     onClick = { navController.navigate(Screen.Settings.route) }
@@ -388,77 +442,6 @@ fun CameraScreen(navController: NavController) {
                 .padding(bottom = topInset + 74.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // OCR Result Card
-            if (rawOcrText.isNotBlank() || errorMessage != null) {
-                val targetLang = selectedTargetLanguage
-                val transliteratedText = if (targetLang != null) {
-                    Transliterator.transliterate(
-                        text = rawOcrText,
-                        sourceLanguage = detectedLanguage,
-                        targetLanguage = targetLang.localeCode
-                    )
-                } else rawOcrText
-
-                LaunchedEffect(rawOcrText, transliteratedText) {
-                    if (rawOcrText.isNotBlank() && transliteratedText.isNotBlank() && transliteratedText != rawOcrText) {
-                        // Save to history
-                        historyRepository.addEntry(
-                            HistoryEntry(
-                                originalText = rawOcrText,
-                                transliteratedText = transliteratedText,
-                                sourceLanguage = detectedLanguage,
-                                targetLanguage = targetLang?.localeCode ?: "en",
-                                source = "camera"
-                            )
-                        )
-
-                        // Auto-copy if enabled
-                        if (autoCopyEnabled) {
-                            val clipboard =
-                                context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            clipboard.setPrimaryClip(
-                                ClipData.newPlainText(
-                                    context.getString(R.string.clipboard_label_transliterated_text),
-                                    transliteratedText
-                                )
-                            )
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.copied),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        // Auto-speak if enabled
-                        if (ttsEnabled && ttsAutoSpeak && targetLang != null) {
-                            speakText(transliteratedText, targetLang.localeCode)
-                        }
-                    }
-                }
-
-                OCRInfoCard(
-                    ocrLoading = (detectionRunning || isCapturing) && rawOcrText.isBlank(),
-                    ocrError = errorMessage,
-                    rawOcrText = rawOcrText,
-                    transliteratedText = transliteratedText,
-                    onCopy = {
-                        val clipboard =
-                            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText(
-                            context.getString(R.string.ocr_text),
-                            transliteratedText
-                        )
-                        clipboard.setPrimaryClip(clip)
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.copied),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    },
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
-                )
-            }
-
             LanguageSelectionRow(
                 sourceLanguage = selectedSourceLanguage,
                 targetLanguage = selectedTargetLanguage,
@@ -488,6 +471,7 @@ fun CameraScreen(navController: NavController) {
                     modifier = Modifier.captureBounds("flash") { key, rect ->
                         tutorialTargets[key] = rect
                     },
+                    description = stringResource(if (flashEnabled) R.string.a11y_flash_on else R.string.a11y_flash_off),
                     icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
                         R.drawable.ic_flash_off_outline
                     ),
@@ -545,8 +529,8 @@ fun CameraScreen(navController: NavController) {
                         }
                     },
                     onLongPressEnd = {
-                        // Release = stop real-time scanning
-                        detectionRunning = false
+                        // Release = stop real-time scanning (read-aloud mode keeps scanning)
+                        detectionRunning = readingMode
                     }
                 )
 
@@ -555,6 +539,7 @@ fun CameraScreen(navController: NavController) {
                     modifier = Modifier.captureBounds("switch_camera") { key, rect ->
                         tutorialTargets[key] = rect
                     },
+                    description = stringResource(R.string.a11y_switch_camera),
                     icon = painterResource(R.drawable.ic_switch_camera),
                     size = 60.dp,
                     enabled = hasBackCamera == true && hasFrontCamera == true,
@@ -623,6 +608,7 @@ fun CameraScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black)
+                    .onGloballyPositioned { capturedDisplaySize = it.size }
             ) {
                 // Show captured image - properly oriented
                 Image(
@@ -642,6 +628,7 @@ fun CameraScreen(navController: NavController) {
                             result.boundingBoxes
                                 .flatMap { it.lines }
                                 .flatMap { it.elements }
+                                .filter { !it.isLowConfidence }
                                 .associate { element ->
                                     element.boundingBox to Transliterator.transliterate(
                                         text = element.text,
@@ -650,12 +637,13 @@ fun CameraScreen(navController: NavController) {
                                     )
                                 }
                         },
-                        containerSize = IntSize(bitmap.width, bitmap.height),
+                        containerSize = capturedDisplaySize,
                         sourceBitmap = bitmap,
-                        visualReplacementMode = visualReplacementMode,
-                        showBoundingBoxes = false,
+                        showBoundingBoxes = true,
                         showTextOverlay = true,
                         enableTextCopy = true,
+                        onWordTap = { word -> speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage)))) },
+                        highContrast = highContrast,
                         modifier = Modifier
                             .fillMaxSize()
                             .align(Alignment.Center)
@@ -691,41 +679,16 @@ fun CameraScreen(navController: NavController) {
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                 ) {
-                    // OCR Result Card
-                    if (rawOcrText.isNotBlank() || capturedImageProcessing || errorMessage != null) {
-                        val transliteratedText = selectedTargetLanguage?.let { targetLang ->
-                            if (rawOcrText.isNotBlank()) {
-                                Transliterator.transliterate(
-                                    text = rawOcrText,
-                                    sourceLanguage = detectedLanguage,
-                                    targetLanguage = targetLang.localeCode
-                                )
-                            } else rawOcrText
-                        } ?: rawOcrText
-
-                        OCRInfoCard(
-                            ocrLoading = capturedImageProcessing,
-                            ocrError = errorMessage,
-                            rawOcrText = rawOcrText,
-                            transliteratedText = transliteratedText,
-                            onCopy = {
-                                val clipboard =
-                                    context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText(
-                                    context.getString(R.string.ocr_text),
-                                    transliteratedText
-                                )
-                                clipboard.setPrimaryClip(clip)
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.copied),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                    if (rawOcrText.isNotBlank()) {
+                        ScanResultCard(
+                            original = rawOcrText,
+                            converted = convertedText,
+                            originalLanguage = speechLanguage(detectedLanguage),
+                            convertedLanguage = selectedTargetLanguage.localeCode,
+                            speech = speech,
+                            textScale = textDisplaySize,
                         )
                     }
-
                     // Bottom controls
                     Row(
                         modifier = Modifier
@@ -736,6 +699,7 @@ fun CameraScreen(navController: NavController) {
                     ) {
                         // Flash toggle
                         GlassButton(
+                            description = stringResource(if (flashEnabled) R.string.a11y_flash_on else R.string.a11y_flash_off),
                             icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
                                 R.drawable.ic_flash_off_outline
                             ), onClick = { flashEnabled = !flashEnabled }
@@ -782,6 +746,7 @@ fun CameraScreen(navController: NavController) {
 
                         // Switch camera button
                         GlassButton(
+                            description = stringResource(R.string.a11y_switch_camera),
                             icon = painterResource(R.drawable.ic_switch_camera),
                             enabled = hasBackCamera == true && hasFrontCamera == true,
                             onClick = {

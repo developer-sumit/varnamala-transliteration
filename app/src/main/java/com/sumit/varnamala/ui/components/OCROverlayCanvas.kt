@@ -2,7 +2,6 @@ package com.sumit.varnamala.ui.components
 
 import com.sumit.varnamala.R
 import com.sumit.varnamala.data.ocr.OCRResult
-import com.sumit.varnamala.data.ocr.OcrVisualReplacementMode
 import com.sumit.varnamala.data.ocr.TextElement
 
 import android.content.ClipData
@@ -12,6 +11,10 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -19,6 +22,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.ui.draw.rotate
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,6 +57,24 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import kotlin.math.max
+import kotlin.math.min
+
+private data class OverlayTransform(val scale: Float, val offsetX: Float, val offsetY: Float)
+
+private fun overlayTransform(
+    result: OCRResult,
+    containerSize: IntSize,
+    cropToFill: Boolean,
+): OverlayTransform {
+    val xScale = containerSize.width.toFloat() / result.imageWidth
+    val yScale = containerSize.height.toFloat() / result.imageHeight
+    val scale = if (cropToFill) max(xScale, yScale) else min(xScale, yScale)
+    return OverlayTransform(
+        scale = scale,
+        offsetX = (containerSize.width - result.imageWidth * scale) / 2f,
+        offsetY = (containerSize.height - result.imageHeight * scale) / 2f,
+    )
+}
 
 
 @Composable
@@ -59,8 +82,8 @@ fun OCROverlayCanvas(
     result: OCRResult?,
     textOverride: Map<android.graphics.Rect, String>? = null,
     containerSize: IntSize,
+    cropToFill: Boolean = false,
     sourceBitmap: Bitmap? = null,
-    visualReplacementMode: OcrVisualReplacementMode = OcrVisualReplacementMode.REPLACE_LITE,
     modifier: Modifier = Modifier,
     // Display settings
     showBoundingBoxes: Boolean = true,
@@ -77,48 +100,54 @@ fun OCROverlayCanvas(
     textColor: Color = Color.White,
     textBackgroundColor: Color = Color.Black.copy(alpha = 0.85f), // More solid background
     // Interaction
-    enableTextCopy: Boolean = true
+    enableTextCopy: Boolean = true,
+    /** Called with the tapped word (or whole line when it is a single word). Long-press still copies. */
+    onWordTap: ((String) -> Unit)? = null,
+    /** Black-and-yellow rendering with solid backgrounds, for low vision and bright sunlight. */
+    highContrast: Boolean = false,
 ) {
     if (result == null || containerSize == IntSize.Zero) return
 
-    val context = LocalContext.current
-    val density = LocalDensity.current
-
     Box(modifier = modifier) {
-        // Bounding boxes overlay
-        if (showBoundingBoxes) {
-            Canvas(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                drawOCRBoundingBoxes(
-                    result = result,
-                    containerSize = containerSize,
-                    drawScope = this,
-                    showBlocks = showBlockBoundingBoxes,
-                    showLines = showLineBoundingBoxes,
-                    showWords = showWordBoundingBoxes,
-                    strokeWidth = boundingBoxStrokeWidth,
-                    textBackgroundAlpha = textBackgroundOpacity,
-                    blockColor = blockBoundingBoxColor,
-                    lineColor = lineBoundingBoxColor,
-                    wordColor = wordBoundingBoxColor
-                )
-            }
-        }
-
-        // Enhanced Text overlay with copy functionality
+        // Render text first. Its background fills the detected area, so bounding-box
+        // strokes must be drawn afterward or they are completely covered.
         if (showTextOverlay) {
             EnhancedOCRTextOverlay(
                 result = result,
                 textOverride = textOverride,
                 containerSize = containerSize,
+                cropToFill = cropToFill,
                 sourceBitmap = sourceBitmap,
-                visualReplacementMode = visualReplacementMode,
-                textColor = textColor,
-                backgroundColor = textBackgroundColor.copy(alpha = textBackgroundOpacity),
+                textColor = if (highContrast) Color.Yellow else textColor,
+                backgroundColor = if (highContrast) Color.Black else textBackgroundColor.copy(alpha = textBackgroundOpacity),
                 enableTextCopy = enableTextCopy,
+                onWordTap = onWordTap,
+                highContrast = highContrast,
                 modifier = Modifier.fillMaxSize()
             )
+        }
+
+        if (showBoundingBoxes) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(2f)
+            ) {
+                drawOCRBoundingBoxes(
+                    result = result,
+                    containerSize = containerSize,
+                    cropToFill = cropToFill,
+                    drawScope = this,
+                    showBlocks = showBlockBoundingBoxes,
+                    showLines = showLineBoundingBoxes,
+                    showWords = showWordBoundingBoxes,
+                    strokeWidth = if (highContrast) boundingBoxStrokeWidth * 2f else boundingBoxStrokeWidth,
+                    textBackgroundAlpha = textBackgroundOpacity,
+                    blockColor = if (highContrast) Color.Yellow else blockBoundingBoxColor,
+                    lineColor = if (highContrast) Color.Yellow else lineBoundingBoxColor,
+                    wordColor = wordBoundingBoxColor
+                )
+            }
         }
     }
 }
@@ -129,6 +158,7 @@ fun OCROverlayCanvas(
 private fun drawOCRBoundingBoxes(
     result: OCRResult,
     containerSize: IntSize,
+    cropToFill: Boolean,
     drawScope: DrawScope,
     showBlocks: Boolean,
     showLines: Boolean,
@@ -141,27 +171,26 @@ private fun drawOCRBoundingBoxes(
 ) {
     if (result.imageWidth == 0 || result.imageHeight == 0) return
 
-    val scaleX = containerSize.width.toFloat() / result.imageWidth.toFloat()
-    val scaleY = containerSize.height.toFloat() / result.imageHeight.toFloat()
+    val transform = overlayTransform(result, containerSize, cropToFill)
+    // The public setting is expressed like the rest of the Compose UI (dp-like),
+    // while DrawScope expects physical pixels. A raw 1-2 px stroke was effectively
+    // invisible on modern high-density screens.
+    val blockStrokePx = max(2f, strokeWidth * drawScope.density)
 
     result.boundingBoxes.forEach { block ->
+        // Lines the recognizer is unsure about are drawn grey, not in the normal colour.
+        val unsure = block.isLowConfidence
+        val blockColor = if (unsure) Color.Gray else blockColor
+        val lineColor = if (unsure) Color.Gray else lineColor
         // Draw block bounding boxes
         if (showBlocks) {
             val scaledRect = android.graphics.RectF(
-                block.boundingBox.left * scaleX,
-                block.boundingBox.top * scaleY,
-                block.boundingBox.right * scaleX,
-                block.boundingBox.bottom * scaleY
+                block.boundingBox.left * transform.scale + transform.offsetX,
+                block.boundingBox.top * transform.scale + transform.offsetY,
+                block.boundingBox.right * transform.scale + transform.offsetX,
+                block.boundingBox.bottom * transform.scale + transform.offsetY
             )
 
-            drawScope.drawRect(
-                color = blockColor,
-                topLeft = Offset(scaledRect.left, scaledRect.top),
-                size = Size(scaledRect.width(), scaledRect.height()),
-                style = Stroke(width = strokeWidth)
-            )
-
-            // Draw text background if enabled
             if (textBackgroundAlpha > 0f) {
                 drawScope.drawRect(
                     color = blockColor.copy(alpha = textBackgroundAlpha * 0.3f),
@@ -169,23 +198,22 @@ private fun drawOCRBoundingBoxes(
                     size = Size(scaledRect.width(), scaledRect.height())
                 )
             }
+            drawScope.drawRect(
+                color = blockColor,
+                topLeft = Offset(scaledRect.left, scaledRect.top),
+                size = Size(scaledRect.width(), scaledRect.height()),
+                style = Stroke(width = blockStrokePx)
+            )
         }
 
         // Draw line bounding boxes
         if (showLines) {
             block.lines.forEach { line ->
                 val scaledRect = android.graphics.RectF(
-                    line.boundingBox.left * scaleX,
-                    line.boundingBox.top * scaleY,
-                    line.boundingBox.right * scaleX,
-                    line.boundingBox.bottom * scaleY
-                )
-
-                drawScope.drawRect(
-                    color = lineColor,
-                    topLeft = Offset(scaledRect.left, scaledRect.top),
-                    size = Size(scaledRect.width(), scaledRect.height()),
-                    style = Stroke(width = strokeWidth * 0.8f)
+                    line.boundingBox.left * transform.scale + transform.offsetX,
+                    line.boundingBox.top * transform.scale + transform.offsetY,
+                    line.boundingBox.right * transform.scale + transform.offsetX,
+                    line.boundingBox.bottom * transform.scale + transform.offsetY
                 )
 
                 if (textBackgroundAlpha > 0f) {
@@ -195,6 +223,12 @@ private fun drawOCRBoundingBoxes(
                         size = Size(scaledRect.width(), scaledRect.height())
                     )
                 }
+                drawScope.drawRect(
+                    color = lineColor,
+                    topLeft = Offset(scaledRect.left, scaledRect.top),
+                    size = Size(scaledRect.width(), scaledRect.height()),
+                    style = Stroke(width = blockStrokePx)
+                )
             }
         }
 
@@ -203,26 +237,25 @@ private fun drawOCRBoundingBoxes(
             block.lines.forEach { line ->
                 line.elements.forEach { element ->
                     val scaledRect = android.graphics.RectF(
-                        element.boundingBox.left * scaleX,
-                        element.boundingBox.top * scaleY,
-                        element.boundingBox.right * scaleX,
-                        element.boundingBox.bottom * scaleY
+                        element.boundingBox.left * transform.scale + transform.offsetX,
+                        element.boundingBox.top * transform.scale + transform.offsetY,
+                        element.boundingBox.right * transform.scale + transform.offsetX,
+                        element.boundingBox.bottom * transform.scale + transform.offsetY
                     )
 
-                    drawScope.drawRect(
-                        color = wordColor,
-                        topLeft = Offset(scaledRect.left, scaledRect.top),
-                        size = Size(scaledRect.width(), scaledRect.height()),
-                        style = Stroke(width = strokeWidth * 0.6f)
-                    )
-
-                    if (textBackgroundAlpha > 0f) {
+                if (textBackgroundAlpha > 0f) {
                         drawScope.drawRect(
                             color = wordColor.copy(alpha = textBackgroundAlpha * 0.1f),
                             topLeft = Offset(scaledRect.left, scaledRect.top),
                             size = Size(scaledRect.width(), scaledRect.height())
-                        )
-                    }
+                    )
+                }
+                drawScope.drawRect(
+                    color = wordColor,
+                    topLeft = Offset(scaledRect.left, scaledRect.top),
+                    size = Size(scaledRect.width(), scaledRect.height()),
+                    style = Stroke(width = blockStrokePx)
+                )
                 }
             }
         }
@@ -237,19 +270,20 @@ private fun EnhancedOCRTextOverlay(
     result: OCRResult,
     textOverride: Map<android.graphics.Rect, String>?,
     containerSize: IntSize,
+    cropToFill: Boolean,
     sourceBitmap: Bitmap?,
-    visualReplacementMode: OcrVisualReplacementMode,
     textColor: Color,
     backgroundColor: Color,
     enableTextCopy: Boolean,
+    onWordTap: ((String) -> Unit)?,
+    highContrast: Boolean,
     modifier: Modifier = Modifier
 ) {
     if (result.imageWidth == 0 || result.imageHeight == 0) return
 
     val context = LocalContext.current
     val density = LocalDensity.current
-    val scaleX = containerSize.width.toFloat() / result.imageWidth.toFloat()
-    val scaleY = containerSize.height.toFloat() / result.imageHeight.toFloat()
+    val transform = overlayTransform(result, containerSize, cropToFill)
 
     var selectedElement by remember { mutableStateOf<TextElement?>(null) }
 
@@ -257,81 +291,35 @@ private fun EnhancedOCRTextOverlay(
         result.boundingBoxes.forEach { block ->
             block.lines.forEach { line ->
                 line.elements.forEach { element ->
-                    val displayText = textOverride?.get(element.boundingBox) ?: element.text
+                    val unsure = element.isLowConfidence
+                    // Show the converted text in place of the original when there is one, so the box
+                    // reads like the sign itself; the result card below shows both.
+                    val converted = if (unsure) null else textOverride?.get(element.boundingBox)
+                    val displayText = if (!converted.isNullOrBlank() && converted != element.text) converted else element.text
                     if (displayText.isNotBlank()) {
                         val scaledRect = android.graphics.RectF(
-                            element.boundingBox.left * scaleX,
-                            element.boundingBox.top * scaleY,
-                            element.boundingBox.right * scaleX,
-                            element.boundingBox.bottom * scaleY
+                            element.boundingBox.left * transform.scale + transform.offsetX,
+                            element.boundingBox.top * transform.scale + transform.offsetY,
+                            element.boundingBox.right * transform.scale + transform.offsetX,
+                            element.boundingBox.bottom * transform.scale + transform.offsetY
                         )
 
-                        val boundingHeightPx = max(1f, scaledRect.height())
-                        val boundingWidthPx = max(1f, scaledRect.width())
-
-                        // Fit text to both width and height. Allow up to 2 lines.
-                        val paddingPx = 2f
-                        val targetWidthPx = max(1f, boundingWidthPx - paddingPx * 2)
-                        val targetHeightPx = max(1f, boundingHeightPx - paddingPx * 2)
-
-                        val minTextPx = 8f
-                        val maxTextPx = max(12f, targetHeightPx * 0.9f)
-                        val maxLines = 2
-
-                        fun fits(textSizePx: Float): Pair<Boolean, Int> {
-                            val paint = android.graphics.Paint().apply {
-                                isAntiAlias = true
-                                textSize = textSizePx
-                                typeface = android.graphics.Typeface.DEFAULT_BOLD
-                            }
-
-                            // Approx line height. Paint.FontMetrics gives better but this is stable.
-                            val fm = paint.fontMetrics
-                            val lineHeight = (fm.descent - fm.ascent) * 1.05f
-
-                            val words =
-                                displayText.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
-                            if (words.isEmpty()) return false to 1
-
-                            var lines = 1
-                            var current = words.first()
-                            for (w in words.drop(1)) {
-                                val candidate = "$current $w"
-                                if (paint.measureText(candidate) <= targetWidthPx) {
-                                    current = candidate
-                                } else {
-                                    lines++
-                                    current = w
-                                    if (lines > maxLines) break
-                                }
-                            }
-
-                            val totalHeight = lineHeight * lines
-                            val ok = lines <= maxLines && totalHeight <= targetHeightPx
-
-                            // Also ensure single long word doesn't exceed width massively
-                            val longestWordWidth = words.maxOf { paint.measureText(it) }
-                            return (ok && longestWordWidth <= targetWidthPx) to lines
+                        // Match the text in the picture: the letters are as tall as the detected box
+                        // allows, shrunk only as far as needed to stay on one line inside it. Tall,
+                        // narrow boxes hold sideways text, which is drawn turned to match.
+                        val sideways = scaledRect.height() > scaledRect.width() * 1.5f && displayText.length > 2
+                        val boxLength = if (sideways) scaledRect.height() else scaledRect.width()
+                        val boxThickness = if (sideways) scaledRect.width() else scaledRect.height()
+                        val paint = android.graphics.Paint().apply {
+                            isAntiAlias = true
+                            typeface = android.graphics.Typeface.DEFAULT_BOLD
                         }
-
-                        // Binary search largest text size that fits.
-                        var lo = minTextPx
-                        var hi = maxTextPx
-                        var best = minTextPx
-                        var bestLines = 1
-                        repeat(16) {
-                            val mid = (lo + hi) / 2f
-                            val (ok, usedLines) = fits(mid)
-                            if (ok) {
-                                best = mid
-                                bestLines = usedLines
-                                lo = mid
-                            } else {
-                                hi = mid
-                            }
-                        }
-                        val optimalFontSizePx = best
-                        val optimalMaxLines = bestLines
+                        // Ink of a text line is about 0.75 of its font size tall, so scale from the box height.
+                        val heightLimitPx = max(6f, boxThickness / 0.95f)
+                        paint.textSize = heightLimitPx
+                        val widthAtLimit = paint.measureText(displayText.trim())
+                        val optimalFontSizePx = if (widthAtLimit <= boxLength) heightLimitPx
+                        else max(6f, heightLimitPx * boxLength / widthAtLimit)
 
                         // Convert pixels to dp for proper positioning
                         val leftDp = with(density) { scaledRect.left.toDp() }
@@ -339,21 +327,13 @@ private fun EnhancedOCRTextOverlay(
                         val widthDp = with(density) { scaledRect.width().toDp() }
                         val heightDp = with(density) { scaledRect.height().toDp() }
 
-                        val replacementColor = when (visualReplacementMode) {
-                            OcrVisualReplacementMode.SIMPLE_OVERLAY -> backgroundColor
-                            OcrVisualReplacementMode.REPLACE_LITE,
-                            OcrVisualReplacementMode.PERSPECTIVE_PATCH,
-                            OcrVisualReplacementMode.OPENCV_INPAINT -> {
-                                sourceBitmap?.sampleBackgroundColor(element.boundingBox)
-                                    ?: backgroundColor
-                            }
+                        val replacementColor = when {
+                            highContrast -> Color.Black
+                            unsure -> Color.DarkGray.copy(alpha = 0.7f)
+                            else -> sourceBitmap?.sampleBackgroundColor(element.boundingBox) ?: backgroundColor
                         }
-                        val cornerRadius = when (visualReplacementMode) {
-                            OcrVisualReplacementMode.SIMPLE_OVERLAY -> 3.dp
-                            OcrVisualReplacementMode.REPLACE_LITE -> 2.dp
-                            OcrVisualReplacementMode.PERSPECTIVE_PATCH,
-                            OcrVisualReplacementMode.OPENCV_INPAINT -> 0.dp
-                        }
+                        val lowConfidenceLabel = stringResource(R.string.low_confidence)
+                        val spokenLabel = if (unsure) "$displayText, $lowConfidenceLabel" else displayText
 
                         // Replacement patch that stays within the detected text box.
                         // OpenCV inpainting is reserved for still-image/high-quality mode; when
@@ -362,7 +342,7 @@ private fun EnhancedOCRTextOverlay(
                             modifier = Modifier
                                 .offset(x = leftDp, y = topDp)
                                 .size(width = widthDp, height = heightDp)
-                                .clip(RoundedCornerShape(cornerRadius))
+                                .clip(RoundedCornerShape(2.dp))
                                 .background(replacementColor)
                                 .zIndex(1f)
                         )
@@ -372,11 +352,24 @@ private fun EnhancedOCRTextOverlay(
                             modifier = Modifier
                                 .offset(x = leftDp, y = topDp)
                                 .size(width = widthDp, height = heightDp)
+                                .semantics(mergeDescendants = true) { contentDescription = spokenLabel }
                                 .then(
-                                    if (enableTextCopy) {
-                                        Modifier.clickable {
-                                            selectedElement = element
-                                            copyTextToClipboard(context, displayText)
+                                    if (enableTextCopy || onWordTap != null) {
+                                        Modifier.pointerInput(element, onWordTap) {
+                                            detectTapGestures(
+                                                onTap = { tap ->
+                                                    if (onWordTap != null) {
+                                                        onWordTap(wordAt(element.text, tap.x / size.width.toFloat()))
+                                                    } else {
+                                                        selectedElement = element
+                                                        copyTextToClipboard(context, displayText)
+                                                    }
+                                                },
+                                                onLongPress = {
+                                                    selectedElement = element
+                                                    copyTextToClipboard(context, displayText)
+                                                },
+                                            )
                                         }
                                     } else Modifier
                                 )
@@ -385,12 +378,14 @@ private fun EnhancedOCRTextOverlay(
                         ) {
                             Text(
                                 text = displayText,
-                                color = textColor,
+                                color = if (unsure) Color.LightGray.copy(alpha = 0.8f) else textColor,
                                 fontSize = with(density) { optimalFontSizePx.toSp() },
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = if (highContrast) FontWeight.Bold else FontWeight.SemiBold,
+                                fontStyle = if (unsure) androidx.compose.ui.text.font.FontStyle.Italic else androidx.compose.ui.text.font.FontStyle.Normal,
                                 textAlign = TextAlign.Center,
-                                maxLines = optimalMaxLines,
-                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                softWrap = false,
+                                overflow = TextOverflow.Clip,
                                 style = TextStyle(
                                     shadow = Shadow(
                                         color = Color.Black.copy(alpha = 0.8f),
@@ -398,9 +393,15 @@ private fun EnhancedOCRTextOverlay(
                                         blurRadius = 2f
                                     )
                                 ),
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(1.dp)
+                                modifier = if (sideways) {
+                                    Modifier
+                                        .requiredSize(width = heightDp, height = widthDp)
+                                        .rotate(90f)
+                                } else {
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(1.dp)
+                                }
                             )
                         }
                     }
@@ -451,6 +452,19 @@ private fun EnhancedOCRTextOverlay(
             }
         }
     }
+}
+
+/** The word under a tap at [fraction] (0..1) across a line, estimating word widths by letter count. */
+internal fun wordAt(line: String, fraction: Float): String {
+    val words = line.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+    if (words.size <= 1) return line.trim()
+    val total = words.sumOf { it.length + 1 }.toFloat()
+    var edge = 0f
+    for (word in words) {
+        edge += (word.length + 1) / total
+        if (fraction <= edge) return word
+    }
+    return words.last()
 }
 
 /**

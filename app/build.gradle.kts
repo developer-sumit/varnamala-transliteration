@@ -105,23 +105,6 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
-        jniLibs {
-            pickFirsts += listOf(
-                "lib/arm64-v8a/libjpeg.so",
-                "lib/arm64-v8a/libpng.so",
-                // pngx is included in some tesseract AAR variants; pick first to avoid merge failures
-                "lib/arm64-v8a/libpngx.so",
-                "lib/arm64-v8a/libtiff.so",
-                "lib/arm64-v8a/libleptonica.so",
-                "lib/arm64-v8a/libtesseract.so",
-                "lib/x86_64/libjpeg.so",
-                "lib/x86_64/libpng.so",
-                "lib/x86_64/libpngx.so",
-                "lib/x86_64/libtiff.so",
-                "lib/x86_64/libleptonica.so",
-                "lib/x86_64/libtesseract.so"
-            )
-        }
     }
 }
 
@@ -129,12 +112,17 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
 
-    // ML Kit Text Recognition - English and Indian languages only
-    implementation(libs.text.recognition)
-    implementation(libs.text.recognition.devanagari)
+    // Official PaddleOCR PP-OCRv6 Android SDK (ONNX Runtime).
+    implementation(project(":ppocr-sdk"))
+    implementation(project(":transliteration"))
 
-    // Tesseract OCR for offline text recognition
-    implementation(libs.tesseract4android.openmp)
+    // On-device Rasa TTS (same ONNX Runtime version as the OCR SDK, so one native library is packaged).
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.21.1")
+
+    // Fingerprint / face / screen-lock prompt for the app lock (also brings in FragmentActivity).
+    implementation("androidx.biometric:biometric:1.1.0")
+
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 
     // CameraX
     implementation(libs.androidx.camera.core)
@@ -155,10 +143,12 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     // Background downloads
-    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.okhttp)
 
     testImplementation(libs.junit)
+    // Real org.json for JVM tests; the Android stub jar only throws.
+    testImplementation("org.json:json:20231013")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

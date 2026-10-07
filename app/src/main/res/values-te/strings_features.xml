@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">సహాయం మరియు ట్యుటోరియల్</string>
+    <string name="help_hint">ఒక చిన్న మార్గదర్శక పర్యటన</string>
+    <string name="help_scan_title">బోర్డును స్కాన్ చేయండి</string>
+    <string name="help_scan_body">కెమెరాను ఏదైనా రాతవైపు పట్టుకోండి. ఫోటో తీయడానికి గుండ్రటి బటన్ నొక్కండి, లేదా ప్రత్యక్షంగా చదవడానికి నొక్కి పట్టుకోండి.</string>
+    <string name="help_languages_title">మీ భాషలను ఎంచుకోండి</string>
+    <string name="help_languages_body">కెమెరా పైన రెండు బటన్లు ఉన్నాయి: ఒకటి రాత భాషకు, మరొకటి మీరు చదవాలనుకునే లిపికి.</string>
+    <string name="help_tap_title">తాకి వినండి</string>
+    <string name="help_tap_body">చిత్రంలో ఒక పదాన్ని తాకితే అది వినిపిస్తుంది. ఒక వరుసను నొక్కి పట్టుకుంటే కాపీ అవుతుంది. బూడిద రంగు వరుసల గురించి యాప్‌కు నమ్మకం లేదు.</string>
+    <string name="help_voice_title">ఆఫ్‌లైన్ గొంతు</string>
+    <string name="help_voice_body">సెట్టింగ్స్‌లో \'గొంతు మరియు మాట\' తెరిచి భారతీయ భాషల సహజమైన గొంతును డౌన్‌లోడ్ చేయండి. తర్వాత ఇంటర్నెట్ లేకుండా పనిచేస్తుంది.</string>
+    <string name="help_type_title">టైప్ చేసి మార్చండి</string>
+    <string name="help_type_body">కీబోర్డ్ ట్యాబ్ తెరిచి టైప్ చేయండి. టైప్ చేస్తుండగానే మార్చిన పాఠ్యం కనిపిస్తుంది, రెండు రూపాలనూ వినవచ్చు.</string>
+    <string name="help_keyboard_title">లిప్యంతరీకరణ కీబోర్డ్</string>
+    <string name="help_keyboard_body">ఏ యాప్‌లోనైనా ఇంగ్లీష్ అక్షరాలలో టైప్ చేసి భారతీయ లిపిని పొందండి. మీ ఫోన్ కీబోర్డ్ సెట్టింగ్స్‌లో దీన్ని ఆన్ చేయండి.</string>
+    <string name="help_private_title">రూపకల్పనలోనే గోప్యత</string>
+    <string name="help_private_body">చదవడం, మార్చడం, మాట్లాడటం అన్నీ మీ ఫోన్‌లోనే జరుగుతాయి. మీరు స్కాన్ చేసినది ఎక్కడికీ పంపబడదు.</string>
+    <string name="help_keyboard_enable">కీబోర్డ్ సెట్టింగ్స్ తెరవండి</string>
+    <string name="help_replay">కెమెరా పర్యటనను మళ్లీ చూడండి</string>
+    <string name="widget_label">టెక్స్ట్ స్కాన్ చేయండి</string>
+</resources>

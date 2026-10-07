@@ -25,6 +25,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -38,6 +41,8 @@ fun GlassButton(
     textColor: Color? = null,
     background: Color? = null,
     enabled: Boolean = true,
+    /** What a screen reader says for an icon-only button. Text buttons are read from their text. */
+    description: String? = null,
     onClick: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -56,7 +61,9 @@ fun GlassButton(
             .scale(scale)
             .clip(CircleShape)
             .alpha(if (enabled) 1f else 0.4f)
+            .semantics { (description ?: text)?.let { contentDescription = it } }
             .clickable(
+                role = Role.Button,
                 enabled = enabled,
                 interactionSource = interactionSource,
                 indication = null

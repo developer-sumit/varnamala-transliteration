@@ -4,14 +4,14 @@ package com.sumit.varnamala.data
  * Language data class that handles both OCR language detection and app UI localization.
  *
  * Important: This class uses TWO different language code systems:
- * 1. `code`: 3-letter ISO 639-2 codes (e.g., "ben", "guj", "mar") used by ML Kit for OCR
+ * 1. `code`: language/model identifier used by OCR
  * 2. `localeCode`: 2-letter ISO 639-1 codes (e.g., "bn", "gu", "mr") used by Android for resource folders
  *
  * When selecting app UI language, use `localeCode` to match Android resource folders (values-bn, values-gu, etc.)
- * When performing OCR detection, use `code` to match ML Kit language models.
+ * When performing OCR, use `code` to select the preferred recognition model.
  */
 data class Language(
-    val code: String, // OCR/ML Kit language code (3-letter ISO 639-2)
+    val code: String,
     val name: String,
     val nativeName: String,
     val flagEmoji: String,

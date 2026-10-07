@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">সহায় আৰু টিউটৰিয়েল</string>
+    <string name="help_hint">এটা চুটি গাইডেড ট্যুৰ</string>
+    <string name="help_scan_title">চাইনবৰ্ড স্কেন কৰক</string>
+    <string name="help_scan_body">কেমেৰা কোনো লিখনিৰ ফালে ধৰক। ফটো তুলিবলৈ গোলাকাৰ বুটাম টিপক, নাইবা লাইভ পঢ়িবলৈ ধৰি ৰাখক।</string>
+    <string name="help_languages_title">আপোনাৰ ভাষা বাছক</string>
+    <string name="help_languages_body">কেমেৰাৰ ওপৰত দুটা বুটাম আছে: এটা লিখনিৰ ভাষাৰ বাবে, আনটো যি লিপিত পঢ়িব বিচাৰে তাৰ বাবে।</string>
+    <string name="help_tap_title">চুই শুনক</string>
+    <string name="help_tap_body">ছবিত কোনো শব্দ চুলে সেয়া শুনা যাব। কোনো শাৰী ধৰি ৰাখিলে কপি হ\'ব। ধূসৰ শাৰীবোৰৰ বিষয়ে এপটো নিশ্চিত নহয়।</string>
+    <string name="help_voice_title">অফলাইন কণ্ঠ</string>
+    <string name="help_voice_body">ছেটিংত \'কণ্ঠ আৰু কোৱা\' খুলি ভাৰতীয় ভাষাৰ স্বাভাৱিক কণ্ঠ ডাউনলোড কৰক। তাৰ পিছত ইণ্টাৰনেট নোহোৱাকৈয়ে চলে।</string>
+    <string name="help_type_title">টাইপ কৰি ৰূপান্তৰ কৰক</string>
+    <string name="help_type_body">কীবৰ্ড টেব খুলি টাইপ কৰক। টাইপ কৰাৰ লগে লগে ৰূপান্তৰিত লিখনি দেখা যায়, আৰু দুয়োটা ৰূপ শুনিব পাৰে।</string>
+    <string name="help_keyboard_title">লিপ্যন্তৰ কীবৰ্ড</string>
+    <string name="help_keyboard_body">যিকোনো এপত ইংৰাজী আখৰেৰে টাইপ কৰি ভাৰতীয় লিপি পাওক। ফোনৰ কীবৰ্ড ছেটিংত ইয়াক চালু কৰক।</string>
+    <string name="help_private_title">ডিজাইনতে গোপনীয়</string>
+    <string name="help_private_body">পঢ়া, ৰূপান্তৰ আৰু কোৱা সকলোবোৰ আপোনাৰ ফোনতে হয়। আপুনি যি স্কেন কৰে সেয়া কতো পঠোৱা নহয়।</string>
+    <string name="help_keyboard_enable">কীবৰ্ড ছেটিং খোলক</string>
+    <string name="help_replay">কেমেৰা ট্যুৰ পুনৰ চাওক</string>
+    <string name="widget_label">লিখনি স্কেন কৰক</string>
+</resources>

@@ -70,7 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### ✨ Added
 
-- Offline OCR model management for on-device text recognition (Tesseract)
+- Offline OCR model management for on-device text recognition
 - Camera OCR settings with saved preferences
 - Settings options for overlay and screen capture
 - Privacy policy link in Settings
@@ -118,5 +118,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | ------- | ---------- | ----------------------------------------- |
 | 1.3.0   | 2026-01-27 | Complete UI redesign, Info dialogs, Animations |
 | 1.2.0   | 2026-01-17 | Text input, History, TTS, UX improvements |
-| 1.1.0   | 2026-01-10 | Offline Tesseract, Settings, Tutorial     |
+| 1.1.0   | 2026-01-10 | Offline OCR, Settings, Tutorial           |
 | 1.0.0   | 2026-01-01 | Initial release                           |

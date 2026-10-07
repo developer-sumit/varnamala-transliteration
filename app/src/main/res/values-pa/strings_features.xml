@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">ਮਦਦ ਅਤੇ ਟਿਊਟੋਰਿਅਲ</string>
+    <string name="help_hint">ਇੱਕ ਛੋਟਾ ਗਾਈਡਿਡ ਟੂਰ</string>
+    <string name="help_scan_title">ਬੋਰਡ ਸਕੈਨ ਕਰੋ</string>
+    <string name="help_scan_body">ਕੈਮਰੇ ਨੂੰ ਕਿਸੇ ਲਿਖਤ ਵੱਲ ਕਰੋ। ਫੋਟੋ ਲੈਣ ਲਈ ਗੋਲ ਬਟਨ ਦਬਾਓ, ਜਾਂ ਲਾਈਵ ਪੜ੍ਹਨ ਲਈ ਦਬਾ ਕੇ ਰੱਖੋ।</string>
+    <string name="help_languages_title">ਆਪਣੀਆਂ ਭਾਸ਼ਾਵਾਂ ਚੁਣੋ</string>
+    <string name="help_languages_body">ਕੈਮਰੇ ਦੇ ਉੱਪਰ ਦੋ ਬਟਨ ਹਨ: ਇੱਕ ਲਿਖਤ ਦੀ ਭਾਸ਼ਾ ਲਈ ਅਤੇ ਦੂਜਾ ਉਸ ਲਿਪੀ ਲਈ ਜਿਸ ਵਿੱਚ ਤੁਸੀਂ ਪੜ੍ਹਨਾ ਚਾਹੁੰਦੇ ਹੋ।</string>
+    <string name="help_tap_title">ਛੂਹ ਕੇ ਸੁਣੋ</string>
+    <string name="help_tap_body">ਤਸਵੀਰ ਵਿੱਚ ਕਿਸੇ ਸ਼ਬਦ ਨੂੰ ਛੂਹੋ, ਉਹ ਸੁਣਾਈ ਦੇਵੇਗਾ। ਕਿਸੇ ਲਾਈਨ ਨੂੰ ਦਬਾ ਕੇ ਰੱਖੋ, ਉਹ ਕਾਪੀ ਹੋ ਜਾਵੇਗੀ। ਸਲੇਟੀ ਲਾਈਨਾਂ ਬਾਰੇ ਐਪ ਨੂੰ ਪੱਕਾ ਭਰੋਸਾ ਨਹੀਂ ਹੈ।</string>
+    <string name="help_voice_title">ਔਫਲਾਈਨ ਆਵਾਜ਼</string>
+    <string name="help_voice_body">ਸੈਟਿੰਗਾਂ ਵਿੱਚ \'ਆਵਾਜ਼ ਅਤੇ ਬੋਲਣਾ\' ਖੋਲ੍ਹ ਕੇ ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ ਦੀ ਕੁਦਰਤੀ ਆਵਾਜ਼ ਡਾਊਨਲੋਡ ਕਰੋ। ਫਿਰ ਇਹ ਇੰਟਰਨੈੱਟ ਤੋਂ ਬਿਨਾਂ ਚੱਲਦੀ ਹੈ।</string>
+    <string name="help_type_title">ਟਾਈਪ ਕਰ ਕੇ ਬਦਲੋ</string>
+    <string name="help_type_body">ਕੀਬੋਰਡ ਟੈਬ ਖੋਲ੍ਹ ਕੇ ਟਾਈਪ ਕਰੋ। ਟਾਈਪ ਕਰਦਿਆਂ ਹੀ ਬਦਲਿਆ ਹੋਇਆ ਟੈਕਸਟ ਦਿਖਦਾ ਹੈ, ਅਤੇ ਤੁਸੀਂ ਦੋਵੇਂ ਰੂਪ ਸੁਣ ਸਕਦੇ ਹੋ।</string>
+    <string name="help_keyboard_title">ਲਿਪੀਅੰਤਰ ਕੀਬੋਰਡ</string>
+    <string name="help_keyboard_body">ਕਿਸੇ ਵੀ ਐਪ ਵਿੱਚ ਅੰਗਰੇਜ਼ੀ ਅੱਖਰਾਂ ਵਿੱਚ ਟਾਈਪ ਕਰੋ ਅਤੇ ਭਾਰਤੀ ਲਿਪੀ ਪਾਓ। ਇਸਨੂੰ ਫ਼ੋਨ ਦੀਆਂ ਕੀਬੋਰਡ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਚਾਲੂ ਕਰੋ।</string>
+    <string name="help_private_title">ਡਿਜ਼ਾਈਨ ਤੋਂ ਹੀ ਨਿੱਜੀ</string>
+    <string name="help_private_body">ਪੜ੍ਹਨਾ, ਬਦਲਣਾ ਅਤੇ ਬੋਲਣਾ ਸਭ ਤੁਹਾਡੇ ਫ਼ੋਨ \'ਤੇ ਹੁੰਦਾ ਹੈ। ਜੋ ਤੁਸੀਂ ਸਕੈਨ ਕਰਦੇ ਹੋ ਉਹ ਕਿਤੇ ਨਹੀਂ ਭੇਜਿਆ ਜਾਂਦਾ।</string>
+    <string name="help_keyboard_enable">ਕੀਬੋਰਡ ਸੈਟਿੰਗਾਂ ਖੋਲ੍ਹੋ</string>
+    <string name="help_replay">ਕੈਮਰਾ ਟੂਰ ਦੁਬਾਰਾ ਦੇਖੋ</string>
+    <string name="widget_label">ਟੈਕਸਟ ਸਕੈਨ ਕਰੋ</string>
+</resources>

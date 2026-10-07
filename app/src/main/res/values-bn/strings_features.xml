@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="help_title">সাহায্য ও টিউটোরিয়াল</string>
+    <string name="help_hint">একটি ছোট গাইডেড ট্যুর</string>
+    <string name="help_scan_title">সাইনবোর্ড স্ক্যান করুন</string>
+    <string name="help_scan_body">ক্যামেরা কোনো লেখার দিকে ধরুন। ছবি তুলতে গোল বোতামে চাপ দিন, অথবা লাইভ পড়তে চেপে ধরে রাখুন।</string>
+    <string name="help_languages_title">আপনার ভাষা বেছে নিন</string>
+    <string name="help_languages_body">ক্যামেরার উপরে দুটি বোতাম আছে: একটি লেখার ভাষার জন্য, অন্যটি যে লিপিতে পড়তে চান তার জন্য।</string>
+    <string name="help_tap_title">ছুঁয়ে শুনুন</string>
+    <string name="help_tap_body">ছবিতে কোনো শব্দ ছুঁলে তা শোনা যাবে। কোনো লাইন চেপে ধরলে কপি হবে। ধূসর লাইনগুলো সম্পর্কে অ্যাপ নিশ্চিত নয়।</string>
+    <string name="help_voice_title">অফলাইন কণ্ঠ</string>
+    <string name="help_voice_body">সেটিংসে \'কণ্ঠ ও বলা\' খুলে ভারতীয় ভাষার স্বাভাবিক কণ্ঠ ডাউনলোড করুন। তারপর ইন্টারনেট ছাড়াই কাজ করে।</string>
+    <string name="help_type_title">টাইপ করে রূপান্তর</string>
+    <string name="help_type_body">কীবোর্ড ট্যাব খুলে টাইপ করুন। টাইপ করতে করতেই রূপান্তরিত লেখা দেখা যায়, আর দুটি রূপই শুনতে পারেন।</string>
+    <string name="help_keyboard_title">লিপ্যন্তর কীবোর্ড</string>
+    <string name="help_keyboard_body">যেকোনো অ্যাপে ইংরেজি অক্ষরে টাইপ করে ভারতীয় লিপি পান। ফোনের কীবোর্ড সেটিংসে এটি চালু করুন।</string>
+    <string name="help_private_title">ডিজাইনেই গোপনীয়</string>
+    <string name="help_private_body">পড়া, রূপান্তর ও বলা সবই আপনার ফোনে হয়। আপনি যা স্ক্যান করেন তা কোথাও পাঠানো হয় না।</string>
+    <string name="help_keyboard_enable">কীবোর্ড সেটিংস খুলুন</string>
+    <string name="help_replay">ক্যামেরা ট্যুর আবার দেখুন</string>
+    <string name="widget_label">লেখা স্ক্যান করুন</string>
+</resources>

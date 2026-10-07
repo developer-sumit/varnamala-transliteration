@@ -150,20 +150,14 @@
     <string name="transliterate_to">எழுத்துப்பெயர்</string>
 
     <!-- OCR engine selection -->
-    <string name="select_ocr_engine">OCR இயந்திரம் தேர்வு</string>
-    <string name="ocr_engine_mlkit_description">வேகமான, ஆன்லைன், பல மொழிகள் ஆதரிக்கும்</string>
-    <string name="ocr_engine_tesseract_name">Tesseract</string>
-    <string name="ocr_engine_tesseract_description">ஆஃப்லைன், மொழி தரவு பதிவிறக்கம் தேவை</string>
 
     <!-- Transliteration selection -->
-    <string name="default_mlkit">இயல்புநிலை (ML Kit)</string>
 
     <string name="unable_to_open_link">இணைப்பைத் திறக்க முடியவில்லை.</string>
 
     <!-- Model downloads -->
     <string name="models">மொழி மாதிரிகள்</string>
     <string name="manage_models">பதிவிறக்கிய OCR மாதிரிகளை நிர்வகி</string>
-    <string name="download_models_hint">தேவைக்கேற்ப ஆஃப்லைன் Tesseract மொழி மாதிரிகளைப் பதிவிறக்கு</string>
     <string name="model_download">மாதிரி பதிவிறக்கு</string>
     <string name="model_downloaded">பதிவிறக்கப்பட்டது</string>
 

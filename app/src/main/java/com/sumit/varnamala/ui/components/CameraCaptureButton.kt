@@ -30,6 +30,15 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
+import com.sumit.varnamala.R
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -92,10 +101,26 @@ fun CameraCaptureButton(
     val strokeWidth = 4.dp
     val density = LocalDensity.current
 
+    val photoLabel = stringResource(R.string.a11y_take_photo)
+    val liveLabel = stringResource(if (isRealTimeMode) R.string.a11y_stop_live else R.string.a11y_start_live)
+    val buttonDescription = stringResource(R.string.a11y_capture_button)
     Box(
         modifier = modifier
             .size(size)
             .scale(animatedScale)
+            // The press-and-hold gesture cannot be done with a screen reader, so offer the same two
+            // actions as explicit ones: activate to take a photo, or use the actions menu for live scanning.
+            .semantics {
+                contentDescription = buttonDescription
+                role = Role.Button
+                onClick(label = photoLabel) { onSingleCapture(); true }
+                customActions = listOf(
+                    CustomAccessibilityAction(liveLabel) {
+                        if (isRealTimeMode) onLongPressEnd() else onLongPressStart()
+                        true
+                    }
+                )
+            }
             .pointerInput(Unit) {
                 val buttonRadius = with(density) { size.toPx() / 2f }
                 val buttonCenter = Offset(buttonRadius, buttonRadius)
