@@ -53,6 +53,7 @@
   - [Prerequisites](#prerequisites)
   - [Build from Source](#build-from-source)
   - [Building Signed Release APKs](#building-signed-release-apks)
+  - [Automated Release via GitHub Actions](#automated-release-via-github-actions)
 - [AI Agents & Developer Tooling](#-ai-agents--developer-tooling)
 - [Contributing](#-contributing)
 - [License](#-license)
@@ -151,7 +152,7 @@ val devaMap = Aksharamukha.getScriptMapping("Devanagari")
 ### Prerequisites
 
 - **JDK 17+**
-- **Android SDK Platform 36**
+- **Android SDK Platform 37**
 - **Gradle 9.8.2** (included via Gradle Wrapper `./gradlew`)
 
 ### Build from Source
@@ -177,6 +178,40 @@ This open-source repository contains **no proprietary keystores or passwords**:
    ```
 2. Fill in your release keystore path and passwords.
 3. Run `./gradlew assembleRelease`. When `key.properties` is absent, release builds safely fall back without breaking.
+
+### Automated Release via GitHub Actions
+
+The repository includes a GitHub Actions workflow [`.github/workflows/build-release.yml`](.github/workflows/build-release.yml) that builds signed release APKs across all supported ABIs (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`, `universal`) and publishes them directly to a GitHub Release.
+
+You can trigger this release build in two ways:
+
+#### Option 1: Push a Version Tag (Recommended)
+
+Tag your commit with a version starting with `v` (e.g., `v1.0.0` or `v1.0.0-beta`) and push the tag to GitHub:
+
+```bash
+# Tag the current commit
+git tag v1.0.0
+
+# Push the tag to trigger the workflow
+git push origin v1.0.0
+```
+
+#### Option 2: Trigger Manually in GitHub Actions
+
+1. Go to your repository on GitHub.
+2. Select the **Actions** tab.
+3. In the left workflow list, click **Build Release APK**.
+4. Click **Run workflow**, specify the target branch and version tag (e.g., `v1.0.0`), then click **Run workflow**.
+
+> [!NOTE]
+> The automated release workflow requires repository secrets configured under **Settings > Secrets and variables > Actions**:
+> - `KEYSTORE_BASE64`: Base64 string of your `.jks` keystore file (`base64 -w 0 your-keystore.jks`)
+> - `KEYSTORE_PASSWORD`: Keystore password
+> - `KEY_ALIAS`: Keystore alias name
+> - `KEY_PASSWORD`: Key password
+>
+> The triggering GitHub user must also be authorized in `ALLOWED_ACTORS` inside `.github/workflows/build-release.yml`.
 
 ---
 
