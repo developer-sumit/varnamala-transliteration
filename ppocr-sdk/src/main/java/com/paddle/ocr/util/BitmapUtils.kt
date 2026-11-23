@@ -37,10 +37,6 @@ object BitmapUtils {
         return bitmapToMat(bitmap, Imgproc.COLOR_RGBA2BGR)
     }
 
-    fun bitmapToRGBMat(bitmap: Bitmap): Mat {
-        return bitmapToMat(bitmap, Imgproc.COLOR_RGBA2RGB)
-    }
-
     fun bgrMatToBitmap(mat: Mat): Bitmap {
         val rgba = Mat()
         return try {

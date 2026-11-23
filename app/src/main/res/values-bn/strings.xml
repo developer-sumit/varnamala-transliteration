@@ -4,7 +4,6 @@
 
     <string name="dark_mode">ডার্ক মোড</string>
     <string name="language">ভাষা</string>
-    <string name="terms_of_service">সেবার শর্তাবলী</string>
     <string name="privacy_policy">গোপনীয়তা নীতি</string>
     <string name="rate_app">অ্যাপ রেট করুন</string>
 
@@ -18,10 +17,6 @@
     <string name="media_permission_description">গ্যালারিতে ছবি প্রদর্শন করতে আমাদের আপনার ছবিতে অ্যাক্সেস প্রয়োজন।</string>
     <string name="media_permission_denied_description">মিডিয়া অনুমতি স্থায়ীভাবে প্রত্যাখ্যান করা হয়েছে।</string>
     <string name="media_permission_allow_hint">চালিয়ে যেতে সিস্টেম সেটিংসে অনুমতি সক্ষম করুন।</string>
-    <string name="overlay_permission_required">অ্যাপের উপর প্রদর্শন অনুমতি প্রয়োজন</string>
-    <string name="overlay_permission_description">অন্যান্য অ্যাপের উপর ওভারলে উইন্ডো প্রদর্শন করতে আমাদের অনুমতি প্রয়োজন।</string>
-    <string name="overlay_permission_denied_description">অ্যাপের উপর প্রদর্শন অনুমতি প্রত্যাখ্যান করা হয়েছে।</string>
-    <string name="overlay_permission_allow_hint">এই বৈশিষ্ট্য ব্যবহার করতে অনুগ্রহ করে সেটিংসে এটি সক্ষম করুন।</string>
 
     <string name="clear_cache">ক্যাশ সাফ করুন</string>
     <string name="gallery">গ্যালারি</string>
@@ -38,9 +33,7 @@
     <string name="tutorial_flash_message">কম আলোতে ক্যামেরা ফ্ল্যাশ টগল করুন।</string>
     <string name="tutorial_capture_title">ক্যাপচার / স্ক্যান</string>
     <string name="tutorial_capture_message">ফটো ক্যাপচার করতে ট্যাপ করুন, বা ক্রমাগত স্ক্যান করতে চেপে ধরুন।</string>
-    <string name="tutorial_gallery_title">গ্যালারি</string>
-    <string name="tutorial_gallery_message">সংরক্ষিত ছবি খুলুন এবং OCR ফলাফল দেখুন।</string>
-    
+
     <!-- Common UI actions -->
     <string name="confirm">নিশ্চিত করুন</string>
     <string name="cancel">বাতিল করুন</string>
@@ -54,11 +47,7 @@
     <string name="bottom_nav_gallery">গ্যালারি</string>
     
     <!-- Model Management -->
-    <string name="delete_model">মডেল মুছুন</string>
-    <string name="delete_model_confirmation">আপনি কি %s মডেলটি মুছতে চান?</string>
-    <string name="model_deleted_successfully">মডেল সফলভাবে মুছে ফেলা হয়েছে</string>
-    <string name="failed_to_delete_model">মডেল মুছতে ব্যর্থ</string>
-    
+
     <!-- Tutorial / Info Messages -->
     <string name="tutorial_switch_camera_title">ক্যামেরা পরিবর্তন করুন</string>
     <string name="tutorial_switch_camera_message">সামনে এবং পিছনের ক্যামেরার মধ্যে পরিবর্তন করুন।</string>
@@ -101,35 +90,22 @@
     
     <!-- Content descriptions -->
     <string name="copied">কপি করা হয়েছে</string>
-    <string name="select_language">ভাষা নির্বাচন করুন</string>
     <string name="selected">নির্বাচিত</string>
     <string name="back">পিছনে</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">ছবির বিবরণ</string>
-    <string name="ocr_result">OCR ফলাফল</string>
-    <string name="original">মূল</string>
     <string name="transliterated">প্রতিবর্ণীকৃত</string>
     <string name="display_options">প্রদর্শন বিকল্প</string>
     <string name="detection_options">সনাক্তকরণ বিকল্প</string>
-    <string name="ocr_results">OCR ফলাফল</string>
-    <string name="hide">লুকান</string>
-    <string name="show">দেখান</string>
-    <string name="both_text_panels_hidden">উভয় টেক্সট প্যানেল লুকানো আছে</string>
-    <string name="no_text_detected">ছবিতে কোনো টেক্সট পাওয়া যায়নি</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">ভাষা পরিবর্তিত হয়েছে। পরিবর্তন দেখতে অনুগ্রহ করে অ্যাপ পুনরায় চালু করুন।</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">ওভারলে সেটিংস</string>
     <string name="enable_overlay">স্ক্রিন ওভারলে OCR</string>
     <string name="overlay_enabled">ফ্লোটিং বাটন সক্রিয়</string>
     <string name="overlay_disabled">ফ্লোটিং বাটন সক্ষম করতে ট্যাপ করুন</string>
-    <string name="overlay_feature_description">এই বৈশিষ্ট্য একটি ফ্লোটিং বাটন যোগ করে যা আপনার স্ক্রিন ক্যাপচার করে এবং OCR টেক্সট ও বাউন্ডিং বক্স ওভারলে হিসাবে দেখায়।</string>
-    <string name="overlay_permission_hint">আপনাকে স্ক্রিন ক্যাপচার এবং ওভারলে অনুমতি দিতে হবে।</string>
     <string name="overlay_permission_denied">স্ক্রিন ক্যাপচার অনুমতি প্রত্যাখ্যাত</string>
-    <string name="enable">সক্ষম করুন</string>
     <string name="start_overlay">ওভারলে শুরু করুন</string>
     <string name="stop_overlay">ওভারলে বন্ধ করুন</string>
     
@@ -149,7 +125,6 @@
     <string name="transliterate">প্রতিবর্ণীকরণ</string>
     <string name="select_ocr_language">OCR ভাষা নির্বাচন করুন</string>
     <string name="select_transliteration_language">প্রতিবর্ণীকরণ ভাষা নির্বাচন করুন</string>
-    <string name="transliterate_to">প্রতিবর্ণীকরণ করুন</string>
 
     <!-- OCR engine selection -->
 
@@ -158,24 +133,12 @@
     <string name="unable_to_open_link">লিংক খোলা যাচ্ছে না।</string>
 
     <!-- Model downloads -->
-    <string name="models">ভাষা মডেল</string>
-    <string name="manage_models">ডাউনলোড করা OCR মডেল পরিচালনা করুন</string>
-    <string name="model_download">মডেল ডাউনলোড করুন</string>
-    <string name="model_downloaded">ডাউনলোড হয়েছে</string>
-
-    <string name="model_download_notification_channel_name">মডেল ডাউনলোড</string>
-    <string name="model_download_notification_title">ভাষা মডেল ডাউনলোড হচ্ছে</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">মডেল ডাউনলোড হয়নি, ডিফল্ট মডেলে যাচ্ছে</string>
-
-    <string name="no_internet_connection">ইন্টারনেট সংযোগ নেই</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">টেক্সট ইনপুট</string>
     <string name="enter_text">টেক্সট লিখুন</string>
     <string name="type_to_transliterate">প্রতিবর্ণীকরণের জন্য এখানে টেক্সট টাইপ বা পেস্ট করুন…</string>
     <string name="characters">অক্ষর</string>
-    <string name="auto_detect">অটো-সনাক্ত</string>
 
     <!-- History Screen -->
     <string name="history">ইতিহাস</string>
@@ -203,7 +166,6 @@
     <string name="auto_copy_hint">প্রতিবর্ণীকৃত টেক্সট স্বয়ংক্রিয়ভাবে ক্লিপবোর্ডে কপি করুন</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">টেক্সট-টু-স্পিচ</string>
     <string name="enable_tts">TTS সক্ষম করুন</string>
     <string name="enable_tts_hint">প্রতিবর্ণীকৃত টেক্সট জোরে পড়ুন</string>
     <string name="tts_auto_speak">ফলাফল অটো-স্পিক</string>
@@ -213,10 +175,8 @@
     <string name="overlay_notification_title">বর্ণমালা ওভারলে সক্রিয়</string>
     <string name="overlay_notification_text">স্ক্রীন টেক্সট বিশ্লেষণ করতে ক্যাপচার বোতাম ব্যবহার করুন</string>
     <string name="overlay_notification_stop_action">ওভারলে বন্ধ করুন</string>
-    <string name="overlay_copied_to_clipboard">ক্লিপবোর্ডে কপি করা হয়েছে</string>
 
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR টেক্সট</string>
     <string name="clipboard_label_transliterated_text">প্রতিবর্ণীকৃত টেক্সট</string>
     <string name="clipboard_label_text">টেক্সট</string>
 </resources>

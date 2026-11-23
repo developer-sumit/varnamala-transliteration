@@ -4,7 +4,6 @@
 
     <string name="dark_mode">డార్క్ మోడ్</string>
     <string name="language">భాష</string>
-    <string name="terms_of_service">సేవా నిబంధనలు</string>
     <string name="privacy_policy">గోప్యతా విధానం</string>
     <string name="rate_app">యాప్‌ను రేట్ చేయండి</string>
 
@@ -18,10 +17,6 @@
     <string name="media_permission_description">గ్యాలరీలో చిత్రాలను ప్రదర్శించడానికి మీ చిత్రాలకు యాక్సెస్ అవసరం.</string>
     <string name="media_permission_denied_description">మీడియా అనుమతి శాశ్వతంగా నిరాకరించబడింది.</string>
     <string name="media_permission_allow_hint">కొనసాగించడానికి సిస్టమ్ సెట్టింగ్‌లలో అనుమతిని ఎనేబుల్ చేయండి.</string>
-    <string name="overlay_permission_required">యాప్‌ల పైన ప్రదర్శన అనుమతి అవసరం</string>
-    <string name="overlay_permission_description">ఇతర యాప్‌ల పైన ఓవర్‌లే విండోలను ప్రదర్శించడానికి మాకు అనుమతి అవసరం.</string>
-    <string name="overlay_permission_denied_description">యాప్‌ల పైన ప్రదర్శన అనుమతి నిరాకరించబడింది.</string>
-    <string name="overlay_permission_allow_hint">ఈ ఫీచర్‌ను ఉపయోగించడానికి దయచేసి సెట్టింగ్‌లలో దీన్ని ఎనేబుల్ చేయండి.</string>
 
     <string name="clear_cache">క్యాష్ క్లియర్ చేయండి</string>
     <string name="gallery">గ్యాలరీ</string>
@@ -38,9 +33,7 @@
     <string name="tutorial_flash_message">తక్కువ వెలుతురులో కెమెరా ఫ్లాష్ టాగుల్ చేయండి.</string>
     <string name="tutorial_capture_title">క్యాప్చర్ / స్కాన్</string>
     <string name="tutorial_capture_message">ఫోటో తీయడానికి ట్యాప్ చేయండి, లేదా నిరంతరం స్కాన్ చేయడానికి నొక్కి పట్టుకోండి.</string>
-    <string name="tutorial_gallery_title">గ్యాలరీ</string>
-    <string name="tutorial_gallery_message">సేవ్ చేసిన చిత్రాలను తెరిచి OCR ఫలితాలను చూడండి.</string>
-    
+
     <!-- Common UI actions -->
     <string name="confirm">నిర్ధారించు</string>
     <string name="cancel">రద్దు చేయి</string>
@@ -53,11 +46,7 @@
     <string name="bottom_nav_gallery">గ్యాలరీ</string>
     
     <!-- Model Management -->
-    <string name="delete_model">మోడల్‌ను తొలగించు</string>
-    <string name="delete_model_confirmation">మీరు %s మోడల్‌ను తొలగించాలనుకుంటున్నారా?</string>
-    <string name="model_deleted_successfully">మోడల్ విజయవంతంగా తొలగించబడింది</string>
-    <string name="failed_to_delete_model">మోడల్‌ను తొలగించడంలో విఫలమైంది</string>
-    
+
     <!-- Tutorial / Info Messages -->
     <string name="tutorial_switch_camera_title">కెమెరా మార్చండి</string>
     <string name="tutorial_switch_camera_message">ముందు మరియు వెనుక కెమెరాల మధ్య మార్చండి.</string>
@@ -99,35 +88,22 @@
     
     <!-- Content descriptions -->
     <string name="copied">కాపీ అయింది</string>
-    <string name="select_language">భాష ఎంచుకోండి</string>
     <string name="selected">ఎంచుకున్నది</string>
     <string name="back">వెనుకకు</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">చిత్ర వివరాలు</string>
-    <string name="ocr_result">OCR ఫలితం</string>
-    <string name="original">అసలు</string>
     <string name="transliterated">లిప్యంతరీకరించబడింది</string>
     <string name="display_options">ప్రదర్శన ఎంపికలు</string>
     <string name="detection_options">గుర్తింపు ఎంపికలు</string>
-    <string name="ocr_results">OCR ఫలితాలు</string>
-    <string name="hide">దాచు</string>
-    <string name="show">చూపించు</string>
-    <string name="both_text_panels_hidden">రెండు టెక్స్ట్ ప్యానెల్‌లు దాచబడ్డాయి</string>
-    <string name="no_text_detected">చిత్రంలో టెక్స్ట్ గుర్తించబడలేదు</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">భాష మారింది. మార్పులు చూడటానికి దయచేసి యాప్‌ను పునఃప్రారంభించండి.</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">ఓవర్‌లే సెట్టింగ్‌లు</string>
     <string name="enable_overlay">స్క్రీన్ ఓవర్‌లే OCR</string>
     <string name="overlay_enabled">ఫ్లోటింగ్ బటన్ యాక్టివ్</string>
     <string name="overlay_disabled">ఫ్లోటింగ్ బటన్ ఎనేబుల్ చేయడానికి ట్యాప్ చేయండి</string>
-    <string name="overlay_feature_description">ఈ ఫీచర్ మీ స్క్రీన్‌ను క్యాప్చర్ చేసి OCR టెక్స్ట్ మరియు బౌండింగ్ బాక్సులను ఓవర్‌లేగా చూపించే ఫ్లోటింగ్ బటన్‌ను జోడిస్తుంది.</string>
-    <string name="overlay_permission_hint">మీరు స్క్రీన్ క్యాప్చర్ మరియు ఓవర్‌లే అనుమతులు మంజూరు చేయాలి.</string>
     <string name="overlay_permission_denied">స్క్రీన్ క్యాప్చర్ అనుమతి నిరాకరించబడింది</string>
-    <string name="enable">ఎనేబుల్ చేయి</string>
     <string name="start_overlay">ఓవర్‌లే ప్రారంభించు</string>
     <string name="stop_overlay">ఓవర్‌లే ఆపు</string>
     
@@ -147,7 +123,6 @@
     <string name="transliterate">లిప్యంతరీకరించు</string>
     <string name="select_ocr_language">OCR భాష ఎంచుకోండి</string>
     <string name="select_transliteration_language">లిప్యంతరీకరణ భాష ఎంచుకోండి</string>
-    <string name="transliterate_to">లిప్యంతరీకరించు</string>
 
     <!-- OCR engine selection -->
 
@@ -156,24 +131,12 @@
     <string name="unable_to_open_link">లింక్ తెరవడం సాధ్యం కాలేదు.</string>
 
     <!-- Model downloads -->
-    <string name="models">భాషా మోడల్స్</string>
-    <string name="manage_models">డౌన్‌లోడ్ చేసిన OCR మోడల్స్ నిర్వహించు</string>
-    <string name="model_download">మోడల్ డౌన్‌లోడ్ చేయి</string>
-    <string name="model_downloaded">డౌన్‌లోడ్ అయింది</string>
-
-    <string name="model_download_notification_channel_name">మోడల్ డౌన్‌లోడ్లు</string>
-    <string name="model_download_notification_title">భాషా మోడల్ డౌన్‌లోడ్ అవుతోంది</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">మోడల్ డౌన్‌లోడ్ కాలేదు, డిఫాల్ట్ మోడల్‌కు వెళ్తోంది</string>
-
-    <string name="no_internet_connection">ఇంటర్నెట్ కనెక్షన్ లేదు</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">టెక్స్ట్ ఇన్‌పుట్</string>
     <string name="enter_text">టెక్స్ట్ నమోదు చేయండి</string>
     <string name="type_to_transliterate">లిప్యంతరీకరించడానికి ఇక్కడ టెక్స్ట్ టైప్ చేయండి లేదా పేస్ట్ చేయండి…</string>
     <string name="characters">అక్షరాలు</string>
-    <string name="auto_detect">ఆటో-డిటెక్ట్</string>
 
     <!-- History Screen -->
     <string name="history">చరిత్ర</string>
@@ -201,7 +164,6 @@
     <string name="auto_copy_hint">లిప్యంతరీకరించిన టెక్స్ట్‌ను ఆటోమేటిక్‌గా క్లిప్‌బోర్డ్‌కు కాపీ చేయండి</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">టెక్స్ట్-టు-స్పీచ్</string>
     <string name="enable_tts">TTS ఎనేబుల్ చేయి</string>
     <string name="enable_tts_hint">లిప్యంతరీకరించిన టెక్స్ట్‌ను బిగ్గరగా చదవండి</string>
     <string name="tts_auto_speak">ఫలితాలు ఆటో-స్పీక్</string>
@@ -211,10 +173,8 @@
     <string name="overlay_notification_title">వర్ణమాల ఓవర్‌లే ద్రువంలో ఉంది</string>
     <string name="overlay_notification_text">స్క్రీన్ టెక్స్ట్‌ని విశ్లేషించడానికి క్యాప్చర్ బటన్‌ను ఉపయోగించండి</string>
     <string name="overlay_notification_stop_action">ఓవర్‌లేను ఆపండి</string>
-    <string name="overlay_copied_to_clipboard">క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది</string>
-    
+
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR టెక్స్ట్</string>
     <string name="clipboard_label_transliterated_text">లిప్యంతరీకరణ చేసిన టెక్స్ట్</string>
     <string name="clipboard_label_text">టెక్స్ట్</string>
 </resources>

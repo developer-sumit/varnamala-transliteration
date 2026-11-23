@@ -3,7 +3,6 @@
 
     <string name="dark_mode">Dark Mode</string>
     <string name="language">Language</string>
-    <string name="terms_of_service">Terms of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="rate_app">Rate this app</string>
 
@@ -17,10 +16,6 @@
     <string name="media_permission_description">We need access to your images to display them in the gallery.</string>
     <string name="media_permission_denied_description">Media permission has been permanently denied.</string>
     <string name="media_permission_allow_hint">Enable the permission in system settings to continue.</string>
-    <string name="overlay_permission_required">Display Over Apps Permission Required</string>
-    <string name="overlay_permission_description">We need permission to display overlay windows on top of other apps.</string>
-    <string name="overlay_permission_denied_description">Display over apps permission has been denied.</string>
-    <string name="overlay_permission_allow_hint">Please enable it in settings to use this feature.</string>
 
     <string name="clear_cache">Clear Cache</string>
     <string name="gallery">Gallery</string>
@@ -40,8 +35,6 @@
     <string name="tutorial_flash_message">Toggle the camera flash in low light.</string>
     <string name="tutorial_capture_title">Capture / Scan</string>
     <string name="tutorial_capture_message">Tap to capture a photo, or press and hold to scan continuously.</string>
-    <string name="tutorial_gallery_title">Gallery</string>
-    <string name="tutorial_gallery_message">Open saved images and view OCR results.</string>
     <string name="tutorial_switch_camera_title">Switch Camera</string>
     <string name="tutorial_switch_camera_message">Switch between front and rear cameras.</string>
     
@@ -84,36 +77,23 @@
     
     <!-- Content descriptions -->
     <string name="copied">Copied</string>
-    <string name="select_language">Select language</string>
     <string name="search_languages">Search languages</string>
     <string name="selected">Selected</string>
     <string name="back">Back</string>
 
     <!-- Additional UI labels -->
     <string name="image_details">Image Details</string>
-    <string name="ocr_result">OCR Result</string>
-    <string name="original">Original</string>
     <string name="transliterated">Transliterated</string>
     <string name="display_options">Display Options</string>
     <string name="detection_options">Detection Options</string>
-    <string name="ocr_results">OCR Results</string>
-    <string name="hide">Hide</string>
-    <string name="show">Show</string>
-    <string name="both_text_panels_hidden">Both text panels hidden</string>
-    <string name="no_text_detected">No text detected in the image</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">Language changed. Please restart the app to see the changes.</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">Overlay Settings</string>
     <string name="enable_overlay">Screen Overlay OCR</string>
     <string name="overlay_enabled">Floating button active</string>
     <string name="overlay_disabled">Tap to enable floating button</string>
-    <string name="overlay_feature_description">This feature adds a floating button that captures your screen and shows OCR text and bounding boxes as an overlay.</string>
-    <string name="overlay_permission_hint">You\'ll need to grant screen capture and overlay permissions.</string>
     <string name="overlay_permission_denied">Screen capture permission denied</string>
-    <string name="enable">Enable</string>
     <string name="start_overlay">Start Overlay</string>
     <string name="stop_overlay">Stop Overlay</string>
     
@@ -134,7 +114,6 @@
     <string name="select_ocr_language">Select OCR language</string>
     <string name="select_source_language">Select source language</string>
     <string name="select_transliteration_language">Select transliteration language</string>
-    <string name="transliterate_to">Transliterate to</string>
 
     <!-- OCR engine selection -->
 
@@ -143,25 +122,14 @@
     <string name="unable_to_open_link">Unable to open link.</string>
 
     <!-- Model downloads -->
-    <string name="models">Language models</string>
-    <string name="manage_models">Manage downloaded OCR models</string>
-    <string name="model_download">Download model</string>
-    <string name="model_downloaded">Downloaded</string>
 
-    <string name="model_download_notification_channel_name">Model downloads</string>
-    <string name="model_download_notification_title">Downloading language model</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">Model not downloaded, falling back to default model</string>
     <string name="model_required_for_ocr">Download the %s OCR model before scanning.</string>
-
-    <string name="no_internet_connection">No internet connection</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">Text Input</string>
     <string name="enter_text">Enter text</string>
     <string name="type_to_transliterate">Type or paste text here to transliterate…</string>
     <string name="characters">characters</string>
-    <string name="auto_detect">Auto-detect</string>
 
     <!-- History Screen -->
     <string name="history">History</string>
@@ -189,14 +157,12 @@
     <string name="auto_copy_hint">Automatically copy transliterated text to clipboard</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">Text-to-Speech</string>
     <string name="enable_tts">Enable TTS</string>
     <string name="enable_tts_hint">Read aloud transliterated text</string>
     <string name="offline_voice">Offline Indic voice</string>
     <string name="tts_voice">Voice</string>
     <string name="voice_female">Female voice %1$d</string>
     <string name="voice_male">Male voice %1$d</string>
-    <string name="low_confidence">low confidence</string>
     <string name="mobile_data_title">Use mobile data?</string>
     <string name="mobile_data_message">This download is %1$s and you are not on Wi-Fi. It may use a lot of your mobile data.</string>
     <string name="download">Download</string>
@@ -251,10 +217,6 @@
     <string name="tts_auto_speak_hint">Automatically speak after transliteration</string>
 
     <!-- Model Delete Dialog -->
-    <string name="delete_model">Delete Model</string>
-    <string name="delete_model_confirmation">Are you sure you want to delete the %s language model? You can download it again later if needed.</string>
-    <string name="model_deleted_successfully">Model deleted successfully</string>
-    <string name="failed_to_delete_model">Failed to delete model</string>
 
     <!-- Tutorial messages -->
     <string name="camera_info_title">Camera</string>
@@ -268,10 +230,8 @@
     <string name="overlay_notification_title">Varnamala Overlay Active</string>
     <string name="overlay_notification_text">Use the capture button to analyze screen text</string>
     <string name="overlay_notification_stop_action">Stop Overlay</string>
-    <string name="overlay_copied_to_clipboard">Copied to clipboard</string>
-    
+
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR Text</string>
     <string name="clipboard_label_transliterated_text">Transliterated Text</string>
     <string name="clipboard_label_text">Text</string>
 

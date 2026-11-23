@@ -64,24 +64,12 @@ class UserPreferencesRepository(private val context: Context) {
             preferences[PreferencesKeys.TTS_AUTO_SPEAK] ?: false
         }
 
-    /** Rasa speaker id of the chosen voice; see [com.sumit.varnamala.tts.RasaVoices]. */
-    val ttsVoiceId: Flow<Int> = context.userPreferencesDataStore.data
-        .map { preferences ->
-            preferences[PreferencesKeys.TTS_VOICE_ID] ?: com.sumit.varnamala.tts.RasaVoices.default.speakerId
-        }
-
     suspend fun setTtsVoiceId(value: Int) {
         context.userPreferencesDataStore.edit { preferences ->
             preferences[PreferencesKeys.TTS_VOICE_ID] = value
         }
     }
 
-    val ttsSpeed: Flow<Float> = context.userPreferencesDataStore.data.map { it[PreferencesKeys.TTS_SPEED] ?: 1f }
-    val ttsPitch: Flow<Float> = context.userPreferencesDataStore.data.map { it[PreferencesKeys.TTS_PITCH] ?: 1f }
-    val ttsStyleId: Flow<Int> = context.userPreferencesDataStore.data.map { it[PreferencesKeys.TTS_STYLE] ?: 0 }
-    /** Speak the sign in its own language first, then the transliterated or converted text. */
-    val ttsSpeakOriginal: Flow<Boolean> = context.userPreferencesDataStore.data.map { it[PreferencesKeys.TTS_SPEAK_ORIGINAL] ?: false }
-    /** Camera mode that reads signs aloud continuously, with a haptic cue for where the text is. */
     val readingMode: Flow<Boolean> = context.userPreferencesDataStore.data.map { it[PreferencesKeys.READING_MODE] ?: false }
     val highContrast: Flow<Boolean> = context.userPreferencesDataStore.data.map { it[PreferencesKeys.HIGH_CONTRAST] ?: false }
     /** Scans older than this many days are deleted when the app opens; 0 keeps everything. */

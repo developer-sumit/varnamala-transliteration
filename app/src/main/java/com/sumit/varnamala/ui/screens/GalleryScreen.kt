@@ -78,12 +78,10 @@ fun GalleryScreen(navController: NavController) {
     val gridState = rememberLazyStaggeredGridState()
     val showScrollToTop by remember { derivedStateOf { gridState.firstVisibleItemIndex > 10 } }
 
-    var isLoading by remember { mutableStateOf(false) }
     var images by remember { mutableStateOf<List<GalleryImage>>(emptyList()) }
     var showGalleryInfoDialog by remember { mutableStateOf(false) }
 
     suspend fun loadImages() {
-        isLoading = true
         val maxItems = 500
         val collection = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val projection = arrayOf(
@@ -162,7 +160,6 @@ fun GalleryScreen(navController: NavController) {
             }
         }
         images = result
-        isLoading = false
     }
 
     Column(

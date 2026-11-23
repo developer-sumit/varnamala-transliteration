@@ -4,7 +4,6 @@
 
     <string name="dark_mode">ഡാർക്ക് മോഡ്</string>
     <string name="language">ഭാഷ</string>
-    <string name="terms_of_service">സേവന നിബന്ധനകൾ</string>
     <string name="privacy_policy">സ്വകാര്യതാ നയം</string>
     <string name="rate_app">ആപ്പ് റേറ്റ് ചെയ്യുക</string>
 
@@ -18,10 +17,6 @@
     <string name="media_permission_description">ഗാലറിയിൽ ചിത്രങ്ങൾ പ്രദർശിപ്പിക്കാൻ നിങ്ങളുടെ ചിത്രങ്ങളിലേക്ക് പ്രവേശനം ആവശ്യമാണ്.</string>
     <string name="media_permission_denied_description">മീഡിയ അനുമതി ശാശ്വതമായി നിരസിച്ചു.</string>
     <string name="media_permission_allow_hint">തുടരാൻ സിസ്റ്റം ക്രമീകരണങ്ങളിൽ അനുമതി പ്രവർത്തനക്ഷമമാക്കുക.</string>
-    <string name="overlay_permission_required">ആപ്പുകളുടെ മുകളിൽ പ്രദർശിപ്പിക്കാനുള്ള അനുമതി ആവശ്യമാണ്</string>
-    <string name="overlay_permission_description">മറ്റ് ആപ്പുകളുടെ മുകളിൽ ഓവർലേ വിൻഡോകൾ പ്രദർശിപ്പിക്കാൻ അനുമതി ആവശ്യമാണ്.</string>
-    <string name="overlay_permission_denied_description">ആപ്പുകളുടെ മുകളിൽ പ്രദർശിപ്പിക്കാനുള്ള അനുമതി നിരസിച്ചു.</string>
-    <string name="overlay_permission_allow_hint">ഈ സവിശേഷത ഉപയോഗിക്കാൻ ദയവായി ക്രമീകരണങ്ങളിൽ ഇത് പ്രവർത്തനക്ഷമമാക്കുക.</string>
 
     <string name="clear_cache">കാഷെ മായ്ക്കുക</string>
     <string name="gallery">ഗാലറി</string>
@@ -38,9 +33,7 @@
     <string name="tutorial_flash_message">കുറഞ്ഞ വെളിച്ചത്തിൽ ക്യാമറ ഫ്ലാഷ് ടോഗിൾ ചെയ്യുക.</string>
     <string name="tutorial_capture_title">ക്യാപ്ചർ / സ്കാൻ</string>
     <string name="tutorial_capture_message">ഫോട്ടോ എടുക്കാൻ ടാപ്പ് ചെയ്യുക, അല്ലെങ്കിൽ തുടർച്ചയായി സ്കാൻ ചെയ്യാൻ അമർത്തിപ്പിടിക്കുക.</string>
-    <string name="tutorial_gallery_title">ഗാലറി</string>
-    <string name="tutorial_gallery_message">സേവ് ചെയ്ത ചിത്രങ്ങൾ തുറന്ന് OCR ഫലങ്ങൾ കാണുക.</string>
-    
+
     <!-- Common UI actions -->
     <string name="confirm">സ്ഥിരീകരിക്കുക</string>
     <string name="cancel">റദ്ദാക്കുക</string>
@@ -54,11 +47,7 @@
     <string name="bottom_nav_gallery">ഗാലറി</string>
     
     <!-- Model Management -->
-    <string name="delete_model">മോഡൽ ഇല്ലാതാക്കുക</string>
-    <string name="delete_model_confirmation">നിങ്ങൾ %s മോഡൽ ഇല്ലാതാക്കാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?</string>
-    <string name="model_deleted_successfully">മോഡൽ വിജയകരമായി ഇല്ലാതാക്കി</string>
-    <string name="failed_to_delete_model">മോഡൽ ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു</string>
-    
+
     <!-- Tutorial / Info Messages -->
     <string name="tutorial_switch_camera_title">ക്യാമറ മാറ്റുക</string>
     <string name="tutorial_switch_camera_message">മുന്നിലും പിന്നിലുമുള്ള ക്യാമറകൾക്കിടയിൽ മാറുക.</string>
@@ -101,35 +90,22 @@
     
     <!-- Content descriptions -->
     <string name="copied">പകർത്തി</string>
-    <string name="select_language">ഭാഷ തിരഞ്ഞെടുക്കുക</string>
     <string name="selected">തിരഞ്ഞെടുത്തു</string>
     <string name="back">പിന്നോട്ട്</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">ചിത്ര വിശദാംശങ്ങൾ</string>
-    <string name="ocr_result">OCR ഫലം</string>
-    <string name="original">യഥാർത്ഥം</string>
     <string name="transliterated">ലിപ്യന്തരണം ചെയ്തത്</string>
     <string name="display_options">പ്രദർശന ഓപ്ഷനുകൾ</string>
     <string name="detection_options">കണ്ടെത്തൽ ഓപ്ഷനുകൾ</string>
-    <string name="ocr_results">OCR ഫലങ്ങൾ</string>
-    <string name="hide">മറയ്ക്കുക</string>
-    <string name="show">കാണിക്കുക</string>
-    <string name="both_text_panels_hidden">രണ്ട് ടെക്സ്റ്റ് പാനലുകളും മറച്ചിരിക്കുന്നു</string>
-    <string name="no_text_detected">ചിത്രത്തിൽ വാചകം കണ്ടെത്തിയില്ല</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">ഭാഷ മാറ്റി. മാറ്റങ്ങൾ കാണാൻ ദയവായി ആപ്പ് പുനരാരംഭിക്കുക.</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">ഓവർലേ ക്രമീകരണങ്ങൾ</string>
     <string name="enable_overlay">സ്ക്രീൻ ഓവർലേ OCR</string>
     <string name="overlay_enabled">ഫ്ലോട്ടിംഗ് ബട്ടൺ സജീവം</string>
     <string name="overlay_disabled">ഫ്ലോട്ടിംഗ് ബട്ടൺ പ്രവർത്തനക്ഷമമാക്കാൻ ടാപ്പ് ചെയ്യുക</string>
-    <string name="overlay_feature_description">ഈ ഫീച്ചർ നിങ്ങളുടെ സ്ക്രീൻ ക്യാപ്ചർ ചെയ്യുകയും OCR ടെക്സ്റ്റും ബൗണ്ടിംഗ് ബോക്സുകളും ഓവർലേ ആയി കാണിക്കുകയും ചെയ്യുന്ന ഒരു ഫ്ലോട്ടിംഗ് ബട്ടൺ ചേർക്കുന്നു.</string>
-    <string name="overlay_permission_hint">നിങ്ങൾ സ്ക്രീൻ ക്യാപ്ചറും ഓവർലേ അനുമതികളും നൽകേണ്ടതുണ്ട്.</string>
     <string name="overlay_permission_denied">സ്ക്രീൻ ക്യാപ്ചർ അനുമതി നിരസിച്ചു</string>
-    <string name="enable">പ്രവർത്തനക്ഷമമാക്കുക</string>
     <string name="start_overlay">ഓവർലേ ആരംഭിക്കുക</string>
     <string name="stop_overlay">ഓവർലേ നിർത്തുക</string>
     
@@ -149,7 +125,6 @@
     <string name="transliterate">ലിപ്യന്തരണം</string>
     <string name="select_ocr_language">OCR ഭാഷ തിരഞ്ഞെടുക്കുക</string>
     <string name="select_transliteration_language">ലിപ്യന്തരണ ഭാഷ തിരഞ്ഞെടുക്കുക</string>
-    <string name="transliterate_to">ലിപ്യന്തരണം ചെയ്യുക</string>
 
     <!-- OCR engine selection -->
 
@@ -158,24 +133,12 @@
     <string name="unable_to_open_link">ലിങ്ക് തുറക്കാനായില്ല.</string>
 
     <!-- Model downloads -->
-    <string name="models">ഭാഷാ മോഡലുകൾ</string>
-    <string name="manage_models">ഡൗൺലോഡ് ചെയ്ത OCR മോഡലുകൾ നിയന്ത്രിക്കുക</string>
-    <string name="model_download">മോഡൽ ഡൗൺലോഡ് ചെയ്യുക</string>
-    <string name="model_downloaded">ഡൗൺലോഡ് ചെയ്തു</string>
-
-    <string name="model_download_notification_channel_name">മോഡൽ ഡൗൺലോഡുകൾ</string>
-    <string name="model_download_notification_title">ഭാഷാ മോഡൽ ഡൗൺലോഡ് ചെയ്യുന്നു</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">മോഡൽ ഡൗൺലോഡ് ചെയ്തിട്ടില്ല, ഡിഫോൾട്ട് മോഡലിലേക്ക് മടങ്ങുന്നു</string>
-
-    <string name="no_internet_connection">ഇന്റർനെറ്റ് കണക്ഷൻ ഇല്ല</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">ടെക്സ്റ്റ് ഇൻപുട്ട്</string>
     <string name="enter_text">ടെക്സ്റ്റ് നൽകുക</string>
     <string name="type_to_transliterate">ലിപ്യന്തരണത്തിനായി ഇവിടെ ടെക്സ്റ്റ് ടൈപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ഒട്ടിക്കുക…</string>
     <string name="characters">അക്ഷരങ്ങൾ</string>
-    <string name="auto_detect">ഓട്ടോ-ഡിറ്റെക്ട്</string>
 
     <!-- History Screen -->
     <string name="history">ചരിത്രം</string>
@@ -203,7 +166,6 @@
     <string name="auto_copy_hint">ലിപ്യന്തരണം ചെയ്ത ടെക്സ്റ്റ് സ്വയമേവ ക്ലിപ്പ്‌ബോർഡിലേക്ക് പകർത്തുക</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">ടെക്സ്റ്റ്-ടു-സ്പീച്ച്</string>
     <string name="enable_tts">TTS പ്രവർത്തനക്ഷമമാക്കുക</string>
     <string name="enable_tts_hint">ലിപ്യന്തരണം ചെയ്ത ടെക്സ്റ്റ് ഉച്ചത്തിൽ വായിക്കുക</string>
     <string name="tts_auto_speak">ഫലങ്ങൾ ഓട്ടോ-സ്പീക്ക്</string>
@@ -213,10 +175,8 @@
     <string name="overlay_notification_title">വർണമാല ഓവർലേ സജീവം</string>
     <string name="overlay_notification_text">സ്ക്രീൻ വാചകം വിശകലനം ചെയ്യാൻ ക്യാപ്ചർ ബട്ടൺ ഉപയോഗിക്കുക</string>
     <string name="overlay_notification_stop_action">ഓവർലേ നിർത്തുക</string>
-    <string name="overlay_copied_to_clipboard">ക്ലിപ്പ്‌ബോർഡിലേക്ക് പകർത്തി</string>
 
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR വാചകം</string>
     <string name="clipboard_label_transliterated_text">ലിപ്യന്തരണം ചെയ്ത വാചകം</string>
     <string name="clipboard_label_text">വാചകം</string>
 </resources>

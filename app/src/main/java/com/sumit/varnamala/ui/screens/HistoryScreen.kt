@@ -16,8 +16,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.contentDescription

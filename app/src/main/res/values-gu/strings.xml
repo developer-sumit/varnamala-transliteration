@@ -4,7 +4,6 @@
 
     <string name="dark_mode">ડાર્ક મોડ</string>
     <string name="language">ભાષા</string>
-    <string name="terms_of_service">સેવાની શરતો</string>
     <string name="privacy_policy">ગોપનીયતા નીતિ</string>
     <string name="rate_app">એપ રેટ કરો</string>
 
@@ -18,10 +17,6 @@
     <string name="media_permission_description">ગેલેરીમાં છબીઓ બતાવવા માટે અમને તમારી છબીઓનો એક્સેસ જરૂરી છે.</string>
     <string name="media_permission_denied_description">મીડિયા પરવાનગી કાયમ માટે નકારવામાં આવી છે.</string>
     <string name="media_permission_allow_hint">ચાલુ રાખવા માટે સિસ્ટમ સેટિંગ્સમાં પરવાનગી સક્ષમ કરો.</string>
-    <string name="overlay_permission_required">એપ્સ પર પ્રદર્શન પરવાનગી જરૂરી</string>
-    <string name="overlay_permission_description">અન્ય એપ્સ પર ઓવરલે વિન્ડોઝ પ્રદર્શિત કરવા માટે અમને પરવાનગી જરૂરી છે.</string>
-    <string name="overlay_permission_denied_description">એપ્સ પર પ્રદર્શન પરવાનગી નકારવામાં આવી છે.</string>
-    <string name="overlay_permission_allow_hint">આ સુવિધા વાપરવા માટે કૃપા કરી સેટિંગ્સમાં આ સક્ષમ કરો.</string>
 
     <string name="clear_cache">કેશ સાફ કરો</string>
     <string name="gallery">ગેલેરી</string>
@@ -38,9 +33,7 @@
     <string name="tutorial_flash_message">ઓછા પ્રકાશમાં કેમેરા ફ્લેશ ટૉગલ કરો.</string>
     <string name="tutorial_capture_title">કેપ્ચર / સ્કેન</string>
     <string name="tutorial_capture_message">ફોટો લેવા ટેપ કરો, અથવા સતત સ્કેન કરવા દબાવી રાખો.</string>
-    <string name="tutorial_gallery_title">ગેલેરી</string>
-    <string name="tutorial_gallery_message">સેવ કરેલી છબીઓ ખોલો અને OCR પરિણામો જુઓ.</string>
-    
+
     <!-- Common UI actions -->
     <string name="confirm">કન્ફર્મ કરો</string>
     <string name="cancel">રદ કરો</string>
@@ -53,11 +46,7 @@
     <string name="bottom_nav_gallery">ગૅલેરી</string>
     
     <!-- Model Management -->
-    <string name="delete_model">મોડેલ ડિલીટ કરો</string>
-    <string name="delete_model_confirmation">શું તમે %s મોડેલને ડિલીટ કરવા માંગો છો?</string>
-    <string name="model_deleted_successfully">મોડેલ સફળતાપૂર્વક ડિલીટ થયું</string>
-    <string name="failed_to_delete_model">મોડેલ ડિલીટ કરવામાં નિષ્ફળ</string>
-    
+
     <!-- Tutorial / Info Messages -->
     <string name="tutorial_switch_camera_title">કૅમેરા બદલો</string>
     <string name="tutorial_switch_camera_message">આગળ અને પાછળના કૅમેરા વચ્ચે બદલો.</string>
@@ -99,35 +88,22 @@
     
     <!-- Content descriptions -->
     <string name="copied">કોપી થયું</string>
-    <string name="select_language">ભાષા પસંદ કરો</string>
     <string name="selected">પસંદ કરેલ</string>
     <string name="back">પાછળ</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">છબી વિગતો</string>
-    <string name="ocr_result">OCR પરિણામ</string>
-    <string name="original">મૂળ</string>
     <string name="transliterated">લિપ્યંતરિત</string>
     <string name="display_options">પ્રદર્શન વિકલ્પો</string>
     <string name="detection_options">શોધ વિકલ્પો</string>
-    <string name="ocr_results">OCR પરિણામો</string>
-    <string name="hide">છુપાવો</string>
-    <string name="show">બતાવો</string>
-    <string name="both_text_panels_hidden">બંને ટેક્સ્ટ પેનલ છુપાયેલ છે</string>
-    <string name="no_text_detected">છબીમાં ટેક્સ્ટ મળ્યો નથી</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">ભાષા બદલાઈ. ફેરફારો જોવા માટે કૃપા કરી એપ ફરીથી શરૂ કરો.</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">ઓવરલે સેટિંગ્સ</string>
     <string name="enable_overlay">સ્ક્રીન ઓવરલે OCR</string>
     <string name="overlay_enabled">ફ્લોટિંગ બટન સક્રિય</string>
     <string name="overlay_disabled">ફ્લોટિંગ બટન સક્ષમ કરવા ટેપ કરો</string>
-    <string name="overlay_feature_description">આ સુવિધા તમારી સ્ક્રીન કેપ્ચર કરતું અને OCR ટેક્સ્ટ અને બાઉન્ડિંગ બોક્સ ઓવરલે તરીકે બતાવતું ફ્લોટિંગ બટન ઉમેરે છે.</string>
-    <string name="overlay_permission_hint">તમારે સ્ક્રીન કેપ્ચર અને ઓવરલે પરવાનગીઓ આપવી પડશે.</string>
     <string name="overlay_permission_denied">સ્ક્રીન કેપ્ચર પરવાનગી નકારી</string>
-    <string name="enable">સક્ષમ કરો</string>
     <string name="start_overlay">ઓવરલે શરૂ કરો</string>
     <string name="stop_overlay">ઓવરલે બંધ કરો</string>
     
@@ -147,7 +123,6 @@
     <string name="transliterate">લિપ્યંતરણ</string>
     <string name="select_ocr_language">OCR ભાષા પસંદ કરો</string>
     <string name="select_transliteration_language">લિપ્યંતરણ ભાષા પસંદ કરો</string>
-    <string name="transliterate_to">લિપ્યંતરણ કરો</string>
 
     <!-- OCR engine selection -->
 
@@ -156,24 +131,12 @@
     <string name="unable_to_open_link">લિંક ખોલવામાં અસમર્થ.</string>
 
     <!-- Model downloads -->
-    <string name="models">ભાષા મોડેલ્સ</string>
-    <string name="manage_models">ડાઉનલોડ કરેલ OCR મોડેલ્સ મેનેજ કરો</string>
-    <string name="model_download">મોડેલ ડાઉનલોડ કરો</string>
-    <string name="model_downloaded">ડાઉનલોડ થયું</string>
-
-    <string name="model_download_notification_channel_name">મોડેલ ડાઉનલોડ્સ</string>
-    <string name="model_download_notification_title">ભાષા મોડેલ ડાઉનલોડ થઈ રહ્યું છે</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">મોડેલ ડાઉનલોડ થયું નથી, ડિફોલ્ટ મોડેલ પર જઈ રહ્યું છે</string>
-
-    <string name="no_internet_connection">ઇન્ટરનેટ કનેક્શન નથી</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">ટેક્સ્ટ ઇનપુટ</string>
     <string name="enter_text">ટેક્સ્ટ દાખલ કરો</string>
     <string name="type_to_transliterate">લિપ્યંતરણ કરવા અહીં ટેક્સ્ટ ટાઇપ અથવા પેસ્ટ કરો…</string>
     <string name="characters">અક્ષરો</string>
-    <string name="auto_detect">ઓટો-ડિટેક્ટ</string>
 
     <!-- History Screen -->
     <string name="history">ઇતિહાસ</string>
@@ -201,7 +164,6 @@
     <string name="auto_copy_hint">લિપ્યંતરિત ટેક્સ્ટ આપમેળે ક્લિપબોર્ડ પર કોપી કરો</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">ટેક્સ્ટ-ટુ-સ્પીચ</string>
     <string name="enable_tts">TTS સક્ષમ કરો</string>
     <string name="enable_tts_hint">લિપ્યંતરિત ટેક્સ્ટ મોટેથી વાંચો</string>
     <string name="tts_auto_speak">પરિણામો ઓટો-બોલો</string>
@@ -211,10 +173,8 @@
     <string name="overlay_notification_title">વર્ણમાળા ઓવરલે સક્રિય</string>
     <string name="overlay_notification_text">સ્ક્રીન ટેક્સ્ટનું વિશ્લેષણ કરવા કેપ્ચર બટન વાપરો</string>
     <string name="overlay_notification_stop_action">ઓવરલે બંધ કરો</string>
-    <string name="overlay_copied_to_clipboard">ક્લિપબોર્ડ પર કોપી કર્યું</string>
 
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR ટેક્સ્ટ</string>
     <string name="clipboard_label_transliterated_text">લિપ્યંતરિત ટેક્સ્ટ</string>
     <string name="clipboard_label_text">ટેક્સ્ટ</string>
 </resources>

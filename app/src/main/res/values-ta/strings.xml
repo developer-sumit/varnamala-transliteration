@@ -4,7 +4,6 @@
 
     <string name="dark_mode">டார்க் மோட்</string>
     <string name="language">மொழி</string>
-    <string name="terms_of_service">சேவை விதிமுறைகள்</string>
     <string name="privacy_policy">தனியுரிமைக் கொள்கை</string>
     <string name="rate_app">ஆப்பை மதிப்பிடுங்கள்</string>
 
@@ -18,10 +17,6 @@
     <string name="media_permission_description">கேலரியில் படங்களைக் காட்ட உங்கள் படங்களை அணுக வேண்டும்.</string>
     <string name="media_permission_denied_description">மீடியா அனுமதி நிரந்தரமாக மறுக்கப்பட்டது.</string>
     <string name="media_permission_allow_hint">தொடர கணினி அமைப்புகளில் அனுமதியை இயக்கவும்.</string>
-    <string name="overlay_permission_required">ஆப்களின் மேல் காட்டு அனுமதி தேவை</string>
-    <string name="overlay_permission_description">மற்ற ஆப்களின் மேல் ஓவர்லே சாளரங்களைக் காட்ட எங்களுக்கு அனுமதி தேவை.</string>
-    <string name="overlay_permission_denied_description">ஆப்களின் மேல் காட்டு அனுமதி மறுக்கப்பட்டது.</string>
-    <string name="overlay_permission_allow_hint">இந்த அம்சத்தைப் பயன்படுத்த அமைப்புகளில் இதை இயக்கவும்.</string>
 
     <string name="clear_cache">கேச் அழி</string>
     <string name="gallery">கேலரி</string>
@@ -38,9 +33,7 @@
     <string name="tutorial_flash_message">குறைந்த ஒளியில் கேமரா ஃப்ளாஷை மாற்று.</string>
     <string name="tutorial_capture_title">படம் எடு / ஸ்கேன்</string>
     <string name="tutorial_capture_message">புகைப்படம் எடுக்க தட்டவும், அல்லது தொடர்ந்து ஸ்கேன் செய்ய அழுத்திப் பிடிக்கவும்.</string>
-    <string name="tutorial_gallery_title">கேலரி</string>
-    <string name="tutorial_gallery_message">சேமித்த படங்களைத் திறந்து OCR முடிவுகளைப் பாருங்கள்.</string>
-    
+
     <!-- Common UI actions -->
     <string name="confirm">உறுதிப்படுத்து</string>
     <string name="cancel">ரத்து செய்</string>
@@ -53,11 +46,7 @@
     <string name="bottom_nav_gallery">கேலரி</string>
     
     <!-- Model Management -->
-    <string name="delete_model">மாதிரியை நீக்கு</string>
-    <string name="delete_model_confirmation">%s மாதிரியை நீக்க விரும்புகிறீர்களா?</string>
-    <string name="model_deleted_successfully">மாதிரி வெற்றிகரமாக நீக்கப்பட்டது</string>
-    <string name="failed_to_delete_model">மாதிரியை நீக்குவதில் தோல்வி</string>
-    
+
     <!-- Tutorial / Info Messages -->
     <string name="tutorial_switch_camera_title">கேமராவை மாற்று</string>
     <string name="tutorial_switch_camera_message">முன் மற்றும் பின் கேமராக்களுக்கு இடையே மாற்றவும்.</string>
@@ -99,35 +88,22 @@
     
     <!-- Content descriptions -->
     <string name="copied">நகலெடுக்கப்பட்டது</string>
-    <string name="select_language">மொழி தேர்வு</string>
     <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="back">பின்செல்</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">படம் விவரங்கள்</string>
-    <string name="ocr_result">OCR முடிவு</string>
-    <string name="original">மூலம்</string>
     <string name="transliterated">எழுத்துப்பெயர்க்கப்பட்டது</string>
     <string name="display_options">காட்சி விருப்பங்கள்</string>
     <string name="detection_options">கண்டறிதல் விருப்பங்கள்</string>
-    <string name="ocr_results">OCR முடிவுகள்</string>
-    <string name="hide">மறை</string>
-    <string name="show">காட்டு</string>
-    <string name="both_text_panels_hidden">இரு உரை பேனல்களும் மறைக்கப்பட்டன</string>
-    <string name="no_text_detected">படத்தில் உரை கண்டறியப்படவில்லை</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">மொழி மாற்றப்பட்டது. மாற்றங்களைக் காண ஆப்பை மீண்டும் தொடங்கவும்.</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">ஓவர்லே அமைப்புகள்</string>
     <string name="enable_overlay">திரை ஓவர்லே OCR</string>
     <string name="overlay_enabled">மிதக்கும் பொத்தான் செயலில்</string>
     <string name="overlay_disabled">மிதக்கும் பொத்தானை இயக்க தட்டவும்</string>
-    <string name="overlay_feature_description">இந்த அம்சம் உங்கள் திரையைப் படம்பிடித்து OCR உரை மற்றும் எல்லைப் பெட்டிகளை ஓவர்லேயாகக் காட்டும் மிதக்கும் பொத்தானைச் சேர்க்கிறது.</string>
-    <string name="overlay_permission_hint">திரை படம்பிடிப்பு மற்றும் ஓவர்லே அனுமதிகளை வழங்க வேண்டும்.</string>
     <string name="overlay_permission_denied">திரை படம்பிடிப்பு அனுமதி மறுக்கப்பட்டது</string>
-    <string name="enable">இயக்கு</string>
     <string name="start_overlay">ஓவர்லே தொடங்கு</string>
     <string name="stop_overlay">ஓவர்லே நிறுத்து</string>
     
@@ -147,7 +123,6 @@
     <string name="transliterate">எழுத்துப்பெயர்ப்பு</string>
     <string name="select_ocr_language">OCR மொழி தேர்வு</string>
     <string name="select_transliteration_language">எழுத்துப்பெயர்ப்பு மொழி தேர்வு</string>
-    <string name="transliterate_to">எழுத்துப்பெயர்</string>
 
     <!-- OCR engine selection -->
 
@@ -156,24 +131,12 @@
     <string name="unable_to_open_link">இணைப்பைத் திறக்க முடியவில்லை.</string>
 
     <!-- Model downloads -->
-    <string name="models">மொழி மாதிரிகள்</string>
-    <string name="manage_models">பதிவிறக்கிய OCR மாதிரிகளை நிர்வகி</string>
-    <string name="model_download">மாதிரி பதிவிறக்கு</string>
-    <string name="model_downloaded">பதிவிறக்கப்பட்டது</string>
-
-    <string name="model_download_notification_channel_name">மாதிரி பதிவிறக்கங்கள்</string>
-    <string name="model_download_notification_title">மொழி மாதிரி பதிவிறக்கப்படுகிறது</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">மாதிரி பதிவிறக்கப்படவில்லை, இயல்புநிலை மாதிரிக்கு மாறுகிறது</string>
-
-    <string name="no_internet_connection">இணைய இணைப்பு இல்லை</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">உரை உள்ளீடு</string>
     <string name="enter_text">உரை உள்ளிடு</string>
     <string name="type_to_transliterate">எழுத்துப்பெயர்க்க இங்கே உரை தட்டச்சு செய்யவும் அல்லது ஒட்டவும்…</string>
     <string name="characters">எழுத்துக்கள்</string>
-    <string name="auto_detect">தானியங்கி-கண்டறி</string>
 
     <!-- History Screen -->
     <string name="history">வரலாறு</string>
@@ -201,7 +164,6 @@
     <string name="auto_copy_hint">எழுத்துப்பெயர்க்கப்பட்ட உரையை தானாக கிளிப்போர்டுக்கு நகலெடு</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">உரை-க்கு-பேச்சு</string>
     <string name="enable_tts">TTS இயக்கு</string>
     <string name="enable_tts_hint">எழுத்துப்பெயர்க்கப்பட்ட உரையை சத்தமாகப் படி</string>
     <string name="tts_auto_speak">முடிவுகள் தானியங்கி-பேசு</string>
@@ -211,10 +173,8 @@
     <string name="overlay_notification_title">வர்ணமாலா ஓவர்லே செயலில் உள்ளது</string>
     <string name="overlay_notification_text">திரை உரையை பகுப்பாய்வு செய்ய கேப்சர் பொத்தானைப் பயன்படுத்தவும்</string>
     <string name="overlay_notification_stop_action">ஓவர்லே நிறுத்து</string>
-    <string name="overlay_copied_to_clipboard">கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது</string>
 
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR உரை</string>
     <string name="clipboard_label_transliterated_text">எழுத்துப்பெயர்க்கப்பட்ட உரை</string>
     <string name="clipboard_label_text">உரை</string>
 </resources>

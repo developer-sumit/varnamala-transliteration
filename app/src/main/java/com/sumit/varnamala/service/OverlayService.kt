@@ -299,7 +299,6 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
         onLanguageSelect: (Language?) -> Unit,
         onTargetLanguageSelect: (Language?) -> Unit
     ) {
-        var offsetX by remember { mutableFloatStateOf(0f) }
         var offsetY by remember { mutableFloatStateOf(0f) }
         var localIsDragging by remember { mutableStateOf(false) }
         var capturedImageSize by remember { mutableStateOf(IntSize.Zero) }
@@ -336,13 +335,11 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                                     serviceScope.launch {
                                         kotlinx.coroutines.delay(150)
                                         localIsDragging = false
-                                        offsetX = 0f
                                         offsetY = 0f
                                     }
                                 },
                                 onDragCancel = {
                                     localIsDragging = false
-                                    offsetX = 0f
                                     offsetY = 0f
                                 },
                                 onDrag = { change, dragAmount ->
@@ -554,13 +551,11 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                                             serviceScope.launch {
                                                 kotlinx.coroutines.delay(150)
                                                 localIsDragging = false
-                                                offsetX = 0f
                                                 offsetY = 0f
                                             }
                                         },
                                         onDragCancel = {
                                             localIsDragging = false
-                                            offsetX = 0f
                                             offsetY = 0f
                                         },
                                         onDrag = { change, dragAmount ->
@@ -719,13 +714,11 @@ class OverlayService : Service(), LifecycleOwner, ViewModelStoreOwner, SavedStat
                                             serviceScope.launch {
                                                 kotlinx.coroutines.delay(150)
                                                 localIsDragging = false
-                                                offsetX = 0f
                                                 offsetY = 0f
                                             }
                                         },
                                         onDragCancel = {
                                             localIsDragging = false
-                                            offsetX = 0f
                                             offsetY = 0f
                                         },
                                         onDrag = { change, dragAmount ->

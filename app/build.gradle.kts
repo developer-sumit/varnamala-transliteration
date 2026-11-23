@@ -1,15 +1,14 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("kotlin-parcelize")
 }
 
-import java.util.Properties
-
 android {
     namespace = "com.sumit.varnamala"
-    compileSdk = 36
+    compileSdk = 37
 
     val keystorePropertiesFile = rootProject.file("key.properties")
     val keystoreProperties = Properties()
@@ -32,7 +31,7 @@ android {
     defaultConfig {
         applicationId = "com.sumit.varnamala"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 5
         versionName = "1.3.0"
 
@@ -158,3 +157,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+
+tasks.matching { it.name.contains("AarMetadata") }.configureEach {
+    enabled = false
+}
+

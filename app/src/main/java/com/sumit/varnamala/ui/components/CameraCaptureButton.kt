@@ -62,7 +62,6 @@ fun CameraCaptureButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
-    var progress by remember { mutableFloatStateOf(0f) }
     var hasStartedRealTime by remember { mutableStateOf(false) }
     var pressStartTime by remember { mutableLongStateOf(0L) }
     val longPressThreshold = 300L // ms before we treat as long press
@@ -84,8 +83,6 @@ fun CameraCaptureButton(
                 // Now considered long press
                 hasStartedRealTime = true
                 onLongPressStart()
-                // Start progress animation (full circle to indicate active streaming)
-                progress = 1f
             }
         } else {
             // Released
@@ -93,7 +90,6 @@ fun CameraCaptureButton(
                 hasStartedRealTime = false
                 onLongPressEnd()
             }
-            progress = 0f
         }
     }
 

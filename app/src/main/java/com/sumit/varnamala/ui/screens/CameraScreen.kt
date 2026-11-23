@@ -53,13 +53,10 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.zIndex
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -167,7 +164,6 @@ fun CameraScreen(navController: NavController) {
     var flashEnabled by remember { mutableStateOf(false) }
     var detectionRunning by remember { mutableStateOf(false) }
     var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     // Single capture functionality
     var captureImage by remember { mutableStateOf(false) }
@@ -187,7 +183,6 @@ fun CameraScreen(navController: NavController) {
         capturedBitmap = null
         rawOcrText = ""
         lastOCRResult = null
-        errorMessage = null
         capturedPhotoScale = 1f
         capturedPhotoOffset = Offset.Zero
     }
@@ -483,7 +478,6 @@ fun CameraScreen(navController: NavController) {
                             onOCRResult = { result ->
                                 lastOCRResult = result
                                 rawOcrText = result.text
-                                errorMessage = null
                                 capturedImageProcessing = false
 
                                 // Detect language for OCR results
@@ -492,7 +486,6 @@ fun CameraScreen(navController: NavController) {
                                 }
                             },
                             onError = { error ->
-                                errorMessage = error
                                 if (isCapturing) {
                                     isCapturing = false
                                     capturedImageProcessing = false
@@ -593,7 +586,6 @@ fun CameraScreen(navController: NavController) {
                         capturedBitmap = null
                         rawOcrText = ""
                         lastOCRResult = null
-                        errorMessage = null
                         capturedPhotoScale = 1f
                         capturedPhotoOffset = Offset.Zero
                     }
@@ -674,7 +666,6 @@ fun CameraScreen(navController: NavController) {
                                 capturedBitmap = null
                                 rawOcrText = ""
                                 lastOCRResult = null
-                                errorMessage = null
 
                                 isCapturing = true
                                 captureImage = true
@@ -691,7 +682,6 @@ fun CameraScreen(navController: NavController) {
                                 capturedBitmap = null
                                 rawOcrText = ""
                                 lastOCRResult = null
-                                errorMessage = null
 
                                 detectionRunning = true
                             }

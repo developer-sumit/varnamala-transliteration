@@ -59,16 +59,10 @@
     <string name="a11y_display_options">Display options</string>
     <string name="a11y_search">Search</string>
     <string name="a11y_backup">Back up or import history</string>
-    <string name="a11y_zoom_in">Zoom in</string>
-    <string name="a11y_zoom_out">Zoom out</string>
-    <string name="a11y_rotate">Rotate</string>
-    <string name="a11y_refresh">Refresh</string>
-    <string name="a11y_camera">Camera</string>
     <string name="a11y_capture_button">Capture. Activate to take a photo; open the actions menu to scan live.</string>
     <string name="a11y_take_photo">Take a photo</string>
     <string name="a11y_start_live">Start live scanning</string>
     <string name="a11y_stop_live">Stop live scanning</string>
-    <string name="a11y_recent_scans">Recent scans. Open history.</string>
     <string name="offline_voice_credit">Voice model: AI4Bharat Rasa (vits_rasa_13), CC BY 4.0. ONNX export by matiaslin. Text reading: PaddleOCR PP-OCRv6, Apache-2.0.</string>
     <string name="ocr_reading">Reading text…</string>
     <string name="ocr_no_text">No text found in this picture</string>

@@ -21,9 +21,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Locale
-import kotlin.coroutines.resume
 
 /** How the voice sounds. [speed] and [pitch] are multipliers around 1.0. */
 data class SpeechSettings(
@@ -179,7 +177,7 @@ class OnDeviceSpeaker(context: Context) {
                 if (head >= pcm.size) break
                 val progress = head.toFloat() / pcm.size
                 val index = starts.indexOfLast { it <= progress }
-                if (index > reported && index >= 0) {
+                if (index > reported) {
                     reported = index
                     onWord(words[index].first)
                 }

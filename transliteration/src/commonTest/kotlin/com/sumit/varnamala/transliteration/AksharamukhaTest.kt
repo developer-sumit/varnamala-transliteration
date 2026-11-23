@@ -103,4 +103,62 @@ class AksharamukhaTest {
         val result = engine.aksharamukha("नमस्ते", "Telugu")
         assertEquals("నమస్తే", result)
     }
+
+    @Test
+    fun testDevanagariToSinhala() {
+        val result = Aksharamukha.process("Devanagari", "Sinhala", "नमस्ते")
+        assertEquals("නමස්තේ", result)
+    }
+
+    @Test
+    fun testSinhalaToDevanagari() {
+        val result = Aksharamukha.process("Sinhala", "Devanagari", "නමස්තේ")
+        assertEquals("नमस्ते", result)
+    }
+
+    @Test
+    fun testDevanagariToEnglishAndReadable() {
+        val toEn = Aksharamukha.process("Devanagari", "en", "नमस्ते")
+        assertEquals("namaste", toEn)
+
+        val toReadable = Aksharamukha.process("Devanagari", "Readable", "नमस्ते")
+        assertEquals("namaste", toReadable)
+    }
+
+    @Test
+    fun testEnglishToDevanagari() {
+        val fromEn = Aksharamukha.process("en", "Devanagari", "namaste")
+        assertEquals("नमस्ते", fromEn)
+
+        val fromCapitalized = Aksharamukha.process("en", "Devanagari", "Namaste")
+        assertEquals("नमस्ते", fromCapitalized)
+    }
+
+    @Test
+    fun testLanguageCodeMapping() {
+        val hiToTe = Aksharamukha.process("hi", "te", "नमस्ते")
+        assertEquals("నమస్తే", hiToTe)
+
+        val hiToEn = Aksharamukha.process("hi", "en", "नमस्ते")
+        assertEquals("namaste", hiToEn)
+
+        val enToHi = Aksharamukha.process("en", "hi", "namaste")
+        assertEquals("नमस्ते", enToHi)
+    }
+
+    @Test
+    fun testUrduTransliteration() {
+        val toUrdu = Aksharamukha.process("Devanagari", "Urdu", "दोस्त")
+        assertEquals("دوست", toUrdu)
+
+        val fromUrdu = Aksharamukha.process("Urdu", "Devanagari", "دوست")
+        assertEquals("दोस्त", fromUrdu)
+    }
+
+    @Test
+    fun testEngineAksharamukhaFallbackForSinhala() {
+        val engine = TransliterationEngine()
+        val sinhalaResult = engine.transliterate("नमस्ते", "si")
+        assertEquals("නමස්තේ", sinhalaResult)
+    }
 }

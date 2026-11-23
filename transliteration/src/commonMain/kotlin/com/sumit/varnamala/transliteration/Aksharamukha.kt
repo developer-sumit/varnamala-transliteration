@@ -20,6 +20,7 @@ object Aksharamukha {
     )
 
     val ROMAN_SCHEMES = listOf(
+        "Readable", "English", "Latin",
         "IAST", "ISO", "ISO15919", "HK", "Harvard-Kyoto",
         "ITRANS", "Velthuis", "SLP1", "WX"
     )
@@ -60,11 +61,24 @@ object Aksharamukha {
             return text
         }
 
+        // Urdu integration via UrduCodec
+        if (resolvedTarget == "Urdu") {
+            val devaText = if (resolvedSource == "Devanagari") text else process(resolvedSource, "Devanagari", text, preOptions, postOptions)
+            return UrduCodec.write(IndicReader.read(devaText, Script.DEVANAGARI))
+        }
+
+        if (resolvedSource == "Urdu") {
+            val tokens = UrduCodec.read(text)
+            val devaText = IndicWriter.write(tokens, Language.HINDI)
+            if (resolvedTarget == "Devanagari") return devaText
+            return process("Devanagari", resolvedTarget, devaText, preOptions, postOptions)
+        }
+
         // Parse input text into intermediate phonetic tokens
         val tokens = parseToTokens(text, resolvedSource)
 
         // Render intermediate phonetic tokens into target script
-        var result = renderFromTokens(tokens, resolvedTarget, resolvedSource)
+        var result = renderFromTokens(tokens, resolvedTarget, resolvedSource, postOptions)
 
         if ("removeSchwa" in postOptions) {
             result = removeTerminalSchwas(result, resolvedTarget)
@@ -324,6 +338,50 @@ object Aksharamukha {
         "nukta" to "଼", "danda" to "।", "double_danda" to "॥"
     )
 
+    private val SINHALA_MAP = mapOf(
+        "a" to "අ", "aa" to "ආ", "i" to "ඉ", "ii" to "ඊ", "u" to "උ", "uu" to "ඌ",
+        "r_vocalic" to "ඍ", "rr_vocalic" to "ඎ", "l_vocalic" to "ඏ", "ll_vocalic" to "ඐ",
+        "e_short" to "එ", "e" to "ඒ", "ai" to "ඓ", "o_short" to "ඔ", "o" to "ඕ", "au" to "ඖ",
+        "m_aa" to "ා", "m_i" to "ි", "m_ii" to "ී", "m_u" to "ු", "m_uu" to "ූ",
+        "m_r_vocalic" to "ෘ", "m_rr_vocalic" to "ෲ", "m_l_vocalic" to "ෟ", "m_ll_vocalic" to "ෳ",
+        "m_e_short" to "ෙ", "m_e" to "ේ", "m_ai" to "ෛ", "m_o_short" to "ො", "m_o" to "ෝ", "m_au" to "ෞ",
+        "k" to "ක", "kh" to "ඛ", "g" to "ග", "gh" to "ඝ", "ng" to "ඞ",
+        "c" to "ච", "ch" to "ඡ", "j" to "ජ", "jh" to "ඣ", "ny" to "ඤ",
+        "tt" to "ට", "tth" to "ඨ", "dd" to "ඩ", "ddh" to "ඪ", "nn" to "ණ",
+        "t" to "ත", "th" to "ථ", "d" to "ද", "dh" to "ධ", "n" to "න",
+        "p" to "ප", "ph" to "ඵ", "b" to "බ", "bh" to "භ", "m" to "ම",
+        "y" to "ය", "r" to "ර", "l" to "ල", "v" to "ව",
+        "sh" to "ශ", "ss" to "ෂ", "s" to "ස", "h" to "හ",
+        "ll" to "ළ", "zh" to "ළ", "rr" to "ර", "nnn" to "න",
+        "q" to "ක", "khh" to "ඛ", "ghh" to "ග", "z" to "ජ", "ddd" to "ඩ", "rh" to "ඪ", "f" to "ෆ", "yy" to "ය",
+        "virama" to "්", "anusvara" to "ං", "visarga" to "ඃ", "candrabindu" to "ඁ", "avagraha" to "",
+        "nukta" to "", "danda" to "।", "double_danda" to "॥"
+    )
+
+    private val READABLE_MAP = mapOf(
+        // Vowels
+        "a" to "a", "aa" to "aa", "i" to "i", "ii" to "ee", "u" to "u", "uu" to "oo",
+        "r_vocalic" to "ri", "rr_vocalic" to "ree", "l_vocalic" to "li", "ll_vocalic" to "lee",
+        "e_short" to "e", "e" to "e", "ai" to "ai", "o_short" to "o", "o" to "o", "au" to "au",
+        // Matras
+        "m_aa" to "a", "m_i" to "i", "m_ii" to "ee", "m_u" to "u", "m_uu" to "oo",
+        "m_r_vocalic" to "ri", "m_rr_vocalic" to "ree", "m_l_vocalic" to "li", "m_ll_vocalic" to "lee",
+        "m_e_short" to "e", "m_e" to "e", "m_ai" to "ai", "m_o_short" to "o", "m_o" to "o", "m_au" to "au",
+        // Consonants
+        "k" to "k", "kh" to "kh", "g" to "g", "gh" to "gh", "ng" to "ng",
+        "c" to "ch", "ch" to "chh", "j" to "j", "jh" to "jh", "ny" to "ny",
+        "tt" to "t", "tth" to "th", "dd" to "d", "ddh" to "dh", "nn" to "n",
+        "t" to "t", "th" to "th", "d" to "d", "dh" to "dh", "n" to "n",
+        "p" to "p", "ph" to "ph", "b" to "b", "bh" to "bh", "m" to "m",
+        "y" to "y", "r" to "r", "l" to "l", "v" to "v",
+        "sh" to "sh", "ss" to "sh", "s" to "s", "h" to "h",
+        "ll" to "l", "zh" to "zh", "rr" to "r", "nnn" to "n",
+        "q" to "q", "khh" to "kh", "ghh" to "gh", "z" to "z", "ddd" to "r", "rh" to "rh", "f" to "f", "yy" to "y",
+        // Modifiers
+        "virama" to "", "anusvara" to "n", "visarga" to "h", "candrabindu" to "n", "avagraha" to "'",
+        "nukta" to "", "danda" to ".", "double_danda" to "."
+    )
+
     // Romanization Schemes Maps
     private val IAST_MAP = mapOf(
         "a" to "a", "aa" to "ā", "i" to "i", "ii" to "ī", "u" to "u", "uu" to "ū",
@@ -381,6 +439,10 @@ object Aksharamukha {
         "Gujarati" to GUJARATI_MAP,
         "Gurmukhi" to GURMUKHI_MAP,
         "Oriya" to ORIYA_MAP,
+        "Sinhala" to SINHALA_MAP,
+        "Readable" to READABLE_MAP,
+        "English" to READABLE_MAP,
+        "Latin" to READABLE_MAP,
         "IAST" to IAST_MAP,
         "ISO" to ISO_MAP,
         "ISO15919" to ISO_MAP,
@@ -403,6 +465,17 @@ object Aksharamukha {
                         return@forEach
                     }
                     if ((key == "m_e_short" && map["m_e"] == glyph) || (key == "m_o_short" && map["m_o"] == glyph)) {
+                        return@forEach
+                    }
+                    // For Roman schemes where retroflex/dental share ASCII letters, prefer dentals
+                    if ((key == "tt" && map["t"] == glyph) ||
+                        (key == "tth" && map["th"] == glyph) ||
+                        (key == "dd" && map["d"] == glyph) ||
+                        (key == "ddh" && map["dh"] == glyph) ||
+                        (key == "nn" && map["n"] == glyph) ||
+                        (key == "ss" && map["sh"] == glyph) ||
+                        (key == "ll" && map["l"] == glyph) ||
+                        (key == "rr" && map["r"] == glyph)) {
                         return@forEach
                     }
                     val token = when {
@@ -438,13 +511,14 @@ object Aksharamukha {
         }
 
         val tokens = mutableListOf<PhToken>()
+        val input = if (scriptName in listOf("Readable", "English", "Latin")) text.lowercase() else text
         var index = 0
-        val length = text.length
+        val length = input.length
 
         while (index < length) {
             var matched = false
             for ((glyph, token) in pairs) {
-                if (text.startsWith(glyph, index)) {
+                if (input.startsWith(glyph, index)) {
                     tokens.add(token.copy(raw = glyph))
                     index += glyph.length
                     matched = true
@@ -465,11 +539,19 @@ object Aksharamukha {
     // Renderer: Intermediate Tokens -> Target Script
     // =========================================================================
 
-    private fun renderFromTokens(tokens: List<PhToken>, targetScript: String, sourceScript: String): String {
+    private fun renderFromTokens(
+        tokens: List<PhToken>,
+        targetScript: String,
+        sourceScript: String,
+        postOptions: List<String> = emptyList(),
+    ): String {
         val table = SCRIPT_TABLES[targetScript] ?: return tokens.joinToString("") { it.raw }
         val isRomanTarget = targetScript in ROMAN_SCHEMES
         val isRomanSource = sourceScript in ROMAN_SCHEMES
         val out = StringBuilder()
+
+        val deleteFinalSchwa = "removeSchwa" in postOptions ||
+            (targetScript in listOf("Readable", "English", "Latin") && "preserveSchwa" !in postOptions)
 
         var i = 0
         val size = tokens.size
@@ -505,13 +587,15 @@ object Aksharamukha {
                                 }
                             }
                             else -> {
-                                // Inherent vowel 'a'
-                                out.append("a")
+                                val isWordEnd = nextToken == null || nextToken.type == PhTokenType.LITERAL || nextToken.type == PhTokenType.DANDA || nextToken.type == PhTokenType.DOUBLE_DANDA
+                                if (!isWordEnd || !deleteFinalSchwa || "preserveSchwa" in postOptions) {
+                                    out.append("a")
+                                }
                             }
                         }
                     } else {
                         // Brahmic target
-                        val glyph = table[token.key] ?: table["s"] ?: token.raw
+                        val glyph = table[token.key] ?: token.raw
                         out.append(glyph)
                         when (nextToken?.type) {
                             PhTokenType.MATRA -> {
@@ -551,12 +635,12 @@ object Aksharamukha {
                         out.append(table["virama"] ?: "")
                     }
                 }
-                PhTokenType.ANUSVARA -> out.append(table["anusvara"] ?: "ṃ")
-                PhTokenType.VISARGA -> out.append(table["visarga"] ?: "ḥ")
-                PhTokenType.CANDRABINDU -> out.append(table["candrabindu"] ?: "~")
+                PhTokenType.ANUSVARA -> out.append(table["anusvara"] ?: if (isRomanTarget) "n" else "ं")
+                PhTokenType.VISARGA -> out.append(table["visarga"] ?: if (isRomanTarget) "h" else "ः")
+                PhTokenType.CANDRABINDU -> out.append(table["candrabindu"] ?: if (isRomanTarget) "n" else "~")
                 PhTokenType.AVAGRAHA -> out.append(table["avagraha"] ?: "'")
-                PhTokenType.DANDA -> out.append(table["danda"] ?: "|")
-                PhTokenType.DOUBLE_DANDA -> out.append(table["double_danda"] ?: "||")
+                PhTokenType.DANDA -> out.append(table["danda"] ?: if (isRomanTarget) "." else "।")
+                PhTokenType.DOUBLE_DANDA -> out.append(table["double_danda"] ?: if (isRomanTarget) "." else "॥")
                 PhTokenType.LITERAL, PhTokenType.DIGIT, PhTokenType.NUKTA -> out.append(token.raw)
             }
             i++
@@ -599,7 +683,13 @@ object Aksharamukha {
                 in 0x0600..0x06FF -> return "Urdu"
             }
         }
-        return "IAST"
+        if (text.any { it in "āīūṛṝḷḹēōṅñṭḍṇśṣṃḥḻṟṉ" }) {
+            return "IAST"
+        }
+        if (text.any { it in "AIRUJGTSDNMHL" } && text.any { it.isLowerCase() }) {
+            return "HK"
+        }
+        return "Readable"
     }
 
     fun normalizeScript(name: String): String {
@@ -615,8 +705,8 @@ object Aksharamukha {
             "telugu", "telu", "te" -> "Telugu"
             "kannada", "knda", "kn" -> "Kannada"
             "malayalam", "mlym", "ml" -> "Malayalam"
-            "sinhala", "sinh", "si" -> "Sinhala"
-            "urdu", "ur" -> "Urdu"
+            "sinhala", "sinh", "si", "sin" -> "Sinhala"
+            "urdu", "ur", "urd", "arabic" -> "Urdu"
             "iast" -> "IAST"
             "iso", "iso15919" -> "ISO"
             "hk", "harvardkyoto" -> "HK"
@@ -624,6 +714,7 @@ object Aksharamukha {
             "velthuis" -> "Velthuis"
             "slp1" -> "SLP1"
             "wx" -> "WX"
+            "readable", "en", "eng", "english", "latin" -> "Readable"
             else -> name.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
         }
     }

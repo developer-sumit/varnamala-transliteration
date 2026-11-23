@@ -47,7 +47,13 @@ class TransliterationEngine(
         scheme: RomanizationScheme = RomanizationScheme.READABLE,
     ): String {
         val target = Language.fromCode(targetLanguage)?.takeUnless { targetLanguage.equals("unknown", true) }
-            ?: return text
+        if (target == null) {
+            val normalized = Aksharamukha.normalizeScript(targetLanguage)
+            if (normalized in Aksharamukha.supportedScripts() || normalized in Aksharamukha.supportedRoman()) {
+                return aksharamukha(text, targetLanguage, sourceLanguage ?: "autodetect")
+            }
+            return text
+        }
         return transliterate(text, target, Language.fromCode(sourceLanguage), scheme)
     }
 

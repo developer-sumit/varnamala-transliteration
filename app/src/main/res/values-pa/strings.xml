@@ -4,7 +4,6 @@
 
     <string name="dark_mode">ਡਾਰਕ ਮੋਡ</string>
     <string name="language">ਭਾਸ਼ਾ</string>
-    <string name="terms_of_service">ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ</string>
     <string name="privacy_policy">ਗੋਪਨੀਯਤਾ ਨੀਤੀ</string>
     <string name="rate_app">ਐਪ ਰੇਟ ਕਰੋ</string>
 
@@ -18,10 +17,6 @@
     <string name="media_permission_description">ਗੈਲਰੀ ਵਿੱਚ ਤਸਵੀਰਾਂ ਦਿਖਾਉਣ ਲਈ ਸਾਨੂੰ ਤੁਹਾਡੀਆਂ ਤਸਵੀਰਾਂ ਤੱਕ ਪਹੁੰਚ ਦੀ ਲੋੜ ਹੈ।</string>
     <string name="media_permission_denied_description">ਮੀਡੀਆ ਇਜਾਜ਼ਤ ਸਥਾਈ ਤੌਰ \'ਤੇ ਰੱਦ ਕਰ ਦਿੱਤੀ ਗਈ ਹੈ।</string>
     <string name="media_permission_allow_hint">ਜਾਰੀ ਰੱਖਣ ਲਈ ਸਿਸਟਮ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਜਾਜ਼ਤ ਚਾਲੂ ਕਰੋ।</string>
-    <string name="overlay_permission_required">ਐਪਾਂ ਉੱਤੇ ਦਿਖਾਉਣ ਦੀ ਇਜਾਜ਼ਤ ਲੋੜੀਂਦੀ ਹੈ</string>
-    <string name="overlay_permission_description">ਹੋਰ ਐਪਾਂ ਦੇ ਉੱਪਰ ਓਵਰਲੇ ਵਿੰਡੋ ਦਿਖਾਉਣ ਲਈ ਸਾਨੂੰ ਇਜਾਜ਼ਤ ਦੀ ਲੋੜ ਹੈ।</string>
-    <string name="overlay_permission_denied_description">ਐਪਾਂ ਉੱਤੇ ਦਿਖਾਉਣ ਦੀ ਇਜਾਜ਼ਤ ਰੱਦ ਕਰ ਦਿੱਤੀ ਗਈ ਹੈ।</string>
-    <string name="overlay_permission_allow_hint">ਇਸ ਵਿਸ਼ੇਸ਼ਤਾ ਦੀ ਵਰਤੋਂ ਕਰਨ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਸੈਟਿੰਗਾਂ ਵਿੱਚ ਇਸਨੂੰ ਚਾਲੂ ਕਰੋ।</string>
 
     <string name="clear_cache">ਕੈਸ਼ ਸਾਫ਼ ਕਰੋ</string>
     <string name="gallery">ਗੈਲਰੀ</string>
@@ -38,9 +33,7 @@
     <string name="tutorial_flash_message">ਘੱਟ ਰੋਸ਼ਨੀ ਵਿੱਚ ਕੈਮਰਾ ਫਲੈਸ਼ ਟੌਗਲ ਕਰੋ।</string>
     <string name="tutorial_capture_title">ਕੈਪਚਰ / ਸਕੈਨ</string>
     <string name="tutorial_capture_message">ਫੋਟੋ ਲੈਣ ਲਈ ਟੈਪ ਕਰੋ, ਜਾਂ ਲਗਾਤਾਰ ਸਕੈਨ ਕਰਨ ਲਈ ਦਬਾ ਕੇ ਰੱਖੋ।</string>
-    <string name="tutorial_gallery_title">ਗੈਲਰੀ</string>
-    <string name="tutorial_gallery_message">ਸੇਵ ਕੀਤੀਆਂ ਤਸਵੀਰਾਂ ਖੋਲ੍ਹੋ ਅਤੇ OCR ਨਤੀਜੇ ਦੇਖੋ।</string>
-    
+
     <!-- Common UI actions -->
     <string name="confirm">ਪੁਸ਼ਟੀ ਕਰੋ</string>
     <string name="cancel">ਰੱਦ ਕਰੋ</string>
@@ -54,11 +47,7 @@
     <string name="bottom_nav_gallery">ਗੈਲਰੀ</string>
     
     <!-- Model Management -->
-    <string name="delete_model">ਮਾਡਲ ਮਿਟਾਓ</string>
-    <string name="delete_model_confirmation">ਕੀ ਤੁਸੀਂ %s ਮਾਡਲ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?</string>
-    <string name="model_deleted_successfully">ਮਾਡਲ ਸਫਲਤਾਪੂਰਵਕ ਮਿਟਾਇਆ ਗਿਆ</string>
-    <string name="failed_to_delete_model">ਮਾਡਲ ਮਿਟਾਉਣ ਵਿੱਚ ਅਸਫਲ</string>
-    
+
     <!-- Tutorial / Info Messages -->
     <string name="tutorial_switch_camera_title">ਕੈਮਰਾ ਬਦਲੋ</string>
     <string name="tutorial_switch_camera_message">ਅੱਗੇ ਅਤੇ ਪਿੱਛੇ ਦੇ ਕੈਮਰਿਆਂ ਵਿਚਕਾਰ ਬਦਲੋ।</string>
@@ -101,35 +90,22 @@
     
     <!-- Content descriptions -->
     <string name="copied">ਕਾਪੀ ਹੋ ਗਈ</string>
-    <string name="select_language">ਭਾਸ਼ਾ ਚੁਣੋ</string>
     <string name="selected">ਚੁਣਿਆ ਗਿਆ</string>
     <string name="back">ਪਿੱਛੇ</string>
     
     <!-- Additional UI labels -->
     <string name="image_details">ਤਸਵੀਰ ਵੇਰਵੇ</string>
-    <string name="ocr_result">OCR ਨਤੀਜਾ</string>
-    <string name="original">ਅਸਲ</string>
     <string name="transliterated">ਲਿਪੀਅੰਤਰਿਤ</string>
     <string name="display_options">ਡਿਸਪਲੇ ਵਿਕਲਪ</string>
     <string name="detection_options">ਖੋਜ ਵਿਕਲਪ</string>
-    <string name="ocr_results">OCR ਨਤੀਜੇ</string>
-    <string name="hide">ਲੁਕਾਓ</string>
-    <string name="show">ਦਿਖਾਓ</string>
-    <string name="both_text_panels_hidden">ਦੋਵੇਂ ਟੈਕਸਟ ਪੈਨਲ ਲੁਕੇ ਹੋਏ ਹਨ</string>
-    <string name="no_text_detected">ਤਸਵੀਰ ਵਿੱਚ ਕੋਈ ਟੈਕਸਟ ਨਹੀਂ ਮਿਲਿਆ</string>
-    
+
     <!-- Language change message -->
-    <string name="language_changed_restart">ਭਾਸ਼ਾ ਬਦਲ ਗਈ। ਬਦਲਾਅ ਦੇਖਣ ਲਈ ਕਿਰਪਾ ਕਰਕੇ ਐਪ ਮੁੜ ਚਾਲੂ ਕਰੋ।</string>
-    
+
     <!-- Overlay settings -->
-    <string name="overlay_settings">ਓਵਰਲੇ ਸੈਟਿੰਗਾਂ</string>
     <string name="enable_overlay">ਸਕ੍ਰੀਨ ਓਵਰਲੇ OCR</string>
     <string name="overlay_enabled">ਫਲੋਟਿੰਗ ਬਟਨ ਸਰਗਰਮ</string>
     <string name="overlay_disabled">ਫਲੋਟਿੰਗ ਬਟਨ ਚਾਲੂ ਕਰਨ ਲਈ ਟੈਪ ਕਰੋ</string>
-    <string name="overlay_feature_description">ਇਹ ਵਿਸ਼ੇਸ਼ਤਾ ਇੱਕ ਫਲੋਟਿੰਗ ਬਟਨ ਜੋੜਦੀ ਹੈ ਜੋ ਤੁਹਾਡੀ ਸਕ੍ਰੀਨ ਕੈਪਚਰ ਕਰਦੀ ਹੈ ਅਤੇ OCR ਟੈਕਸਟ ਅਤੇ ਬਾਊਂਡਿੰਗ ਬਾਕਸ ਓਵਰਲੇ ਵਜੋਂ ਦਿਖਾਉਂਦੀ ਹੈ।</string>
-    <string name="overlay_permission_hint">ਤੁਹਾਨੂੰ ਸਕ੍ਰੀਨ ਕੈਪਚਰ ਅਤੇ ਓਵਰਲੇ ਇਜਾਜ਼ਤਾਂ ਦੇਣੀਆਂ ਪੈਣਗੀਆਂ।</string>
     <string name="overlay_permission_denied">ਸਕ੍ਰੀਨ ਕੈਪਚਰ ਇਜਾਜ਼ਤ ਰੱਦ ਕੀਤੀ ਗਈ</string>
-    <string name="enable">ਚਾਲੂ ਕਰੋ</string>
     <string name="start_overlay">ਓਵਰਲੇ ਸ਼ੁਰੂ ਕਰੋ</string>
     <string name="stop_overlay">ਓਵਰਲੇ ਬੰਦ ਕਰੋ</string>
     
@@ -149,7 +125,6 @@
     <string name="transliterate">ਲਿਪੀਅੰਤਰਨ</string>
     <string name="select_ocr_language">OCR ਭਾਸ਼ਾ ਚੁਣੋ</string>
     <string name="select_transliteration_language">ਲਿਪੀਅੰਤਰਨ ਭਾਸ਼ਾ ਚੁਣੋ</string>
-    <string name="transliterate_to">ਲਿਪੀਅੰਤਰਨ ਕਰੋ</string>
 
     <!-- OCR engine selection -->
 
@@ -158,24 +133,12 @@
     <string name="unable_to_open_link">ਲਿੰਕ ਖੋਲ੍ਹਣ ਵਿੱਚ ਅਸਮਰੱਥ।</string>
 
     <!-- Model downloads -->
-    <string name="models">ਭਾਸ਼ਾ ਮਾਡਲ</string>
-    <string name="manage_models">ਡਾਊਨਲੋਡ ਕੀਤੇ OCR ਮਾਡਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ</string>
-    <string name="model_download">ਮਾਡਲ ਡਾਊਨਲੋਡ ਕਰੋ</string>
-    <string name="model_downloaded">ਡਾਊਨਲੋਡ ਹੋ ਗਿਆ</string>
-
-    <string name="model_download_notification_channel_name">ਮਾਡਲ ਡਾਊਨਲੋਡ</string>
-    <string name="model_download_notification_title">ਭਾਸ਼ਾ ਮਾਡਲ ਡਾਊਨਲੋਡ ਹੋ ਰਿਹਾ ਹੈ</string>
-    <string name="model_download_notification_content">%1$s • %2$d%%</string>
-    <string name="model_not_downloaded_fallback">ਮਾਡਲ ਡਾਊਨਲੋਡ ਨਹੀਂ ਹੋਇਆ, ਡਿਫਾਲਟ ਮਾਡਲ \'ਤੇ ਜਾ ਰਿਹਾ ਹੈ</string>
-
-    <string name="no_internet_connection">ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਹੀਂ ਹੈ</string>
 
     <!-- Text Input Screen -->
     <string name="text_input">ਟੈਕਸਟ ਇਨਪੁਟ</string>
     <string name="enter_text">ਟੈਕਸਟ ਦਾਖਲ ਕਰੋ</string>
     <string name="type_to_transliterate">ਲਿਪੀਅੰਤਰਨ ਲਈ ਇੱਥੇ ਟੈਕਸਟ ਟਾਈਪ ਜਾਂ ਪੇਸਟ ਕਰੋ…</string>
     <string name="characters">ਅੱਖਰ</string>
-    <string name="auto_detect">ਆਟੋ-ਖੋਜ</string>
 
     <!-- History Screen -->
     <string name="history">ਇਤਿਹਾਸ</string>
@@ -203,7 +166,6 @@
     <string name="auto_copy_hint">ਲਿਪੀਅੰਤਰਿਤ ਟੈਕਸਟ ਆਟੋਮੈਟਿਕ ਕਲਿੱਪਬੋਰਡ \'ਤੇ ਕਾਪੀ ਕਰੋ</string>
 
     <!-- Text-to-Speech -->
-    <string name="text_to_speech">ਟੈਕਸਟ-ਟੂ-ਸਪੀਚ</string>
     <string name="enable_tts">TTS ਚਾਲੂ ਕਰੋ</string>
     <string name="enable_tts_hint">ਲਿਪੀਅੰਤਰਿਤ ਟੈਕਸਟ ਉੱਚੀ ਆਵਾਜ਼ ਵਿੱਚ ਪੜ੍ਹੋ</string>
     <string name="tts_auto_speak">ਨਤੀਜੇ ਆਟੋ-ਬੋਲੋ</string>
@@ -213,10 +175,8 @@
     <string name="overlay_notification_title">ਵਰਨਮਾਲਾ ਓਵਰਲੇ ਸਰਗਰਮ</string>
     <string name="overlay_notification_text">ਸਕ੍ਰੀਨ ਟੈਕਸਟ ਦਾ ਵਿਸ਼ਲੇਸ਼ਣ ਕਰਨ ਲਈ ਕੈਪਚਰ ਬਟਨ ਵਰਤੋਂ</string>
     <string name="overlay_notification_stop_action">ਓਵਰਲੇ ਬੰਦ ਕਰੋ</string>
-    <string name="overlay_copied_to_clipboard">ਕਲਿੱਪਬੋਰਡ ਤੇ ਕਾਪੀ ਕੀਤਾ ਗਿਆ</string>
-    
+
     <!-- Clipboard Labels -->
-    <string name="clipboard_label_ocr_text">OCR ਟੈਕਸਟ</string>
     <string name="clipboard_label_transliterated_text">ਲਿਪੀਅੰਤਰਿਤ ਟੈਕਸਟ</string>
     <string name="clipboard_label_text">ਟੈਕਸਟ</string>
 </resources>
