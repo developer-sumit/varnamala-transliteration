@@ -1,6 +1,7 @@
 package com.sumit.varnamala.ui.screens
 
 import com.sumit.varnamala.R
+import com.sumit.varnamala.data.CameraSession
 import com.sumit.varnamala.data.Screen
 import com.sumit.varnamala.ui.components.CameraPermissionHandler
 import com.sumit.varnamala.ui.components.GlassButton
@@ -163,28 +164,23 @@ fun CameraScreen(navController: NavController) {
     // State variables
     var flashEnabled by remember { mutableStateOf(false) }
     var detectionRunning by remember { mutableStateOf(false) }
-    var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
-
     // Single capture functionality
     var captureImage by remember { mutableStateOf(false) }
     var isCapturing by remember { mutableStateOf(false) }
-    var capturedBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var capturedDisplaySize by remember { mutableStateOf(IntSize.Zero) }
-    var capturedImageProcessing by remember { mutableStateOf(false) }
-    var capturedPhotoScale by remember { mutableFloatStateOf(1f) }
-    var capturedPhotoOffset by remember { mutableStateOf(Offset.Zero) }
 
-    // OCR result processing variables
-    var rawOcrText by remember { mutableStateOf("") }
-    var detectedLanguage by remember { mutableStateOf("unknown") }
+    // Captured photo and OCR state backed by CameraSession to survive navigation and language changes
+    val capturedBitmap = CameraSession.capturedBitmap
+    val capturedDisplaySize = CameraSession.capturedDisplaySize
+    val capturedImageProcessing = CameraSession.capturedImageProcessing
+    val capturedPhotoScale = CameraSession.capturedPhotoScale
+    val capturedPhotoOffset = CameraSession.capturedPhotoOffset
+    val rawOcrText = CameraSession.rawOcrText
+    val detectedLanguage = CameraSession.detectedLanguage
+    val lastOCRResult = CameraSession.lastOCRResult
 
     // Intercept back button when an image is captured: dismiss captured image instead of exiting
     BackHandler(enabled = capturedBitmap != null) {
-        capturedBitmap = null
-        rawOcrText = ""
-        lastOCRResult = null
-        capturedPhotoScale = 1f
-        capturedPhotoOffset = Offset.Zero
+        CameraSession.clearCaptured()
     }
 
     val selectedOcrModel = remember(selectedOcrModelCode) {
@@ -242,16 +238,20 @@ fun CameraScreen(navController: NavController) {
     LaunchedEffect(rawOcrText, convertedText, capturedBitmap) {
         val photo = capturedBitmap ?: return@LaunchedEffect
         if (rawOcrText.isNotBlank() && convertedText.isNotBlank() && convertedText != rawOcrText) {
-            historyRepository.addEntry(
-                HistoryEntry(
-                    originalText = rawOcrText,
-                    transliteratedText = convertedText,
-                    sourceLanguage = detectedLanguage,
-                    targetLanguage = selectedTargetLanguage.localeCode,
-                    source = "camera",
-                    imageRef = ScanThumbnails.save(context, photo),
+            val historyKey = "$rawOcrText->$convertedText->${selectedTargetLanguage.localeCode}"
+            if (CameraSession.lastSavedHistoryKey != historyKey) {
+                CameraSession.lastSavedHistoryKey = historyKey
+                historyRepository.addEntry(
+                    HistoryEntry(
+                        originalText = rawOcrText,
+                        transliteratedText = convertedText,
+                        sourceLanguage = detectedLanguage,
+                        targetLanguage = selectedTargetLanguage.localeCode,
+                        source = "camera",
+                        imageRef = ScanThumbnails.save(context, photo),
+                    )
                 )
-            )
+            }
             if (autoCopyEnabled) {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(ClipData.newPlainText(context.getString(R.string.clipboard_label_transliterated_text), convertedText))
@@ -319,17 +319,17 @@ fun CameraScreen(navController: NavController) {
                         val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
                             val newScale = (capturedPhotoScale * zoomChange).coerceIn(1f, 6f)
                             if (newScale == 1f) {
-                                capturedPhotoOffset = Offset.Zero
+                                CameraSession.capturedPhotoOffset = Offset.Zero
                             } else {
                                 val maxOffsetX = (containerSize.width * (newScale - 1f)) / 2f
                                 val maxOffsetY = (containerSize.height * (newScale - 1f)) / 2f
                                 val newOffset = capturedPhotoOffset + panChange
-                                capturedPhotoOffset = Offset(
+                                CameraSession.capturedPhotoOffset = Offset(
                                     x = newOffset.x.coerceIn(-maxOffsetX, maxOffsetX),
                                     y = newOffset.y.coerceIn(-maxOffsetY, maxOffsetY)
                                 )
                             }
-                            capturedPhotoScale = newScale
+                            CameraSession.capturedPhotoScale = newScale
                         }
 
                         Box(
@@ -347,15 +347,15 @@ fun CameraScreen(navController: NavController) {
                                     detectTapGestures(
                                         onDoubleTap = { tapOffset ->
                                             if (capturedPhotoScale > 1.05f) {
-                                                capturedPhotoScale = 1f
-                                                capturedPhotoOffset = Offset.Zero
+                                                CameraSession.capturedPhotoScale = 1f
+                                                CameraSession.capturedPhotoOffset = Offset.Zero
                                             } else {
-                                                capturedPhotoScale = 2.5f
+                                                CameraSession.capturedPhotoScale = 2.5f
                                                 val centerX = containerSize.width / 2f
                                                 val centerY = containerSize.height / 2f
                                                 val maxOffsetX = (containerSize.width * 1.5f) / 2f
                                                 val maxOffsetY = (containerSize.height * 1.5f) / 2f
-                                                capturedPhotoOffset = Offset(
+                                                CameraSession.capturedPhotoOffset = Offset(
                                                     x = ((centerX - tapOffset.x) * 1.5f).coerceIn(-maxOffsetX, maxOffsetX),
                                                     y = ((centerY - tapOffset.y) * 1.5f).coerceIn(-maxOffsetY, maxOffsetY)
                                                 )
@@ -468,27 +468,27 @@ fun CameraScreen(navController: NavController) {
                             captureImage = captureImage,
                             onCaptureComplete = {
                                 captureImage = false
-                                capturedImageProcessing = false
+                                CameraSession.capturedImageProcessing = false
                             },
                             onImageCaptured = { bitmap ->
-                                capturedBitmap = bitmap
-                                capturedImageProcessing = true
+                                CameraSession.capturedBitmap = bitmap
+                                CameraSession.capturedImageProcessing = true
                                 isCapturing = false
                             },
                             onOCRResult = { result ->
-                                lastOCRResult = result
-                                rawOcrText = result.text
-                                capturedImageProcessing = false
+                                CameraSession.lastOCRResult = result
+                                CameraSession.rawOcrText = result.text
+                                CameraSession.capturedImageProcessing = false
 
                                 // Detect language for OCR results
                                 if (result.text.isNotBlank()) {
-                                    detectedLanguage = LanguageDetector.detectLanguage(result.text)
+                                    CameraSession.detectedLanguage = LanguageDetector.detectLanguage(result.text)
                                 }
                             },
                             onError = { error ->
                                 if (isCapturing) {
                                     isCapturing = false
-                                    capturedImageProcessing = false
+                                    CameraSession.capturedImageProcessing = false
                                 }
                             }
                         )
@@ -583,11 +583,7 @@ fun CameraScreen(navController: NavController) {
                     size = 48.dp,
                     background = Color.Black.copy(alpha = 0.7f),
                     onClick = {
-                        capturedBitmap = null
-                        rawOcrText = ""
-                        lastOCRResult = null
-                        capturedPhotoScale = 1f
-                        capturedPhotoOffset = Offset.Zero
+                        CameraSession.clearCaptured()
                     }
                 )
             }
@@ -663,9 +659,7 @@ fun CameraScreen(navController: NavController) {
                                     return@CameraCaptureButton
                                 }
                                 // Clear any previous capture
-                                capturedBitmap = null
-                                rawOcrText = ""
-                                lastOCRResult = null
+                                CameraSession.clearCaptured()
 
                                 isCapturing = true
                                 captureImage = true
@@ -679,9 +673,7 @@ fun CameraScreen(navController: NavController) {
                                     return@CameraCaptureButton
                                 }
                                 // Clear any captured image
-                                capturedBitmap = null
-                                rawOcrText = ""
-                                lastOCRResult = null
+                                CameraSession.clearCaptured()
 
                                 detectionRunning = true
                             }

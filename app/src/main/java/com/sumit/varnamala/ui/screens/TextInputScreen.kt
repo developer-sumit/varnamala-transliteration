@@ -4,6 +4,7 @@ import com.sumit.varnamala.R
 import com.sumit.varnamala.data.Language
 import com.sumit.varnamala.data.HistoryEntry
 import com.sumit.varnamala.data.Screen
+import com.sumit.varnamala.data.TextInputSession
 import com.sumit.varnamala.data.TransliterationLanguageCatalog
 import com.sumit.varnamala.data.TransliterationHistoryRepository
 import com.sumit.varnamala.data.preferences.OCRSettingsRepository
@@ -107,9 +108,9 @@ fun TextInputScreen(navController: NavController) {
     val hapticEnabled by userPrefsRepository.hapticFeedbackEnabled.collectAsState(initial = true)
     val autoCopyEnabled by userPrefsRepository.autoCopyEnabled.collectAsState(initial = false)
 
-    // Input state
-    var inputText by remember { mutableStateOf("") }
-    var transliteratedText by remember { mutableStateOf("") }
+    // Input state backed by session to preserve text across navigation and language changes
+    val inputText = TextInputSession.inputText
+    val transliteratedText = TextInputSession.transliteratedText
 
     val selectedSourceCode by ocrSettingsRepository.selectedSourceTransliterationCode.collectAsState(
         initial = "auto"
@@ -160,7 +161,7 @@ fun TextInputScreen(navController: NavController) {
     // the speech engine wait for typing to settle so a half-typed word is not saved.
     LaunchedEffect(inputText, sourceLanguage, targetLanguage) {
         if (inputText.isBlank()) {
-            transliteratedText = ""
+            TextInputSession.transliteratedText = ""
             speech.stop()
             return@LaunchedEffect
         }
@@ -173,7 +174,7 @@ fun TextInputScreen(navController: NavController) {
         val tgtLang = targetLanguage.localeCode
         val converted = withContext(Dispatchers.Default) { Transliterator.transliterate(inputText, srcLang, tgtLang) }
         resolvedSource = speechLanguage(srcLang)
-        transliteratedText = converted
+        TextInputSession.transliteratedText = converted
 
         delay(1200)
         if (autoCopyEnabled && converted.isNotBlank()) {
@@ -183,15 +184,19 @@ fun TextInputScreen(navController: NavController) {
             )
         }
         if (converted.isNotBlank() && converted != inputText) {
-            historyRepository.addEntry(
-                HistoryEntry(
-                    originalText = inputText,
-                    transliteratedText = converted,
-                    sourceLanguage = srcLang,
-                    targetLanguage = tgtLang,
-                    source = "text_input"
+            val historyKey = "$inputText->$converted->$srcLang->$tgtLang"
+            if (TextInputSession.lastSavedHistoryKey != historyKey) {
+                TextInputSession.lastSavedHistoryKey = historyKey
+                historyRepository.addEntry(
+                    HistoryEntry(
+                        originalText = inputText,
+                        transliteratedText = converted,
+                        sourceLanguage = srcLang,
+                        targetLanguage = tgtLang,
+                        source = "text_input"
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -308,8 +313,7 @@ fun TextInputScreen(navController: NavController) {
                         )
                         TextButton(
                             onClick = {
-                                inputText = ""
-                                transliteratedText = ""
+                                TextInputSession.clear()
                                 performHapticFeedback()
                             },
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
@@ -326,7 +330,7 @@ fun TextInputScreen(navController: NavController) {
 
                 BasicTextField(
                     value = inputText,
-                    onValueChange = { inputText = it },
+                    onValueChange = { TextInputSession.inputText = it },
                     visualTransformation = spokenWordHighlight(speech, "typed", 0, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
                     modifier = Modifier
                         .fillMaxWidth()
