@@ -8,15 +8,15 @@
   <strong>Transform Indian scripts into readable English and across Indic languages - 100% offline & private on-device AI.</strong>
 </p>
 
-[![Platform](https://img.shields.io/badge/Platform-Android%20(API%2024%2B)-3DDC84?style=flat-square&logo=android&logoColor=white)](https://developer.android.com)
-[![Language](https://img.shields.io/badge/Language-Kotlin%202.0.21-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
-[![UI Framework](https://img.shields.io/badge/UI-Jetpack%20Compose%20(Material%203)-4285F4?style=flat-square&logo=jetpack-compose&logoColor=white)](https://developer.android.com/jetpack/compose)
-[![OCR Engine](https://img.shields.io/badge/OCR%20Engine-PaddleOCR%20(PP--OCRv6)-0052CC?style=flat-square)](https://github.com/PaddlePaddle/PaddleOCR)
-[![ML Runtime](https://img.shields.io/badge/ML%20Inference-ONNX%20Runtime%20Mobile-005CED?style=flat-square)](https://onnxruntime.ai)
-[![Transliteration](https://img.shields.io/badge/Transliteration-KMP%20%2B%20Aksharamukha-FF6B00?style=flat-square)](https://github.com/virtualvinodh/aksharamukha)
-[![Build Tool](https://img.shields.io/badge/Build%20Tool-Gradle%209.8.2-02303A?style=flat-square&logo=gradle&logoColor=white)](https://gradle.org)
-[![Architecture](https://img.shields.io/badge/Architecture-MVVM%20%2B%20UDF-blueviolet?style=flat-square)](https://developer.android.com/topic/architecture)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Android_24%2B-3DDC84?style=flat-square&logo=android&logoColor=white)](https://developer.android.com)
+[![Language](https://img.shields.io/badge/Language-Kotlin_2.0.21-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://kotlinlang.org)
+[![Framework](https://img.shields.io/badge/Framework-Jetpack_Compose-4285F4?style=flat-square&logo=jetpackcompose&logoColor=white)](https://developer.android.com/jetpack/compose)
+[![OCR Engine](https://img.shields.io/badge/OCR_Engine-PaddleOCR_PP--OCRv6-0052CC?style=flat-square)](https://github.com/PaddlePaddle/PaddleOCR)
+[![ML Runtime](https://img.shields.io/badge/ML_Runtime-ONNX_Runtime_Mobile-005CED?style=flat-square&logo=onnx&logoColor=white)](https://onnxruntime.ai)
+[![Transliteration](https://img.shields.io/badge/Transliteration-KMP_%2B_Aksharamukha-FF6B00?style=flat-square)](https://github.com/virtualvinodh/aksharamukha)
+[![Build Tool](https://img.shields.io/badge/Build_Tool-Gradle_9.8.2-02303A?style=flat-square&logo=gradle&logoColor=white)](https://gradle.org)
+[![Architecture](https://img.shields.io/badge/Architecture-MVVM_%2B_UDF-8A2BE2?style=flat-square)](https://developer.android.com/topic/architecture)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
 <br/>
 
@@ -35,11 +35,27 @@
   </a>
 </p>
 
+</div>
+
 ---
 
-[Features](#-features) • [Screenshots](#-screenshots) • [Architecture](#-architecture) • [Aksharamukha Engine](#-aksharamukha-transliteration-engine) • [Getting Started](#-getting-started) • [AI Tooling](#-ai-agents--developer-tooling) • [License](#-license)
+## 📑 Table of Contents
 
-</div>
+- [Features](#-features)
+  - [Core Capabilities](#-core-capabilities)
+- [Screenshots](#-screenshots)
+- [Architecture & Modules](#️-architecture--modules)
+- [Aksharamukha Transliteration Engine](#-aksharamukha-transliteration-engine)
+  - [Supported Scripts & Schemes](#supported-scripts--schemes)
+  - [JSON Mapping Resources](#json-mapping-resources)
+  - [Code Example](#code-example)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Build from Source](#build-from-source)
+  - [Building Signed Release APKs](#building-signed-release-apks)
+- [AI Agents & Developer Tooling](#-ai-agents--developer-tooling)
+- [Contributing](#-contributing)
+- [License](#-license)
 
 ---
 
