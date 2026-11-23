@@ -9,6 +9,9 @@ import android.content.Context
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.util.Log
+import android.view.OrientationEventListener
+import android.view.Surface
+import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -17,6 +20,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
+import androidx.camera.core.UseCaseGroup
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
@@ -102,6 +106,38 @@ fun OCRCameraPreview(
     var lastOCRResult by remember { mutableStateOf<OCRResult?>(null) }
     var lastNonEmptyAt by remember { mutableStateOf(0L) }
     var previewSize by remember { mutableStateOf(IntSize.Zero) }
+    var currentDisplayRotation by remember { mutableStateOf(Surface.ROTATION_0) }
+
+    val orientationEventListener = remember {
+        object : OrientationEventListener(context) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) return
+                val rot = previewView?.display?.rotation ?: when (orientation) {
+                    in 45..134 -> Surface.ROTATION_270
+                    in 135..224 -> Surface.ROTATION_180
+                    in 225..314 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
+                if (rot != currentDisplayRotation) {
+                    currentDisplayRotation = rot
+                }
+                try {
+                    preview?.targetRotation = rot
+                    imageAnalyzer?.targetRotation = rot
+                    imageCapture?.targetRotation = rot
+                } catch (_: Throwable) {}
+            }
+        }
+    }
+
+    DisposableEffect(orientationEventListener) {
+        if (orientationEventListener.canDetectOrientation()) {
+            orientationEventListener.enable()
+        }
+        onDispose {
+            orientationEventListener.disable()
+        }
+    }
 
     LaunchedEffect(paddleRepository) {
         withContext(Dispatchers.IO) {
@@ -115,7 +151,24 @@ fun OCRCameraPreview(
             modifier = Modifier
                 .fillMaxSize()
                 .onGloballyPositioned { coordinates ->
+                    val oldSize = previewSize
                     previewSize = coordinates.size
+                    val currentRotation = previewView?.display?.rotation
+                    if (currentRotation != null && currentRotation != currentDisplayRotation) {
+                        currentDisplayRotation = currentRotation
+                    }
+                    if (currentRotation != null) {
+                        try {
+                            preview?.targetRotation = currentRotation
+                            imageAnalyzer?.targetRotation = currentRotation
+                            imageCapture?.targetRotation = currentRotation
+                        } catch (_: Throwable) {}
+                    }
+                    if (oldSize != IntSize.Zero &&
+                        (oldSize.width > oldSize.height) != (coordinates.size.width > coordinates.size.height)
+                    ) {
+                        lastOCRResult = null
+                    }
                 },
             factory = { ctx ->
                 PreviewView(ctx).apply {
@@ -160,17 +213,21 @@ fun OCRCameraPreview(
             modifier = Modifier.fillMaxSize()
         )
 
-        LaunchedEffect(isDetectionRunning, lensFacing, cameraProvider) {
+        LaunchedEffect(isDetectionRunning, lensFacing, cameraProvider, currentDisplayRotation) {
             cameraProvider?.let { provider ->
                 val wrappedOnOCR: (OCRResult) -> Unit = { result ->
-                    // Keep showing the previous lines briefly when a frame finds nothing (motion
-                    // blur, a blink), so the overlay does not flicker between runs.
-                    val now = System.currentTimeMillis()
-                    if (result.boundingBoxes.isNotEmpty()) lastNonEmptyAt = now
-                    if (result.boundingBoxes.isNotEmpty() || now - lastNonEmptyAt > KEEP_LAST_RESULT_MS) {
-                        lastOCRResult = result
+                    val isLandscapePreview = previewSize.width > previewSize.height
+                    val isLandscapeResult = result.imageWidth > result.imageHeight
+                    if (previewSize != IntSize.Zero && isLandscapePreview != isLandscapeResult) {
+                        // Stale result from previous orientation, do not display
+                    } else {
+                        val now = System.currentTimeMillis()
+                        if (result.boundingBoxes.isNotEmpty()) lastNonEmptyAt = now
+                        if (result.boundingBoxes.isNotEmpty() || now - lastNonEmptyAt > KEEP_LAST_RESULT_MS) {
+                            lastOCRResult = result
+                        }
+                        onOCRResult(result)
                     }
-                    onOCRResult(result)
                 }
 
                 updateAnalysisUseCase(
@@ -178,6 +235,7 @@ fun OCRCameraPreview(
                     lifecycleOwner = lifecycleOwner,
                     preview = preview,
                     imageCapture = imageCapture,
+                    previewView = previewView,
                     lensFacing = lensFacing,
                     isDetectionRunning = isDetectionRunning,
                     cameraExecutor = cameraExecutor,
@@ -295,15 +353,22 @@ private fun setupCameraOnce(
     cameraProviderFuture.addListener({
         try {
             val cameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder().build()
+            val targetRotation = previewView.display?.rotation ?: Surface.ROTATION_0
+            val preview = Preview.Builder()
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetRotation(targetRotation)
+                .build()
                 .also { it.surfaceProvider = previewView.surfaceProvider }
 
             val imageCapture = ImageCapture.Builder()
                 .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetRotation(targetRotation)
                 .build()
 
             val cameraSelector = selectCameraSelector(cameraProvider, lensFacing)
             cameraProvider.unbindAll()
+
             val camera = cameraProvider.bindToLifecycle(
                 lifecycleOwner,
                 cameraSelector,
@@ -324,6 +389,7 @@ private fun updateAnalysisUseCase(
     lifecycleOwner: LifecycleOwner,
     preview: Preview?,
     imageCapture: ImageCapture?,
+    previewView: PreviewView?,
     lensFacing: Int,
     isDetectionRunning: Boolean,
     cameraExecutor: ExecutorService,
@@ -342,11 +408,20 @@ private fun updateAnalysisUseCase(
 ) {
     try {
         val cameraSelector = selectCameraSelector(cameraProvider, lensFacing)
+        val targetRotation = previewView?.display?.rotation ?: Surface.ROTATION_0
+
+        // Keep preview and imageCapture in sync with the current target rotation
+        try {
+            preview?.targetRotation = targetRotation
+            imageCapture?.targetRotation = targetRotation
+        } catch (_: Throwable) {}
 
         if (isDetectionRunning) {
             val imageAnalyzer = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+                .setTargetRotation(targetRotation)
                 .build()
                 .also { analysis ->
                     val analyzerCounter = AtomicInteger(0)
@@ -407,6 +482,7 @@ private fun updateAnalysisUseCase(
             preview?.let { useCases.add(it) }
             imageAnalyzer.let { useCases.add(it) }
             imageCapture?.let { useCases.add(it) }
+
             val cam = cameraProvider.bindToLifecycle(
                 lifecycleOwner,
                 cameraSelector,
@@ -421,11 +497,12 @@ private fun updateAnalysisUseCase(
             preview?.let { useCases.add(it) }
             imageCapture?.let { useCases.add(it) }
             if (useCases.isNotEmpty()) {
-                cameraProvider.bindToLifecycle(
+                val cam = cameraProvider.bindToLifecycle(
                     lifecycleOwner,
                     cameraSelector,
                     *useCases.toTypedArray()
                 )
+                onCameraReady(cam)
             }
             onAnalyzerReady(null)
         }
@@ -452,8 +529,7 @@ private fun selectCameraSelector(
 
 /**
  * Decodes any CameraX frame (RGBA analysis frames, YUV frames with row padding, or JPEG
- * captures) into a bitmap; rotation is applied separately. The previous manual NV21 copy ignored row and
- * pixel strides and crashed on single-plane JPEG captures, so OCR never received a valid image.
+ * captures) into a bitmap; rotation is applied separately.
  */
 private fun imageProxyToBitmap(imageProxy: ImageProxy): android.graphics.Bitmap = imageProxy.toBitmap()
 

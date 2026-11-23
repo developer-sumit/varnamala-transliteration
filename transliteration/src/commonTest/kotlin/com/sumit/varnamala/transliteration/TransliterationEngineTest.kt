@@ -13,14 +13,14 @@ import com.sumit.varnamala.transliteration.Language.SANSKRIT
 import com.sumit.varnamala.transliteration.Language.TAMIL
 import com.sumit.varnamala.transliteration.Language.TELUGU
 import com.sumit.varnamala.transliteration.Language.URDU
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.Test
+import org.junit.Assert.assertEquals
 
 class TransliterationEngineTest {
     private val engine = TransliterationEngine()
 
     private fun check(expected: String, input: String, target: Language, source: Language? = null) =
-        assertEquals(expected, engine.transliterate(input, target, source), "$input → ${target.code}")
+        assertEquals("$input → ${target.code}", expected, engine.transliterate(input, target, source))
 
     private fun iso(input: String, source: Language? = null) =
         engine.transliterate(input, ENGLISH, source, RomanizationScheme.ISO_15919)
@@ -112,7 +112,7 @@ class TransliterationEngineTest {
         assertEquals("kr̥ṣṇa", iso("कृष्ण"))
         assertEquals("vaṇakkam", iso("வணக்கம்"))
         for (word in listOf("नमस्ते", "राष्ट्र", "कृष्ण", "ज़िंदगी", "संस्कृत", "दुःख")) {
-            assertEquals(word, engine.transliterate(iso(word), SANSKRIT), "round trip $word")
+            assertEquals("round trip $word", word, engine.transliterate(iso(word), SANSKRIT))
         }
     }
 

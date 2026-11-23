@@ -27,4 +27,15 @@ object Transliterator {
         targetLanguage: String = "en",
         scheme: RomanizationScheme = RomanizationScheme.READABLE,
     ): String = engine.transliterate(text, targetLanguage, sourceLanguage, scheme)
+
+    /**
+     * Transliterates [text] using the Aksharamukha engine across Indic scripts and Romanization schemes.
+     */
+    fun aksharamukha(
+        text: String,
+        targetScript: String,
+        sourceScript: String = "autodetect",
+        preOptions: List<String> = emptyList(),
+        postOptions: List<String> = emptyList(),
+    ): String = engine.aksharamukha(text, targetScript, sourceScript, preOptions, postOptions)
 }

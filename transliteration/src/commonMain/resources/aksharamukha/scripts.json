@@ -1,0 +1,106 @@
+{
+  "scripts": [
+    {
+      "name": "Devanagari",
+      "file": "Devanagari.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Bengali",
+      "file": "Bengali.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Assamese",
+      "file": "Assamese.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Tamil",
+      "file": "Tamil.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Telugu",
+      "file": "Telugu.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Kannada",
+      "file": "Kannada.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Malayalam",
+      "file": "Malayalam.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Gujarati",
+      "file": "Gujarati.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Gurmukhi",
+      "file": "Gurmukhi.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "Oriya",
+      "file": "Oriya.json",
+      "type": "indic",
+      "entries": 84
+    },
+    {
+      "name": "IAST",
+      "file": "IAST.json",
+      "type": "romanization",
+      "entries": 84
+    },
+    {
+      "name": "ISO15919",
+      "file": "ISO15919.json",
+      "type": "romanization",
+      "entries": 84
+    },
+    {
+      "name": "HK",
+      "file": "HK.json",
+      "type": "romanization",
+      "entries": 84
+    },
+    {
+      "name": "ITRANS",
+      "file": "ITRANS.json",
+      "type": "romanization",
+      "entries": 84
+    },
+    {
+      "name": "Velthuis",
+      "file": "Velthuis.json",
+      "type": "romanization",
+      "entries": 84
+    },
+    {
+      "name": "SLP1",
+      "file": "SLP1.json",
+      "type": "romanization",
+      "entries": 84
+    },
+    {
+      "name": "WX",
+      "file": "WX.json",
+      "type": "romanization",
+      "entries": 84
+    }
+  ]
+}

@@ -51,6 +51,20 @@ class TransliterationEngine(
         return transliterate(text, target, Language.fromCode(sourceLanguage), scheme)
     }
 
+    /**
+     * Transliterates [text] using the Aksharamukha engine across Indic scripts and Romanization schemes.
+     *
+     * @param targetScript target script name or romanization scheme (e.g. "Devanagari", "Tamil", "IAST")
+     * @param sourceScript source script name or "autodetect"
+     */
+    fun aksharamukha(
+        text: String,
+        targetScript: String,
+        sourceScript: String = "autodetect",
+        preOptions: List<String> = emptyList(),
+        postOptions: List<String> = emptyList(),
+    ): String = Aksharamukha.process(sourceScript, targetScript, text, preOptions, postOptions)
+
     // ---- Runs ----
 
     private data class Run(val text: String, val script: Script?)

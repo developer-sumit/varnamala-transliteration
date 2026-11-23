@@ -22,7 +22,6 @@ import com.sumit.varnamala.transliteration.LanguageDetector
 import com.sumit.varnamala.utils.Transliterator
 import com.sumit.varnamala.data.ScanThumbnails
 import com.sumit.varnamala.tts.SpeechPart
-import com.sumit.varnamala.ui.components.ScanResultCard
 import com.sumit.varnamala.ui.components.rememberSpeechController
 import com.sumit.varnamala.ui.components.speechLanguage
 import com.sumit.varnamala.data.ocr.CachedLanguageGroup
@@ -219,90 +218,76 @@ fun ImageDetailScreen(navController: NavController, imageId: Long, sharedUri: Ur
     }
 
     Box(Modifier.fillMaxSize()) {
-        meta?.let { m ->
-            val targetUri = sharedUri ?: ContentUris.withAppendedId(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId
+        val targetUri = sharedUri ?: ContentUris.withAppendedId(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageId
+        )
+        val transformableState =
+            rememberTransformableState { zoomChange, offsetChange, _ ->
+                scale = (scale * zoomChange).coerceIn(1f, 5f)
+                offset += offsetChange
+            }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(
+                    scaleX = scale,
+                    scaleY = scale,
+                    translationX = offset.x,
+                    translationY = offset.y,
+                )
+                .transformable(state = transformableState)
+                .onGloballyPositioned { coordinates ->
+                    imageSize = coordinates.size
+                },
+            contentAlignment = Alignment.Center
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context).data(targetUri).crossfade(true).build(),
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Fit
             )
-            val aspectRatio =
-                if (m.width != null && m.height != null && m.height != 0) m.width.toFloat() / m.height.toFloat() else 1f
-            val transformableState =
-                rememberTransformableState { zoomChange, offsetChange, _ ->
-                    scale = (scale * zoomChange).coerceIn(1f, 5f)
-                    offset += offsetChange
+
+            val overlayTextOverrides =
+                remember(lastResult, selectedTargetLanguage, detectedLanguage) {
+                    val result = lastResult
+                    if (result == null) {
+                        null
+                    } else {
+                        result.boundingBoxes
+                            .flatMap { it.lines }
+                            .flatMap { it.elements }
+                            .filter { !it.isLowConfidence }
+                            .associate { element ->
+                                element.boundingBox to Transliterator.transliterate(
+                                    text = element.text,
+                                    sourceLanguage = detectedLanguage,
+                                    targetLanguage = selectedTargetLanguage.localeCode
+                                )
+                            }
+                    }
                 }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(aspectRatio)
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context).data(targetUri).crossfade(true)
-                        .build(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .aspectRatio(aspectRatio)
-                        .graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale,
-                            translationX = offset.x,
-                            translationY = offset.y,
-                        )
-                        .transformable(state = transformableState)
-                        .onGloballyPositioned { coordinates ->
-                            imageSize = coordinates.size
-                        },
-                    contentScale = ContentScale.Fit
-                )
-
-                val overlayTextOverrides =
-                    remember(lastResult, selectedTargetLanguage, detectedLanguage) {
-                        val result = lastResult
-                        if (result == null) {
-                            null
-                        } else {
-                            result.boundingBoxes
-                                .flatMap { it.lines }
-                                .flatMap { it.elements }
-                                .filter { !it.isLowConfidence }
-                                .associate { element ->
-                                    element.boundingBox to Transliterator.transliterate(
-                                        text = element.text,
-                                        sourceLanguage = detectedLanguage,
-                                        targetLanguage = selectedTargetLanguage.localeCode
-                                    )
-                                }
-                        }
-                    }
-
-                OCROverlayCanvas(
-                    result = lastResult,
-                    textOverride = overlayTextOverrides,
-                    containerSize = imageSize,
-                    showBoundingBoxes = showBoundingBoxes,
-                    showTextOverlay = showTextOverlay,
-                    showWordBoundingBoxes = showWordBoundingBoxes,
-                    showLineBoundingBoxes = showLineBoundingBoxes,
-                    showBlockBoundingBoxes = showBlockBoundingBoxes,
-                    textBackgroundOpacity = textBackgroundOpacity,
-                    boundingBoxStrokeWidth = boundingBoxStrokeWidth,
-                    enableTextCopy = true,
-                    onWordTap = { word ->
-                        speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage))))
-                    },
-                    highContrast = highContrast,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .aspectRatio(aspectRatio)
-                        .graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale,
-                            translationX = offset.x,
-                            translationY = offset.y,
-                        )
-                )
-            }
+            OCROverlayCanvas(
+                result = lastResult,
+                textOverride = overlayTextOverrides,
+                containerSize = imageSize,
+                cropToFill = false,
+                showBoundingBoxes = showBoundingBoxes,
+                showTextOverlay = showTextOverlay,
+                showWordBoundingBoxes = showWordBoundingBoxes,
+                showLineBoundingBoxes = showLineBoundingBoxes,
+                showBlockBoundingBoxes = showBlockBoundingBoxes,
+                textBackgroundOpacity = textBackgroundOpacity,
+                boundingBoxStrokeWidth = boundingBoxStrokeWidth,
+                enableTextCopy = true,
+                onWordTap = { word ->
+                    speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage))))
+                },
+                highContrast = highContrast,
+                modifier = Modifier.fillMaxSize()
+            )
         }
 
         Row(
@@ -405,17 +390,6 @@ fun ImageDetailScreen(navController: NavController, imageId: Long, sharedUri: Ur
                             SpeechPart(transliteratedText, selectedTargetLanguage.localeCode),
                         )
                     }
-                }
-
-                if (rawOcrText.isNotBlank()) {
-                    ScanResultCard(
-                        original = rawOcrText,
-                        converted = transliteratedText,
-                        originalLanguage = speechLanguage(detectedLanguage),
-                        convertedLanguage = selectedTargetLanguage.localeCode,
-                        speech = speech,
-                        textScale = textDisplaySize,
-                    )
                 }
             }
 
@@ -757,17 +731,20 @@ private suspend fun runSingleImageOcr(
     onThumbnail(ScanThumbnails.save(context, bitmap))
     val repository = PaddleOcrRepository(context)
     try {
-        // Quick pass with the fast model so boxes appear in about a second; the accurate pass
-        // (several seconds on a large photo) then replaces it.
-        val accurateInstalled = com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.get(context)
-            .isReady(com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.MEDIUM)
-        if (accurateInstalled) {
+        val provisioner = com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.get(context)
+        val accurateInstalled = provisioner.isReady(com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.MEDIUM)
+        val fastInstalled = provisioner.isReady(com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.TINY)
+        if (!accurateInstalled && !fastInstalled) {
+            throw IllegalStateException("OCR models are not downloaded. Please download OCR resources in Settings.")
+        }
+        if (accurateInstalled && fastInstalled) {
             onPreview(repository.processBitmap(bitmap, preferredLanguage, com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.TINY))
         }
+        val targetTier = if (accurateInstalled) com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.MEDIUM else com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.TINY
         repository.processBitmap(
             bitmap,
             preferredLanguage,
-            com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.MEDIUM,
+            targetTier,
             enhance = true,
         )
     } finally {

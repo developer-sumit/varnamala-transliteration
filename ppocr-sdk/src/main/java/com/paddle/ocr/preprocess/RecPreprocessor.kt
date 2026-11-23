@@ -52,7 +52,7 @@ object RecPreprocessor {
         for (mat in resizedMats) {
             val floatMat = Mat(mat.rows(), mat.cols(), CvType.CV_32FC3)
             mat.convertTo(floatMat, CvType.CV_32F)
-            // Use Scalar with all 3 channels set — single-value Scalar only sets val[0]!
+            // Use Scalar with all 3 channels set (single-value Scalar only sets val[0])!
             Core.divide(floatMat, org.opencv.core.Scalar(127.5, 127.5, 127.5), floatMat)
             Core.subtract(floatMat, org.opencv.core.Scalar(1.0, 1.0, 1.0), floatMat)
 

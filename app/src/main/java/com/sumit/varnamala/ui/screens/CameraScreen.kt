@@ -29,10 +29,14 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +49,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.zIndex
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +64,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +73,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
@@ -86,7 +96,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.sumit.varnamala.data.ScanThumbnails
 import com.sumit.varnamala.tts.SpeechPart
-import com.sumit.varnamala.ui.components.ScanResultCard
 import com.sumit.varnamala.ui.components.rememberSpeechController
 import com.sumit.varnamala.ui.components.speechLanguage
 import kotlinx.coroutines.launch
@@ -166,10 +175,22 @@ fun CameraScreen(navController: NavController) {
     var capturedBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var capturedDisplaySize by remember { mutableStateOf(IntSize.Zero) }
     var capturedImageProcessing by remember { mutableStateOf(false) }
+    var capturedPhotoScale by remember { mutableFloatStateOf(1f) }
+    var capturedPhotoOffset by remember { mutableStateOf(Offset.Zero) }
 
     // OCR result processing variables
     var rawOcrText by remember { mutableStateOf("") }
     var detectedLanguage by remember { mutableStateOf("unknown") }
+
+    // Intercept back button when an image is captured: dismiss captured image instead of exiting
+    BackHandler(enabled = capturedBitmap != null) {
+        capturedBitmap = null
+        rawOcrText = ""
+        lastOCRResult = null
+        errorMessage = null
+        capturedPhotoScale = 1f
+        capturedPhotoOffset = Offset.Zero
+    }
 
     val selectedOcrModel = remember(selectedOcrModelCode) {
         OcrLanguageCatalog.sourceOrDefault(selectedOcrModelCode)
@@ -188,8 +209,8 @@ fun CameraScreen(navController: NavController) {
         )
     }
 
-    // PP-OCRv6 models are bundled with the app and loaded by its SDK.
-    fun hasRequiredOcrModel() = true
+    fun hasRequiredOcrModel() =
+        com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.get(context).isReady(com.sumit.varnamala.ocr.paddle.PaddleModelProvisioner.Tier.TINY)
 
     fun promptModelDownload() {
         Toast.makeText(
@@ -197,7 +218,7 @@ fun CameraScreen(navController: NavController) {
             context.getString(R.string.model_required_for_ocr, selectedOcrModel.displayName),
             Toast.LENGTH_LONG
         ).show()
-        navController.navigate(Screen.OcrLanguage.route)
+        navController.navigate(Screen.ResourceSetup.route)
     }
 
     // The whole recognized text, converted once per result rather than on every recomposition.
@@ -289,77 +310,196 @@ fun CameraScreen(navController: NavController) {
                 SideEffect {
                     cameraPermissionGranted = true
                 }
+                var containerSize by remember { mutableStateOf(IntSize.Zero) }
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .onGloballyPositioned { coordinates ->
+                            containerSize = coordinates.size
+                        },
                     contentAlignment = Alignment.Center
                 ) {
-                    OCRCameraPreview(
-                        modifier = Modifier.fillMaxSize(),
-                        isDetectionRunning = detectionRunning,
-                        flashEnabled = flashEnabled,
-                        lensFacing = lensFacing,
-                        paddleLanguage = selectedOcrModel,
-                        onWordTap = { word -> speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage)))) },
-                        highContrast = highContrast,
-                        detectionIntervalMs = detectionIntervalMs,
-                        readingMsPerWord = readingMsPerWord,
-                        maxExtraDelayMs = maxExtraDelayMs,
-                        skipFrames = skipFrames,
-                        showBoundingBoxes = true,
-                        showTextOverlay = true,
-                        showWordBoundingBoxes = false,
-                        showLineBoundingBoxes = true,
-                        showBlockBoundingBoxes = true,
-                        textOverride = selectedTargetLanguage?.let { targetLang ->
-                            lastOCRResult?.boundingBoxes
-                                ?.flatMap { it.lines }
-                                ?.flatMap { it.elements }
-                                ?.filter { !it.isLowConfidence }
-                                ?.associate { element ->
-                                    element.boundingBox to Transliterator.transliterate(
-                                        text = element.text,
-                                        sourceLanguage = detectedLanguage,
-                                        targetLanguage = targetLang.localeCode
+                    if (capturedBitmap != null) {
+                        val photo = capturedBitmap!!
+                        val transformableState = rememberTransformableState { zoomChange, panChange, _ ->
+                            val newScale = (capturedPhotoScale * zoomChange).coerceIn(1f, 6f)
+                            if (newScale == 1f) {
+                                capturedPhotoOffset = Offset.Zero
+                            } else {
+                                val maxOffsetX = (containerSize.width * (newScale - 1f)) / 2f
+                                val maxOffsetY = (containerSize.height * (newScale - 1f)) / 2f
+                                val newOffset = capturedPhotoOffset + panChange
+                                capturedPhotoOffset = Offset(
+                                    x = newOffset.x.coerceIn(-maxOffsetX, maxOffsetX),
+                                    y = newOffset.y.coerceIn(-maxOffsetY, maxOffsetY)
+                                )
+                            }
+                            capturedPhotoScale = newScale
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clipToBounds()
+                                .graphicsLayer {
+                                    scaleX = capturedPhotoScale
+                                    scaleY = capturedPhotoScale
+                                    translationX = capturedPhotoOffset.x
+                                    translationY = capturedPhotoOffset.y
+                                }
+                                .transformable(state = transformableState)
+                                .pointerInput(capturedBitmap) {
+                                    detectTapGestures(
+                                        onDoubleTap = { tapOffset ->
+                                            if (capturedPhotoScale > 1.05f) {
+                                                capturedPhotoScale = 1f
+                                                capturedPhotoOffset = Offset.Zero
+                                            } else {
+                                                capturedPhotoScale = 2.5f
+                                                val centerX = containerSize.width / 2f
+                                                val centerY = containerSize.height / 2f
+                                                val maxOffsetX = (containerSize.width * 1.5f) / 2f
+                                                val maxOffsetY = (containerSize.height * 1.5f) / 2f
+                                                capturedPhotoOffset = Offset(
+                                                    x = ((centerX - tapOffset.x) * 1.5f).coerceIn(-maxOffsetX, maxOffsetX),
+                                                    y = ((centerY - tapOffset.y) * 1.5f).coerceIn(-maxOffsetY, maxOffsetY)
+                                                )
+                                            }
+                                        }
                                     )
                                 }
-                        },
-                        // Single capture functionality
-                        captureImage = captureImage,
-                        onCaptureComplete = {
-                            captureImage = false
-                            capturedImageProcessing = false
-                        },
-                        onImageCaptured = { bitmap ->
-                            capturedBitmap = bitmap
-                            capturedImageProcessing = true
-                            isCapturing = false
-                        },
-                        onOCRResult = { result ->
-                            if (capturedBitmap != null) {
-                                // This is a result from captured image
-                                rawOcrText = result.text
-                                lastOCRResult = result
+                        ) {
+                            Image(
+                                bitmap = photo.asImageBitmap(),
+                                contentDescription = "Captured Image",
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+
+                            val validResult = if (lastOCRResult != null &&
+                                lastOCRResult!!.imageWidth == photo.width &&
+                                lastOCRResult!!.imageHeight == photo.height
+                            ) lastOCRResult else null
+
+                            if (validResult != null) {
+                                OCROverlayCanvas(
+                                    result = validResult,
+                                    textOverride = selectedTargetLanguage?.let { targetLang ->
+                                        validResult.boundingBoxes
+                                            .flatMap { it.lines }
+                                            .flatMap { it.elements }
+                                            .filter { !it.isLowConfidence }
+                                            .associate { element ->
+                                                element.boundingBox to Transliterator.transliterate(
+                                                    text = element.text,
+                                                    sourceLanguage = detectedLanguage,
+                                                    targetLanguage = targetLang.localeCode
+                                                )
+                                            }
+                                    },
+                                    containerSize = containerSize,
+                                    cropToFill = true,
+                                    sourceBitmap = photo,
+                                    showBoundingBoxes = true,
+                                    showTextOverlay = true,
+                                    showWordBoundingBoxes = false,
+                                    showLineBoundingBoxes = true,
+                                    showBlockBoundingBoxes = true,
+                                    textBackgroundOpacity = 0.8f,
+                                    boundingBoxStrokeWidth = 2f,
+                                    enableTextCopy = true,
+                                    onWordTap = { word -> speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage)))) },
+                                    highContrast = highContrast,
+                                    modifier = Modifier.fillMaxSize()
+                                )
+                            }
+                        }
+
+                        if (capturedImageProcessing) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .clip(RoundedCornerShape(50.dp))
+                                    .background(Color.Black.copy(alpha = 0.7f))
+                                    .padding(16.dp, 10.dp)
+                            ) {
+                                Surface(
+                                    modifier = Modifier.size(10.dp),
+                                    shape = RoundedCornerShape(5.dp),
+                                    color = Color.Green
+                                ) {}
+                                Text(
+                                    text = "Recognizing text...",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    } else {
+                        OCRCameraPreview(
+                            modifier = Modifier.fillMaxSize(),
+                            isDetectionRunning = detectionRunning,
+                            flashEnabled = flashEnabled,
+                            lensFacing = lensFacing,
+                            paddleLanguage = selectedOcrModel,
+                            onWordTap = { word -> speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage)))) },
+                            highContrast = highContrast,
+                            detectionIntervalMs = detectionIntervalMs,
+                            readingMsPerWord = readingMsPerWord,
+                            maxExtraDelayMs = maxExtraDelayMs,
+                            skipFrames = skipFrames,
+                            showBoundingBoxes = true,
+                            showTextOverlay = true,
+                            showWordBoundingBoxes = false,
+                            showLineBoundingBoxes = true,
+                            showBlockBoundingBoxes = true,
+                            textOverride = selectedTargetLanguage?.let { targetLang ->
+                                lastOCRResult?.boundingBoxes
+                                    ?.flatMap { it.lines }
+                                    ?.flatMap { it.elements }
+                                    ?.filter { !it.isLowConfidence }
+                                    ?.associate { element ->
+                                        element.boundingBox to Transliterator.transliterate(
+                                            text = element.text,
+                                            sourceLanguage = detectedLanguage,
+                                            targetLanguage = targetLang.localeCode
+                                        )
+                                    }
+                            },
+                            // Single capture functionality
+                            captureImage = captureImage,
+                            onCaptureComplete = {
+                                captureImage = false
                                 capturedImageProcessing = false
-                            } else {
-                                // This is a real-time OCR result
+                            },
+                            onImageCaptured = { bitmap ->
+                                capturedBitmap = bitmap
+                                capturedImageProcessing = true
+                                isCapturing = false
+                            },
+                            onOCRResult = { result ->
                                 lastOCRResult = result
                                 rawOcrText = result.text
                                 errorMessage = null
+                                capturedImageProcessing = false
 
                                 // Detect language for OCR results
                                 if (result.text.isNotBlank()) {
                                     detectedLanguage = LanguageDetector.detectLanguage(result.text)
                                 }
+                            },
+                            onError = { error ->
+                                errorMessage = error
+                                if (isCapturing) {
+                                    isCapturing = false
+                                    capturedImageProcessing = false
+                                }
                             }
-                        },
-                        onError = { error ->
-                            errorMessage = error
-                            if (isCapturing) {
-                                isCapturing = false
-                                capturedImageProcessing = false
-                            }
-                        }
-                    )
+                        )
+                    }
 
                     // Status indicator
                     if (detectionRunning || isCapturing) {
@@ -389,166 +529,216 @@ fun CameraScreen(navController: NavController) {
                 }
             })
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Left side - Info button and read-aloud mode
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                GlassButton(
-                    description = stringResource(R.string.a11y_info),
-                    icon = painterResource(R.drawable.ic_info),
-                    background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                    onClick = { showCameraInfoDialog = true }
-                )
-                GlassButton(
-                    modifier = Modifier.semantics {
-                        contentDescription = context.getString(if (readingMode) R.string.reading_mode_on else R.string.reading_mode_off)
-                    },
-                    icon = painterResource(R.drawable.ic_volume_up),
-                    background = if (readingMode) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                    onClick = { tutorialScope.launch { userPrefsRepository.setReadingMode(!readingMode) } }
-                )
-            }
+        if (capturedBitmap == null) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Left side: Info button and read-aloud mode
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    GlassButton(
+                        description = stringResource(R.string.a11y_info),
+                        icon = painterResource(R.drawable.ic_info),
+                        background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        onClick = { showCameraInfoDialog = true }
+                    )
+                    GlassButton(
+                        modifier = Modifier.semantics {
+                            contentDescription = context.getString(if (readingMode) R.string.reading_mode_on else R.string.reading_mode_off)
+                        },
+                        icon = painterResource(R.drawable.ic_volume_up),
+                        background = if (readingMode) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        onClick = { tutorialScope.launch { userPrefsRepository.setReadingMode(!readingMode) } }
+                    )
+                }
 
-            // Right side - History and Settings
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                // Right side: History and Settings
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    GlassButton(
+                        description = stringResource(R.string.history),
+                        icon = painterResource(R.drawable.ic_history),
+                        background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        onClick = { navController.navigate(Screen.History.route) }
+                    )
+                    GlassButton(
+                        modifier = Modifier.captureBounds("settings") { key, rect ->
+                            tutorialTargets[key] = rect
+                        },
+                        description = stringResource(R.string.a11y_settings),
+                        icon = painterResource(R.drawable.ic_settings_outline),
+                        background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        onClick = { navController.navigate(Screen.Settings.route) }
+                    )
+                }
+            }
+        } else {
+            // Prominent close button for captured photo view
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp, topInset + 10.dp, 16.dp, 16.dp)
+                    .zIndex(100f),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 GlassButton(
-                    description = stringResource(R.string.history),
-                    icon = painterResource(R.drawable.ic_history),
-                    background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                    onClick = { navController.navigate(Screen.History.route) }
-                )
-                GlassButton(
-                    modifier = Modifier.captureBounds("settings") { key, rect ->
-                        tutorialTargets[key] = rect
-                    },
-                    description = stringResource(R.string.a11y_settings),
-                    icon = painterResource(R.drawable.ic_settings_outline),
-                    background = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                    onClick = { navController.navigate(Screen.Settings.route) }
+                    description = "Close",
+                    icon = painterResource(R.drawable.ic_close),
+                    size = 48.dp,
+                    background = Color.Black.copy(alpha = 0.7f),
+                    onClick = {
+                        capturedBitmap = null
+                        rawOcrText = ""
+                        lastOCRResult = null
+                        errorMessage = null
+                        capturedPhotoScale = 1f
+                        capturedPhotoOffset = Offset.Zero
+                    }
                 )
             }
         }
 
         // Bottom section
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(bottom = topInset + 74.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            LanguageSelectionRow(
-                sourceLanguage = selectedSourceLanguage,
-                targetLanguage = selectedTargetLanguage,
-                onSourceLanguageClick = { navController.navigate(Screen.OcrLanguage.route) },
-                onTargetLanguageClick = {
-                    navController.navigate(
-                        Screen.TransliterationLanguage.create(
-                            Screen.TransliterationLanguage.ROLE_TARGET
-                        )
-                    )
-                },
-                modifier = Modifier.captureBounds("languages") { key, rect ->
-                    tutorialTargets[key] = rect
-                }
-            )
-
-            // Bottom controls
-            Row(
+        if (capturedBitmap == null) {
+            Column(
                 modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(bottom = topInset + 74.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Flash toggle
-                GlassButton(
-                    modifier = Modifier.captureBounds("flash") { key, rect ->
+                LanguageSelectionRow(
+                    sourceLanguage = selectedSourceLanguage,
+                    targetLanguage = selectedTargetLanguage,
+                    onSourceLanguageClick = { navController.navigate(Screen.OcrLanguage.route) },
+                    onTargetLanguageClick = {
+                        navController.navigate(
+                            Screen.TransliterationLanguage.create(
+                                Screen.TransliterationLanguage.ROLE_TARGET
+                            )
+                        )
+                    },
+                    modifier = Modifier.captureBounds("languages") { key, rect ->
                         tutorialTargets[key] = rect
-                    },
-                    description = stringResource(if (flashEnabled) R.string.a11y_flash_on else R.string.a11y_flash_off),
-                    icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
-                        R.drawable.ic_flash_off_outline
-                    ),
-                    size = 60.dp,
-                    onClick = { flashEnabled = !flashEnabled }
-                )
-
-                // Capture button
-                CameraCaptureButton(
-                    text = when {
-                        isCapturing -> "Capturing..."
-                        detectionRunning -> "Scanning..."
-                        else -> "Tap/Hold"
-                    },
-                    size = 90.dp,
-                    textColor = Color.White,
-                    backgroundColor = Color(0xFF2196F3),
-                    longPressBackgroundColor = Color(0xFF4CAF50),
-                    progressColor = Color.White,
-                    isRealTimeMode = detectionRunning,
-                    modifier = Modifier.captureBounds("capture") { key, rect ->
-                        tutorialTargets[key] = rect
-                    },
-                    onSingleCapture = {
-                        // Tap = capture single image
-                        if (!isCapturing && !detectionRunning) {
-                            if (!hasRequiredOcrModel()) {
-                                promptModelDownload()
-                                return@CameraCaptureButton
-                            }
-                            // Clear any previous capture
-                            capturedBitmap = null
-                            rawOcrText = ""
-                            lastOCRResult = null
-                            errorMessage = null
-
-                            isCapturing = true
-                            captureImage = true
-                        }
-                    },
-                    onLongPressStart = {
-                        // Hold = start real-time scanning
-                        if (!isCapturing) {
-                            if (!hasRequiredOcrModel()) {
-                                promptModelDownload()
-                                return@CameraCaptureButton
-                            }
-                            // Clear any captured image
-                            capturedBitmap = null
-                            rawOcrText = ""
-                            lastOCRResult = null
-                            errorMessage = null
-
-                            detectionRunning = true
-                        }
-                    },
-                    onLongPressEnd = {
-                        // Release = stop real-time scanning (read-aloud mode keeps scanning)
-                        detectionRunning = readingMode
                     }
                 )
 
-                // Camera Switch button
-                GlassButton(
-                    modifier = Modifier.captureBounds("switch_camera") { key, rect ->
-                        tutorialTargets[key] = rect
-                    },
-                    description = stringResource(R.string.a11y_switch_camera),
-                    icon = painterResource(R.drawable.ic_switch_camera),
-                    size = 60.dp,
-                    enabled = hasBackCamera == true && hasFrontCamera == true,
-                    onClick = {
-                        lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
-                            CameraSelector.LENS_FACING_FRONT
-                        } else {
-                            CameraSelector.LENS_FACING_BACK
+                // Bottom controls
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Flash toggle
+                    GlassButton(
+                        modifier = Modifier.captureBounds("flash") { key, rect ->
+                            tutorialTargets[key] = rect
+                        },
+                        description = stringResource(if (flashEnabled) R.string.a11y_flash_on else R.string.a11y_flash_off),
+                        icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
+                            R.drawable.ic_flash_off_outline
+                        ),
+                        size = 60.dp,
+                        onClick = { flashEnabled = !flashEnabled }
+                    )
+
+                    // Capture button
+                    CameraCaptureButton(
+                        text = when {
+                            isCapturing -> "Capturing..."
+                            detectionRunning -> "Scanning..."
+                            else -> "Tap/Hold"
+                        },
+                        size = 90.dp,
+                        textColor = Color.White,
+                        backgroundColor = Color(0xFF2196F3),
+                        longPressBackgroundColor = Color(0xFF4CAF50),
+                        progressColor = Color.White,
+                        isRealTimeMode = detectionRunning,
+                        modifier = Modifier.captureBounds("capture") { key, rect ->
+                            tutorialTargets[key] = rect
+                        },
+                        onSingleCapture = {
+                            // Tap = capture single image
+                            if (!isCapturing && !detectionRunning) {
+                                if (!hasRequiredOcrModel()) {
+                                    promptModelDownload()
+                                    return@CameraCaptureButton
+                                }
+                                // Clear any previous capture
+                                capturedBitmap = null
+                                rawOcrText = ""
+                                lastOCRResult = null
+                                errorMessage = null
+
+                                isCapturing = true
+                                captureImage = true
+                            }
+                        },
+                        onLongPressStart = {
+                            // Hold = start real-time scanning
+                            if (!isCapturing) {
+                                if (!hasRequiredOcrModel()) {
+                                    promptModelDownload()
+                                    return@CameraCaptureButton
+                                }
+                                // Clear any captured image
+                                capturedBitmap = null
+                                rawOcrText = ""
+                                lastOCRResult = null
+                                errorMessage = null
+
+                                detectionRunning = true
+                            }
+                        },
+                        onLongPressEnd = {
+                            // Release = stop real-time scanning (read-aloud mode keeps scanning)
+                            detectionRunning = readingMode
                         }
+                    )
+
+                    // Camera Switch button
+                    GlassButton(
+                        modifier = Modifier.captureBounds("switch_camera") { key, rect ->
+                            tutorialTargets[key] = rect
+                        },
+                        description = stringResource(R.string.a11y_switch_camera),
+                        icon = painterResource(R.drawable.ic_switch_camera),
+                        size = 60.dp,
+                        enabled = hasBackCamera == true && hasFrontCamera == true,
+                        onClick = {
+                            lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                                CameraSelector.LENS_FACING_FRONT
+                            } else {
+                                CameraSelector.LENS_FACING_BACK
+                            }
+                        }
+                    )
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LanguageSelectionRow(
+                    sourceLanguage = selectedSourceLanguage,
+                    targetLanguage = selectedTargetLanguage,
+                    onSourceLanguageClick = { navController.navigate(Screen.OcrLanguage.route) },
+                    onTargetLanguageClick = {
+                        navController.navigate(
+                            Screen.TransliterationLanguage.create(
+                                Screen.TransliterationLanguage.ROLE_TARGET
+                            )
+                        )
                     }
                 )
             }
@@ -600,166 +790,6 @@ fun CameraScreen(navController: NavController) {
                     }
                 }
             )
-        }
-
-        // Captured Image Overlay - shows as full screen over camera
-        if (capturedBitmap != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black)
-                    .onGloballyPositioned { capturedDisplaySize = it.size }
-            ) {
-                // Show captured image - properly oriented
-                Image(
-                    bitmap = capturedBitmap!!.asImageBitmap(),
-                    contentDescription = "Captured Image",
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .align(Alignment.Center),
-                    contentScale = ContentScale.Fit
-                )
-
-                lastOCRResult?.let { result ->
-                    val bitmap = capturedBitmap!!
-                    OCROverlayCanvas(
-                        result = result,
-                        textOverride = selectedTargetLanguage?.let { targetLang ->
-                            result.boundingBoxes
-                                .flatMap { it.lines }
-                                .flatMap { it.elements }
-                                .filter { !it.isLowConfidence }
-                                .associate { element ->
-                                    element.boundingBox to Transliterator.transliterate(
-                                        text = element.text,
-                                        sourceLanguage = detectedLanguage,
-                                        targetLanguage = targetLang.localeCode
-                                    )
-                                }
-                        },
-                        containerSize = capturedDisplaySize,
-                        sourceBitmap = bitmap,
-                        showBoundingBoxes = true,
-                        showTextOverlay = true,
-                        enableTextCopy = true,
-                        onWordTap = { word -> speech.start("word", listOf(SpeechPart(word, speechLanguage(detectedLanguage)))) },
-                        highContrast = highContrast,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .align(Alignment.Center)
-                    )
-                }
-
-                // Close button at top right
-                IconButton(
-                    onClick = {
-                        capturedBitmap = null
-                        rawOcrText = ""
-                        lastOCRResult = null
-                        errorMessage = null
-                    },
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(16.dp)
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(24.dp))
-                        .background(Color.Black.copy(alpha = 0.5f))
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_delete_outline),
-                        contentDescription = "Close",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-
-                // Bottom section with same controls
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                ) {
-                    if (rawOcrText.isNotBlank()) {
-                        ScanResultCard(
-                            original = rawOcrText,
-                            converted = convertedText,
-                            originalLanguage = speechLanguage(detectedLanguage),
-                            convertedLanguage = selectedTargetLanguage.localeCode,
-                            speech = speech,
-                            textScale = textDisplaySize,
-                        )
-                    }
-                    // Bottom controls
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        // Flash toggle
-                        GlassButton(
-                            description = stringResource(if (flashEnabled) R.string.a11y_flash_on else R.string.a11y_flash_off),
-                            icon = if (flashEnabled) painterResource(R.drawable.ic_flash_on_outline) else painterResource(
-                                R.drawable.ic_flash_off_outline
-                            ), onClick = { flashEnabled = !flashEnabled }
-                        )
-
-                        // Capture button - can capture another or start scanning
-                        CameraCaptureButton(
-                            text = "Tap/Hold",
-                            size = 90.dp,
-                            textColor = Color.White,
-                            backgroundColor = Color(0xFF2196F3),
-                            longPressBackgroundColor = Color(0xFF4CAF50),
-                            progressColor = Color.White,
-                            isRealTimeMode = false,
-                            onSingleCapture = {
-                                // Tap = capture another image
-                                if (!hasRequiredOcrModel()) {
-                                    promptModelDownload()
-                                    return@CameraCaptureButton
-                                }
-                                capturedBitmap = null
-                                rawOcrText = ""
-                                lastOCRResult = null
-                                errorMessage = null
-                                isCapturing = true
-                                captureImage = true
-                            },
-                            onLongPressStart = {
-                                // Hold = start real-time scanning (closes captured image)
-                                if (!hasRequiredOcrModel()) {
-                                    promptModelDownload()
-                                    return@CameraCaptureButton
-                                }
-                                capturedBitmap = null
-                                rawOcrText = ""
-                                lastOCRResult = null
-                                errorMessage = null
-                                detectionRunning = true
-                            },
-                            onLongPressEnd = {
-                                detectionRunning = false
-                            }
-                        )
-
-                        // Switch camera button
-                        GlassButton(
-                            description = stringResource(R.string.a11y_switch_camera),
-                            icon = painterResource(R.drawable.ic_switch_camera),
-                            enabled = hasBackCamera == true && hasFrontCamera == true,
-                            onClick = {
-                                lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK) {
-                                    CameraSelector.LENS_FACING_FRONT
-                                } else {
-                                    CameraSelector.LENS_FACING_BACK
-                                }
-                            }
-                        )
-                    }
-                }
-            }
         }
 
         if (showCameraInfoDialog) {

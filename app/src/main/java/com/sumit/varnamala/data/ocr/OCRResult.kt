@@ -1,5 +1,6 @@
 package com.sumit.varnamala.data.ocr
 
+import android.graphics.PointF
 import android.graphics.Rect
 import androidx.compose.runtime.Immutable
 
@@ -27,6 +28,8 @@ data class TextBlock(
     val boundingBox: Rect,
     val lines: List<TextLine> = emptyList(),
     val confidence: Float = 1f,
+    val points: List<PointF> = emptyList(),
+    val angle: Float = 0f,
 ) {
     val isLowConfidence: Boolean get() = confidence < OcrConfidence.LOW
 }
@@ -37,6 +40,8 @@ data class TextLine(
     val boundingBox: Rect,
     val elements: List<TextElement> = emptyList(),
     val confidence: Float = 1f,
+    val points: List<PointF> = emptyList(),
+    val angle: Float = 0f,
 ) {
     val isLowConfidence: Boolean get() = confidence < OcrConfidence.LOW
 }
@@ -46,6 +51,8 @@ data class TextElement(
     val text: String,
     val boundingBox: Rect,
     val confidence: Float = 1f,
+    val points: List<PointF> = emptyList(),
+    val angle: Float = 0f,
 ) {
     val isLowConfidence: Boolean get() = confidence < OcrConfidence.LOW
 }

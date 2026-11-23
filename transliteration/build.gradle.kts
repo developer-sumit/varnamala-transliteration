@@ -13,16 +13,17 @@ kotlin {
         browser()
         nodejs()
     }
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    // iOS native targets are commented out under Gradle 9 until KGP adds Gradle 9 support for Kotlin/Native artifact publication
+    // iosX64()
+    // iosArm64()
+    // iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
-            implementation(kotlin("test"))
+            implementation(libs.junit)
         }
     }
 }

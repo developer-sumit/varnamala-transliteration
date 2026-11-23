@@ -26,17 +26,17 @@ import com.sumit.varnamala.R
 import com.sumit.varnamala.data.preferences.UserPreferencesRepository
 import com.sumit.varnamala.utils.AppLockSession
 import com.sumit.varnamala.utils.authenticateOwner
+import com.sumit.varnamala.utils.canAuthenticate
 
 /** Shows [content] only after the owner has unlocked, when the app lock is on. */
 @Composable
 fun LockGate(content: @Composable () -> Unit) {
     val context = LocalContext.current
-    // null until the saved setting has been read: the lock must not appear (or prompt) before then.
-    val locked by remember { UserPreferencesRepository(context).appLockEnabled }.collectAsState(initial = null)
+    // Default to false: only lock when explicitly enabled in preferences and device supports it
+    val locked by remember(context) { UserPreferencesRepository(context).appLockEnabled }.collectAsState(initial = false)
     var unlocked by remember { mutableStateOf(AppLockSession.unlocked) }
 
-    if (locked == null) return
-    if (locked == false || unlocked) {
+    if (!locked || !canAuthenticate(context) || unlocked) {
         content()
         return
     }

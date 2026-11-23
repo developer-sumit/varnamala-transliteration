@@ -74,12 +74,26 @@ class PaddleOcrRepository(private val context: Context) {
 
         val rtl = language in RTL_LANGUAGES
         val lines = ReadingOrder.sort(best, rtl) { found -> found.rect.let { ReadingOrder.Box(it.left, it.top, it.right, it.bottom) } }.map { found ->
+            val scaledQuad = found.quad.map { PointF(it.x * scaleX, it.y * scaleY) }
+            val (orderedQuad, angle) = if (scaledQuad.size == 4) {
+                val p0 = scaledQuad[0]
+                val p1 = scaledQuad[1]
+                val p2 = scaledQuad[2]
+                val p3 = scaledQuad[3]
+                val midLeft = PointF((p0.x + p3.x) / 2f, (p0.y + p3.y) / 2f)
+                val midRight = PointF((p1.x + p2.x) / 2f, (p1.y + p2.y) / 2f)
+                val readingVec = PointF(midRight.x - midLeft.x, midRight.y - midLeft.y)
+                val angleDeg = Math.toDegrees(atan2(readingVec.y.toDouble(), readingVec.x.toDouble())).toFloat()
+                scaledQuad to angleDeg
+            } else scaledQuad to 0f
+
             val rect = found.rect.let {
                 Rect((it.left * scaleX).toInt(), (it.top * scaleY).toInt(), (it.right * scaleX).toInt(), (it.bottom * scaleY).toInt())
             }
-            TextLine(found.text, rect, listOf(TextElement(found.text, rect, found.confidence)), found.confidence)
+            val element = TextElement(found.text, rect, found.confidence, orderedQuad, angle)
+            TextLine(found.text, rect, listOf(element), found.confidence, orderedQuad, angle)
         }
-        val blocks = lines.map { TextBlock(it.text, it.boundingBox, listOf(it), it.confidence) }
+        val blocks = lines.map { TextBlock(it.text, it.boundingBox, listOf(it), it.confidence, it.points, it.angle) }
         OCRResult(
             text = lines.filter { !it.isLowConfidence }.joinToString("\n") { it.text },
             language = language ?: "pp-ocrv6",

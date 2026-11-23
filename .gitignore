@@ -1,22 +1,25 @@
 *.iml
 .gradle
 /local.properties
+local.properties
 /.idea
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.idea/
 .DS_Store
 **/build
+build/
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+.kotlin/
+.remember/
+kotlin-js-store/
 
-# Signing / Play Store
+# Signing / Play Store / Secrets
 key.properties
+keystore/
 *.jks
 *.keystore
 */release
+*.apk
+*.aab
+
