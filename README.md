@@ -83,6 +83,7 @@
 
 | 📷 Live Camera OCR | 🖼️ Gallery & Zoom | ⌨️ Text Transliteration | ⚙️ Settings & Security |
 | :---: | :---: | :---: | :---: |
+| <img src="docs/images/camera-screen.png" alt="Live Camera OCR" width="220" /> | <img src="docs/images/gallery-screen.png" alt="Gallery & Zoom" width="220" /> | <img src="docs/images/text-screen.png" alt="Text Transliteration" width="220" /> | <img src="docs/images/settings-screen.png" alt="Settings & Security" width="220" /> |
 | Point at text with live bounding box overlay | Pinch-to-zoom with 1:1 mapped OCR boxes | Type or paste text across Indic scripts | Custom font scale, themes, biometric lock |
 
 </div>
