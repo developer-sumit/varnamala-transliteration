@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.4.0] - 2026-11-23
+
+### 📸 Camera & Image Viewer Enhancements
+
+- **Interactive Pinch-to-Zoom & Pan**: Added double-tap and two-finger pinch-to-zoom (1x to 6x) on captured photos with 1:1 mapped OCR bounding box overlays.
+- **Smart Back Navigation**: Back gesture or button on camera screen safely dismisses the captured image and returns to live preview instead of exiting the app.
+- **Full OCR Text Display**: Dynamic font auto-scaling and proportional bounds clipping prevent text truncation ("...") and ensure words fit cleanly inside bounding boxes.
+
+### 💾 Session State Persistence
+
+- **Screen State Retention**: Preserves user input and transliteration results on the text screen across bottom navigation tabs, settings, and screen transitions.
+- **Camera Session Preservation**: Retains captured photo, recognized text, and zoom/pan state when changing transliteration source/target languages or app UI language.
+- **Live Transliteration Switching**: Changing target transliteration language on a captured photo dynamically re-transliterates all bounding boxes without needing to retake the photo.
+- **Duplicate History Prevention**: Prevents redundant history entries and duplicate thumbnail files when re-entering or switching between screens.
+
+### 🔤 Aksharamukha Transliteration Engine
+
+- **Aksharamukha Integration**: Complete Kotlin Multiplatform script conversion engine supporting 12+ Indic scripts and international Roman schemes (Readable English, IAST, ISO 15919, Harvard-Kyoto).
+- **Clean English Mapping**: Added Readable ASCII transliteration (`READABLE_MAP`), Sinhala script support, and bidirectional Urdu conversion.
+- **Natural Dental Mapping**: Disambiguated reverse transliteration tables to prioritize natural dental consonants over retroflex consonants (e.g., "namaste" converts cleanly to "नमस्ते").
+
+### 🛠️ Open Source & DevOps
+
+- **Automated Multi-ABI Release Workflow**: GitHub Actions workflow (`build-release.yml`) compiles signed APKs (`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`, `universal`) and creates GitHub Releases upon pushing version tags.
+- **Community Governance**: Added `CONTRIBUTING.md`, `SECURITY.md`, PR template, and GitHub issue templates.
+- **Modern Build Tooling**: Upgraded to AGP 9.0 built-in Kotlin, Android SDK 37, Compose 1.13, etc
+
+---
+
 ## [1.3.0] - 2026-01-27
 
 ### 🎨 Major UI Overhaul
@@ -116,6 +145,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 | Version | Date       | Highlights                                |
 | ------- | ---------- | ----------------------------------------- |
+| 1.4.0   | 2026-11-23 | Pinch-to-zoom, State persistence, Aksharamukha engine |
 | 1.3.0   | 2026-01-27 | Complete UI redesign, Info dialogs, Animations |
 | 1.2.0   | 2026-01-17 | Text input, History, TTS, UX improvements |
 | 1.1.0   | 2026-01-10 | Offline OCR, Settings, Tutorial           |
